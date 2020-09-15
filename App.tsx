@@ -12,16 +12,30 @@ import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
+  Platform,
   ScrollView,
   View,
   StatusBar,
+  PanResponder,
+  Image,
+  Dimensions,
 } from 'react-native';
 
 import Svg, {Rect} from 'react-native-svg';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
+
 const App = () => {
+  const [panState, setpanState] = React.useState({
+    touchX: 100,
+    touchY: 5,
+    width:200,
+    heigt:50,
+  });
+
   return (
     <>
       <StatusBar barStyle="dark-content" />
@@ -33,16 +47,15 @@ const App = () => {
             <View style={styles.sectionContainer}>
               <Svg width="200" height="60">
                 <Rect
-                  x="25"
-                  y="5"
-                  width="150"
-                  height="50"
+                  x={panState.touchX}
+                  y={panState.touchY}
+                  width={panState.width}
+                  height={panState.width}
                   fill="rgb(0,0,255)"
                   strokeWidth="3"
                   stroke="rgb(0,0,0)"
                 />
               </Svg>
-    
             </View>
           </View>
         </ScrollView>
