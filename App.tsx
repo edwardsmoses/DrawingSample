@@ -1,160 +1,87 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
+import React, {Component} from 'react';
 
-import React from 'react';
+import Svg, {Line} from 'react-native-svg';
+
 import {
-  SafeAreaView,
   StyleSheet,
-  Platform,
-  ScrollView,
   View,
+  Platform,
   Text,
-  StatusBar,
   PanResponder,
   Image,
-  Animated,
   Dimensions,
 } from 'react-native';
 
-import Svg, {Rect, Line} from 'react-native-svg';
+var width = Dimensions.get('window').width;
+var height = Dimensions.get('window').height;
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+export default class App extends Component {
+  constructor() {
+    super();
+    //initialize state
+    this.panResponder;
+    this.state = {
+      startTouchX: 0,
+      startTouchY: 0,
 
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+      endTouchX: 0,
+      endTouchY: 0,
+    };
 
-const App = () => {
-  const [panState, setpanState] = React.useState({
-    startTouchX: 0,
-    startTouchY: 0,
-
-    endTouchX: 0,
-    endTouchY: 0,
-  });
-
-  const appPanResponder = React.useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: (event, gestureState) => true,
-        onStartShouldSetPanResponderCapture: (event, gestureState) => {
-          if (event && event.nativeEvent) {
-            setpanState((appState) => ({
-              ...appState,
-              startTouchX: event.nativeEvent.locationX,
-              startTouchY: event.nativeEvent.locationY,
-            }));
-          }
-          return true;
-        },
-        onMoveShouldSetPanResponder: (event, gestureState) => false,
-        onMoveShouldSetPanResponderCapture: (event, gestureState) => false,
-        onPanResponderGrant: (event, gestureState) => false,
-        onPanResponderMove: (event, gestureState) => {},
-        onPanResponderRelease: (event, gestureState) => {
-          if (event && event.nativeEvent) {
-            setpanState((appState) => ({
-              ...appState,
-              endTouchX: event.nativeEvent.locationX,
-              endTouchY: event.nativeEvent.locationY,
-            }));
-          }
-        },
-      }),
-    [],
-  );
-
-  const pan = React.useRef(new Animated.ValueXY()).current;
-
-  const panResponder = React.useRef(
-    PanResponder.create({
-      // Ask to be the responder:
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-
-      onPanResponderGrant: (evt, gestureState) => {
-        // The gesture has started. Show visual feedback so the user knows
-        // what is happening!
-        // gestureState.d{x,y} will be set to zero now
-        if (evt && evt.nativeEvent) {
-          setpanState((appState) => ({
-            ...appState,
-            startTouchX: evt.nativeEvent.locationX,
-            startTouchY: evt.nativeEvent.locationY,
-          }));
-        }
+    //panResponder initialization
+    this.panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (event, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (event, gestureState) => {
+        this.setState({
+          startTouchX: event.nativeEvent.locationX.toFixed(2),
+          startTouchY: event.nativeEvent.locationY.toFixed(2),
+        });
       },
-      onPanResponderMove: (evt, gestureState) => {
-        // The most recent move distance is gestureState.move{X,Y}
-        // The accumulated gesture distance since becoming responder is
-        // gestureState.d{x,y}
+      onMoveShouldSetPanResponder: (event, gestureState) => false,
+      onMoveShouldSetPanResponderCapture: (event, gestureState) => false,
+      onPanResponderGrant: (event, gestureState) => false,
+      onPanResponderMove: (event, gestureState) => {},
+      onPanResponderRelease: (event, gestureState) => {
+        this.setState({
+          endTouchX: event.nativeEvent.locationX.toFixed(2),
+          endTouchY: event.nativeEvent.locationY.toFixed(2),
+        });
       },
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderRelease: (evt, gestureState) => {
-        // The user has released all touches while this view is the
-        // responder. This typically means a gesture has succeeded
-        if (evt && evt.nativeEvent) {
-          setpanState((appState) => ({
-            ...appState,
-            endTouchX: evt.nativeEvent.locationX,
-            endTouchY: evt.nativeEvent.locationY,
-          }));
-        }
-      },
-      onPanResponderTerminate: (evt, gestureState) => {
-        // Another component has become the responder, so this gesture
-        // should be cancelled
-      },
-      onShouldBlockNativeResponder: (evt, gestureState) => {
-        // Returns whether this component should block native components from becoming the JS
-        // responder. Returns true by default. Is currently only supported on android.
-        return true;
-      },
-    }),
-  ).current;
+    });
+    
+    this.setState({
+      startTouchX: 0,
+      startTouchY: 0,
 
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
+      endTouchX: 0,
+      endTouchY: 0,
+    });
+  }
+  render() {
+    return (
       <View style={styles.MainContainer}>
         <View style={styles.childView}>
-          <Svg height={height} width={width} style={styles.svgStyle}>
+          <Svg height={height} width={width} position="absolute">
             <Line
-              x1={panState.startTouchX}
-              y1={panState.startTouchY}
-              x2={panState.endTouchX}
-              y2={panState.endTouchY}
+              x1={this.state.startTouchX}
+              y1={this.state.startTouchY}
+              x2={this.state.endTouchX}
+              y2={this.state.endTouchY}
               stroke="red"
               strokeWidth="8"
             />
           </Svg>
-          <View style={styles.panView} {...panResponder.panHandlers} />
+          <View
+            style={{flex: 1, backgroundColor: 'transparent'}}
+            {...this.panResponder.panHandlers}
+          />
         </View>
       </View>
-    </>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
-  body: {
-    backgroundColor: Colors.white,
-    flex: 1,
-  },
-  svgStyle: {
-    position: 'absolute',
-  },
-  panView: {
-    flex: 1,
-    backgroundColor: 'transparent',
-  },
   MainContainer: {
     flex: 1,
   },
@@ -163,6 +90,12 @@ const styles = StyleSheet.create({
     flex: 1,
     overflow: 'hidden',
   },
+  point: {
+    height: 22,
+    width: 22,
+    marginTop: 5,
+    position: 'absolute',
+    borderRadius: 14,
+    backgroundColor: '#afeeee',
+  },
 });
-
-export default App;
