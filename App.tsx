@@ -15,13 +15,15 @@ import {
   Platform,
   ScrollView,
   View,
+  Text,
   StatusBar,
   PanResponder,
   Image,
+  Animated,
   Dimensions,
 } from 'react-native';
 
-import Svg, {Rect} from 'react-native-svg';
+import Svg, {Rect, Line} from 'react-native-svg';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -30,76 +32,136 @@ const height = Dimensions.get('window').height;
 
 const App = () => {
   const [panState, setpanState] = React.useState({
-    touchX: 100,
-    touchY: 5,
-    width:200,
-    heigt:50,
+    startTouchX: 0,
+    startTouchY: 0,
+
+    endTouchX: 0,
+    endTouchY: 0,
   });
+
+  const appPanResponder = React.useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: (event, gestureState) => true,
+        onStartShouldSetPanResponderCapture: (event, gestureState) => {
+          if (event && event.nativeEvent) {
+            setpanState((appState) => ({
+              ...appState,
+              startTouchX: event.nativeEvent.locationX,
+              startTouchY: event.nativeEvent.locationY,
+            }));
+          }
+          return true;
+        },
+        onMoveShouldSetPanResponder: (event, gestureState) => false,
+        onMoveShouldSetPanResponderCapture: (event, gestureState) => false,
+        onPanResponderGrant: (event, gestureState) => false,
+        onPanResponderMove: (event, gestureState) => {},
+        onPanResponderRelease: (event, gestureState) => {
+          if (event && event.nativeEvent) {
+            setpanState((appState) => ({
+              ...appState,
+              endTouchX: event.nativeEvent.locationX,
+              endTouchY: event.nativeEvent.locationY,
+            }));
+          }
+        },
+      }),
+    [],
+  );
+
+  const pan = React.useRef(new Animated.ValueXY()).current;
+
+  const panResponder = React.useRef(
+    PanResponder.create({
+      // Ask to be the responder:
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+
+      onPanResponderGrant: (evt, gestureState) => {
+        // The gesture has started. Show visual feedback so the user knows
+        // what is happening!
+        // gestureState.d{x,y} will be set to zero now
+        if (evt && evt.nativeEvent) {
+          setpanState((appState) => ({
+            ...appState,
+            startTouchX: evt.nativeEvent.locationX,
+            startTouchY: evt.nativeEvent.locationY,
+          }));
+        }
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // The most recent move distance is gestureState.move{X,Y}
+        // The accumulated gesture distance since becoming responder is
+        // gestureState.d{x,y}
+      },
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        // The user has released all touches while this view is the
+        // responder. This typically means a gesture has succeeded
+        if (evt && evt.nativeEvent) {
+          setpanState((appState) => ({
+            ...appState,
+            endTouchX: evt.nativeEvent.locationX,
+            endTouchY: evt.nativeEvent.locationY,
+          }));
+        }
+      },
+      onPanResponderTerminate: (evt, gestureState) => {
+        // Another component has become the responder, so this gesture
+        // should be cancelled
+      },
+      onShouldBlockNativeResponder: (evt, gestureState) => {
+        // Returns whether this component should block native components from becoming the JS
+        // responder. Returns true by default. Is currently only supported on android.
+        return true;
+      },
+    }),
+  ).current;
 
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Svg width="200" height="60">
-                <Rect
-                  x={panState.touchX}
-                  y={panState.touchY}
-                  width={panState.width}
-                  height={panState.width}
-                  fill="rgb(0,0,255)"
-                  strokeWidth="3"
-                  stroke="rgb(0,0,0)"
-                />
-              </Svg>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+      <View style={styles.MainContainer}>
+        <View style={styles.childView}>
+          <Svg height={height} width={width} style={styles.svgStyle}>
+            <Line
+              x1={panState.startTouchX}
+              y1={panState.startTouchY}
+              x2={panState.endTouchX}
+              y2={panState.endTouchY}
+              stroke="red"
+              strokeWidth="8"
+            />
+          </Svg>
+          <View style={styles.panView} {...panResponder.panHandlers} />
+        </View>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
   body: {
     backgroundColor: Colors.white,
+    flex: 1,
   },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  svgStyle: {
+    position: 'absolute',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
+  panView: {
+    flex: 1,
+    backgroundColor: 'transparent',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
+  MainContainer: {
+    flex: 1,
   },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+
+  childView: {
+    flex: 1,
+    overflow: 'hidden',
   },
 });
 
