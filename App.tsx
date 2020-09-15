@@ -17,9 +17,9 @@ import {
   StatusBar,
 } from 'react-native';
 
-import Svg, { Rect } from 'react-native-svg';
+import Svg, {Rect} from 'react-native-svg';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
   return (
@@ -42,6 +42,7 @@ const App = () => {
                   stroke="rgb(0,0,0)"
                 />
               </Svg>
+    
             </View>
           </View>
         </ScrollView>
