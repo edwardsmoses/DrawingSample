@@ -1,85 +1,24 @@
-import React, {Component} from 'react';
+import React from 'react';
 
-import Svg, {Line} from 'react-native-svg';
+import {View, StyleSheet} from 'react-native';
 
-import {
-  StyleSheet,
-  View,
-  Platform,
-  Text,
-  PanResponder,
-  Image,
-  Dimensions,
-} from 'react-native';
+import Pad from './src/view/pad';
 
-var width = Dimensions.get('window').width;
-var height = Dimensions.get('window').height;
-
-export default class App extends Component {
-  constructor() {
-    super();
-    //initialize state
-    this.panResponder;
-    this.state = {
-      startTouchX: 0,
-      startTouchY: 0,
-
-      endTouchX: 0,
-      endTouchY: 0,
-    };
-
-    //panResponder initialization
-    this.panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (event, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (event, gestureState) => {
-        this.setState({
-          startTouchX: event.nativeEvent.locationX.toFixed(2),
-          startTouchY: event.nativeEvent.locationY.toFixed(2),
-        });
-      },
-      onMoveShouldSetPanResponder: (event, gestureState) => false,
-      onMoveShouldSetPanResponderCapture: (event, gestureState) => false,
-      onPanResponderGrant: (event, gestureState) => false,
-      onPanResponderMove: (event, gestureState) => {},
-      onPanResponderRelease: (event, gestureState) => {
-        this.setState({
-          endTouchX: event.nativeEvent.locationX.toFixed(2),
-          endTouchY: event.nativeEvent.locationY.toFixed(2),
-        });
-      },
-    });
-    
-    this.setState({
-      startTouchX: 0,
-      startTouchY: 0,
-
-      endTouchX: 0,
-      endTouchY: 0,
-    });
-  }
-  render() {
-    return (
-      <View style={styles.MainContainer}>
-        <View style={styles.childView}>
-          <Svg height={height} width={width} position="absolute">
-            <Line
-              x1={this.state.startTouchX}
-              y1={this.state.startTouchY}
-              x2={this.state.endTouchX}
-              y2={this.state.endTouchY}
-              stroke="red"
-              strokeWidth="8"
-            />
-          </Svg>
-          <View
-            style={{flex: 1, backgroundColor: 'transparent'}}
-            {...this.panResponder.panHandlers}
-          />
-        </View>
-      </View>
-    );
-  }
-}
+const App = () => {
+  return (
+    <View style={styles.MainContainer}>
+      <Pad
+        strokes={[]}
+        containerStyle={{backgroundColor: 'rgba(0,0,0,0.01)'}}
+        rewind={(undo: any) => {}}
+        clear={(clear: any) => {}}
+        color={'#000000'}
+        strokeWidth={4}
+        onChangeStrokes={(strokes: any) => console.log(strokes)}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   MainContainer: {
@@ -99,3 +38,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#afeeee',
   },
 });
+
+export default App;
