@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Image} from 'react-native';
 import {Bar} from './src/components/bottombar/Bar';
 
 import Pad from './src/components/pad/';
@@ -14,7 +14,14 @@ const App = () => {
     const [strokeColor, setstrokeColor] = React.useState('#000000');
 
     return (
-        <View style={styles.MainContainer}>
+        <View style={styles.mainContainer}>
+            <View style={styles.imageContainer}>
+                <Image
+                    source={require('./src/assets/playingGolf.png')}
+                    style={styles.backgroundImage}
+                />
+            </View>
+
             <Pad
                 strokes={[]}
                 containerStyle={styles.padView}
@@ -34,8 +41,21 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-    MainContainer: {
+    mainContainer: {
         flex: 1,
+    },
+    imageContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover',
     },
     padView: {
         backgroundColor: 'rgba(0,0,0,0.01)',
