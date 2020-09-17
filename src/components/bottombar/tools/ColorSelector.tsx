@@ -49,6 +49,7 @@ export const ColorSelector = (props: ColorSelectorProps) => {
     );
 };
 
+const buttonWidth = 50;
 const styles = StyleSheet.create({
     containerStyle: {
         alignSelf: 'flex-end',
@@ -57,10 +58,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     circleButtonStyle: {
-        height: 50,
-        width: 50,
+        height: buttonWidth,
+        width: buttonWidth,
         marginVertical: 15,
         marginHorizontal: 5,
-        borderRadius: 25,
+        borderRadius: buttonWidth / 2,
     },
 });
