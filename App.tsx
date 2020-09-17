@@ -2,7 +2,7 @@ import React from 'react';
 
 import {View, StyleSheet} from 'react-native';
 
-import Pad from './src/view/pad';
+import Pad from './src/components/pad/';
 
 const App = () => {
   return (
