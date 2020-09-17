@@ -28,11 +28,17 @@ type ColorSelectorProps = {
 
 export const ColorSelector = (props: ColorSelectorProps) => {
     const {onSelectColor} = props;
-    const colors = ['red', 'green'];
+    const defaultColors = [
+        '#131113',
+        '#4cafe6',
+        '#f89604',
+        '#a06ce0',
+        '#e0481f',
+    ];
 
     return (
         <View style={styles.containerStyle}>
-            {colors.map((color, index) => (
+            {defaultColors.map((color, index) => (
                 <ColorButton
                     onPress={onSelectColor}
                     buttonColor={color}
