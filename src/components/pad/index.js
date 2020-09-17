@@ -57,60 +57,7 @@ export default class Whiteboard extends React.Component {
         };
     }
 
-    // componentWillReceiveProps(newProps) {
-    //     if (
-    //         this.props.strokes &&
-    //         newProps.strokes &&
-    //         JSON.stringify(this.props.strokes) !==
-    //             JSON.stringify(newProps.strokes)
-    //     ) {
-    //         this.setState({
-    //             previousStrokes: newProps.strokes,
-    //             newStroke: [],
-    //         });
-    //     }
-    // }
-
-    // componentDidUpdate(prevProps, prevState) {
-    //   if (this.props.strokes  !== prevProps.isVisible) {
-    //     logVisibleChange(this.props.isVisible);
-    //   }
-    // }
-
-    // shouldComponentUpdate(nextProps, nextState) {
-    //     if (
-    //         this.props.strokes &&
-    //         nextProps.strokes &&
-    //         this.props.strokes !== nextProps.strokes
-    //     ) {
-    //         this.setState({
-    //             previousStrokes: nextProps.strokes,
-    //             newStroke: [],
-    //         });
-    //         return true;
-    //     }
-    //     return false;
-    // }
-
-    // static getDerivedStateFromProps(props, state) {
-    //     console.log(props.strokes);
-    //     console.log(state.previousStrokes);
-    //     if (state.previousStrokes !== JSON.stringify(props.strokes)) {
-    //         console.log('Was True');
-    //         return {
-    //             previousStrokes: props.strokes,
-    //             newStroke: [],
-    //         };
-    //     }
-    //     console.log('Return Null');
-    //     // Return null to indicate no change to state.
-    //     return null;
-    // }
-
     static getDerivedStateFromProps(nextProps, prevState) {
-        console.log('NextProps', nextProps.strokes);
-        console.log('PreviousStrokes', prevState.previousStrokes);
-
         if (
             nextProps.strokes &&
             prevState.previousStrokes &&
