@@ -14,5 +14,11 @@ export const Bar = () => {
 const styles = StyleSheet.create({
     containerStyle: {
         backgroundColor: '#fff',
+        width: '100%',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: 0,
     },
 });

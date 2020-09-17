@@ -4,13 +4,16 @@ import {StyleSheet, View} from 'react-native';
 
 export const ColorSelector = () => {
     return (
-        <View>
+        <View style={styles.containerStyle}>
             <View style={styles.circleButtonStyle} />
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    containerStyle: {
+        alignSelf: 'flex-end',
+    },
     circleButtonStyle: {
         height: 22,
         width: 22,
