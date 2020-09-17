@@ -6,18 +6,27 @@ import {Bar} from './src/components/bottombar/Bar';
 import Pad from './src/components/pad/';
 
 const App = () => {
+    const selectColor = (color: string) => {
+        console.log('Pressed');
+        console.log(color);
+    };
+
     return (
         <View style={styles.MainContainer}>
             <Pad
                 strokes={[]}
-                containerStyle={{backgroundColor: 'rgba(0,0,0,0.01)'}}
-                rewind={(undo: any) => {}}
-                clear={(clear: any) => {}}
+                containerStyle={styles.padView}
+                rewind={(undo: any) => {
+                    console.log(undo);
+                }}
+                clear={(clear: any) => {
+                    console.log(clear);
+                }}
                 color={'#000000'}
                 strokeWidth={4}
                 onChangeStrokes={(strokes: any) => console.log(strokes)}
             />
-            <Bar />
+            <Bar selectColor={selectColor} undoAction={() => {}} />
         </View>
     );
 };
@@ -27,9 +36,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 
-    childView: {
-        flex: 1,
-        overflow: 'hidden',
+    padView: {
+        backgroundColor: 'rgba(0,0,0,0.01)',
     },
     point: {
         height: 22,
