@@ -49,7 +49,7 @@ export const ColorSelector = (props: ColorSelectorProps) => {
     );
 };
 
-const buttonWidth = 50;
+const buttonWidth = 45;
 const styles = StyleSheet.create({
     containerStyle: {
         alignSelf: 'flex-end',
