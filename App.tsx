@@ -7,9 +7,11 @@ import Pad from './src/components/pad/';
 
 const App = () => {
     const selectColor = (color: string) => {
-        console.log('Pressed');
         console.log(color);
+        setstrokeColor(color);
     };
+
+    const [strokeColor, setstrokeColor] = React.useState('#000000');
 
     return (
         <View style={styles.MainContainer}>
@@ -22,7 +24,7 @@ const App = () => {
                 clear={(clear: any) => {
                     console.log(clear);
                 }}
-                color={'#000000'}
+                color={strokeColor}
                 strokeWidth={4}
                 onChangeStrokes={(strokes: any) => console.log(strokes)}
             />
