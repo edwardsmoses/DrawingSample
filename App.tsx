@@ -35,17 +35,8 @@ const styles = StyleSheet.create({
     MainContainer: {
         flex: 1,
     },
-
     padView: {
         backgroundColor: 'rgba(0,0,0,0.01)',
-    },
-    point: {
-        height: 22,
-        width: 22,
-        marginTop: 5,
-        position: 'absolute',
-        borderRadius: 14,
-        backgroundColor: '#afeeee',
     },
 });
 
