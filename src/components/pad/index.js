@@ -235,7 +235,6 @@ export default class Whiteboard extends React.Component {
                 <Bar
                     selectColor={this.props.updateColor}
                     undoAction={() => {
-                        console.log('Pressed Here');
                         this.rewind();
                     }}
                 />
