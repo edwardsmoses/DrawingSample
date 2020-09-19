@@ -4,6 +4,8 @@ import Svg, {G, Path} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
 
+import {Bar} from '../bottombar/Bar';
+
 import humps from 'humps';
 
 export const convertStrokesToSvg = (strokes, layout = {}) => {
@@ -195,34 +197,49 @@ export default class Whiteboard extends React.Component {
 
     render() {
         return (
-            <View
-                onLayout={this._onLayoutContainer}
-                style={[styles.drawContainer, this.props.containerStyle]}>
+            <React.Fragment>
                 <View
-                    style={styles.svgContainer}
-                    {...this._panResponder.panHandlers}>
-                    <Svg style={styles.drawSurface}>
-                        <G>
-                            {this.state.previousStrokes.map((stroke, index) => {
-                                return this._renderSvgElement(stroke, index);
-                            })}
-                            <Path
-                                key={this.state.previousStrokes.length}
-                                d={this.state.pen.pointsToSvg(
-                                    this.state.currentPoints,
+                    onLayout={this._onLayoutContainer}
+                    style={[styles.drawContainer, this.props.containerStyle]}>
+                    <View
+                        style={styles.svgContainer}
+                        {...this._panResponder.panHandlers}>
+                        <Svg style={styles.drawSurface}>
+                            <G>
+                                {this.state.previousStrokes.map(
+                                    (stroke, index) => {
+                                        return this._renderSvgElement(
+                                            stroke,
+                                            index,
+                                        );
+                                    },
                                 )}
-                                stroke={this.props.color || '#000000'}
-                                strokeWidth={this.props.strokeWidth || 4}
-                                fill="none"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </G>
-                    </Svg>
+                                <Path
+                                    key={this.state.previousStrokes.length}
+                                    d={this.state.pen.pointsToSvg(
+                                        this.state.currentPoints,
+                                    )}
+                                    stroke={this.props.color || '#000000'}
+                                    strokeWidth={this.props.strokeWidth || 4}
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                />
+                            </G>
+                        </Svg>
 
-                    {this.props.children}
+                        {this.props.children}
+                    </View>
                 </View>
-            </View>
+
+                <Bar
+                    selectColor={this.props.updateColor}
+                    undoAction={() => {
+                        console.log('Pressed Here');
+                        this.rewind();
+                    }}
+                />
+            </React.Fragment>
         );
     }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {View, StyleSheet, Image} from 'react-native';
-import {Bar} from './src/components/bottombar/Bar';
 
 import Pad from './src/components/pad/';
 
@@ -32,10 +31,10 @@ const App = () => {
                     console.log(clear);
                 }}
                 color={strokeColor}
+                updateColor={selectColor}
                 strokeWidth={4}
                 onChangeStrokes={(strokes: any) => console.log(strokes)}
             />
-            <Bar selectColor={selectColor} undoAction={() => {}} />
         </View>
     );
 };
