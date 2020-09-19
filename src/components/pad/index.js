@@ -237,6 +237,9 @@ export default class Whiteboard extends React.Component {
                     undoAction={() => {
                         this.rewind();
                     }}
+                    clearAction={() => {
+                        this.clear();
+                    }}
                 />
             </React.Fragment>
         );
