@@ -240,6 +240,8 @@ export default class Whiteboard extends React.Component {
                     clearAction={() => {
                         this.clear();
                     }}
+                    strokeWidth={this.props.strokeWidth}
+                    updateStrokeWidth={this.props.updateStrokeWidth}
                 />
             </React.Fragment>
         );

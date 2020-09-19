@@ -10,7 +10,12 @@ const App = () => {
         setstrokeColor(color);
     };
 
+    const updateStrokeWidth = (value: number) => {
+        setStrokeWidth(value);
+    };
+
     const [strokeColor, setstrokeColor] = React.useState('#000000');
+    const [strokeWidth, setStrokeWidth] = React.useState(4);
 
     return (
         <View style={styles.mainContainer}>
@@ -32,7 +37,8 @@ const App = () => {
                 }}
                 color={strokeColor}
                 updateColor={selectColor}
-                strokeWidth={4}
+                strokeWidth={strokeWidth}
+                updateStrokeWidth={updateStrokeWidth}
                 onChangeStrokes={(strokes: any) => console.log(strokes)}
             />
         </View>

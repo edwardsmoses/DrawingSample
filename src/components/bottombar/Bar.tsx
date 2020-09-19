@@ -3,16 +3,25 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ClearButton} from './tools/ClearButton';
 import {ColorSelector} from './tools/ColorSelector';
+import {StrokeSlider} from './tools/StrokeSlider';
 import {UndoButton} from './tools/UndoButton';
 
 type BarProps = {
     selectColor(color: string): void;
     undoAction(): void;
     clearAction(): void;
+    strokeWidth: number;
+    updateStrokeWidth(strokeWidth: number): void;
 };
 
 export const Bar = (props: BarProps) => {
-    const {selectColor, undoAction, clearAction} = props;
+    const {
+        selectColor,
+        undoAction,
+        clearAction,
+        strokeWidth,
+        updateStrokeWidth,
+    } = props;
 
     return (
         <View style={styles.containerStyle}>
@@ -21,7 +30,12 @@ export const Bar = (props: BarProps) => {
                     <ClearButton clearAction={clearAction} />
                     <UndoButton undoAction={undoAction} />
                 </View>
-                <View style={styles.topRightSection} />
+                <View style={styles.topRightSection}>
+                    <StrokeSlider
+                        strokeWidth={strokeWidth}
+                        updateStrokeWidth={updateStrokeWidth}
+                    />
+                </View>
             </View>
             <View style={styles.bottomSection}>
                 <ColorSelector onSelectColor={selectColor} />
