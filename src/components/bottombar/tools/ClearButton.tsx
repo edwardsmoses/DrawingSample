@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {View, TouchableOpacity, Text} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 
 type ClearButtonProps = {
     clearAction(): void;
@@ -10,6 +10,7 @@ export const ClearButton = (props: ClearButtonProps) => {
     const {clearAction} = props;
     return (
         <TouchableOpacity
+            style={styles.buttonStyle}
             onPress={() => {
                 clearAction();
             }}>
@@ -19,3 +20,9 @@ export const ClearButton = (props: ClearButtonProps) => {
         </TouchableOpacity>
     );
 };
+
+const styles = StyleSheet.create({
+    buttonStyle: {
+        marginHorizontal: 10,
+    },
+});
