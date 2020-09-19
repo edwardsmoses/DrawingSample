@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, PanResponder, StyleSheet} from 'react-native';
+import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
 import Svg, {G, Path} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
@@ -7,27 +7,28 @@ import Point from '../tools/point';
 import {Bar} from '../bottombar/Bar';
 
 import humps from 'humps';
+import {debounce} from 'lodash';
 
 export const convertStrokesToSvg = (strokes, layout = {}) => {
     return `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${layout.width}" height="${
+      <svg xmlns="http://www.w3.org/2000/svg" width="${layout.width}" height="${
         layout.height
     }" version="1.1">
-      <g>
-        ${strokes
-            .map((e) => {
-                return `<${e.type.toLowerCase()} ${Object.keys(e.attributes)
-                    .map((a) => {
-                        return `${humps.decamelize(a, {separator: '-'})}="${
-                            e.attributes[a]
-                        }"`;
-                    })
-                    .join(' ')}/>`;
-            })
-            .join('\n')}
-      </g>
-    </svg>
-  `;
+        <g>
+          ${strokes
+              .map((e) => {
+                  return `<${e.type.toLowerCase()} ${Object.keys(e.attributes)
+                      .map((a) => {
+                          return `${humps.decamelize(a, {separator: '-'})}="${
+                              e.attributes[a]
+                          }"`;
+                      })
+                      .join(' ')}/>`;
+              })
+              .join('\n')}
+        </g>
+      </svg>
+    `;
 };
 
 export default class Whiteboard extends React.Component {
@@ -54,6 +55,35 @@ export default class Whiteboard extends React.Component {
             rewind: rewind(this.rewind),
             clear: clear(this.clear),
         };
+
+        this.updateStrokes = debounce(this.updateStrokes.bind(this), 50, {
+            leading: true,
+            trailing: true,
+            maxWait: 100,
+        });
+
+        this._onChangeStrokes = debounce(
+            this._onChangeStrokes.bind(this),
+            100,
+            {
+                leading: true,
+                trailing: true,
+                maxWait: 1000,
+            },
+        );
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (this.state.previousStrokes !== nextState.previousStrokes) {
+            return true;
+        }
+        if (this.state.currentPoints !== nextState.currentPoints) {
+            return true;
+        }
+        if (this.state.newStroke !== nextState.newStroke) {
+            return true;
+        }
+        return false;
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -108,6 +138,12 @@ export default class Whiteboard extends React.Component {
         this.state.pen.clear();
     };
 
+    updateStrokes(data = {}) {
+        requestAnimationFrame(() => {
+            this.setState({...data});
+        });
+    }
+
     onTouch(evt) {
         let x, y, timestamp;
         [x, y, timestamp] = [
@@ -149,7 +185,11 @@ export default class Whiteboard extends React.Component {
         let newElement = {
             type: 'Path',
             attributes: {
-                d: this.state.pen.pointsToSvg(points),
+                d: this.state.pen.pointsToSvg(
+                    points,
+                    this.props.simplifyTolerance,
+                    this.props.lineGenerator,
+                ),
                 stroke: this.props.color || '#000000',
                 strokeWidth: this.props.strokeWidth || 4,
                 fill: 'none',
@@ -160,20 +200,31 @@ export default class Whiteboard extends React.Component {
 
         this.state.pen.addStroke(points);
 
-        this.setState(
-            {
-                previousStrokes: [...this.state.previousStrokes, newElement],
-                currentPoints: [],
-            },
-            () => {
-                this._onChangeStrokes(this.state.previousStrokes);
-            },
-        );
+        this.currentPoints = [];
+
+        InteractionManager.runAfterInteractions(() => {
+            this.setState(
+                {
+                    previousStrokes: [
+                        ...this.state.previousStrokes,
+                        newElement,
+                    ],
+                    currentPoints: this.currentPoints || [],
+                },
+                () => {
+                    requestAnimationFrame(() => {
+                        this._onChangeStrokes(this.state.previousStrokes);
+                    });
+                },
+            );
+        });
     }
 
     _onChangeStrokes = (strokes) => {
         if (this.props.onChangeStrokes) {
-            this.props.onChangeStrokes(strokes);
+            requestAnimationFrame(() => {
+                this.props.onChangeStrokes(strokes);
+            });
         }
     };
 
@@ -218,6 +269,9 @@ export default class Whiteboard extends React.Component {
                                     key={this.state.previousStrokes.length}
                                     d={this.state.pen.pointsToSvg(
                                         this.state.currentPoints,
+                                        this.props.simplifyTolerance,
+                                        this.props.lineGenerator,
+                                        false,
                                     )}
                                     stroke={this.props.color || '#000000'}
                                     strokeWidth={this.props.strokeWidth || 4}
