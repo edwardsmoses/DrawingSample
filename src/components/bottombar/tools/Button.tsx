@@ -2,20 +2,21 @@ import React from 'react';
 
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 
-type ClearButtonProps = {
-    clearAction(): void;
+type ButtonProps = {
+    text: string;
+    buttonAction(): void;
 };
 
-export const ClearButton = (props: ClearButtonProps) => {
-    const {clearAction} = props;
+export const Button = (props: ButtonProps) => {
+    const {buttonAction, text} = props;
     return (
         <TouchableOpacity
             style={styles.buttonStyle}
             onPress={() => {
-                clearAction();
+                buttonAction();
             }}>
             <View>
-                <Text>Clear</Text>
+                <Text>{text}</Text>
             </View>
         </TouchableOpacity>
     );

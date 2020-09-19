@@ -1,10 +1,9 @@
 import React from 'react';
 
 import {StyleSheet, View} from 'react-native';
-import {ClearButton} from './tools/ClearButton';
 import {ColorSelector} from './tools/ColorSelector';
 import {StrokeSlider} from './tools/StrokeSlider';
-import {UndoButton} from './tools/UndoButton';
+import {Button} from './tools/Button';
 
 type BarProps = {
     selectColor(color: string): void;
@@ -27,8 +26,8 @@ export const Bar = (props: BarProps) => {
         <View style={styles.containerStyle}>
             <View style={styles.topSection}>
                 <View style={styles.topLeftSection}>
-                    <ClearButton clearAction={clearAction} />
-                    <UndoButton undoAction={undoAction} />
+                    <Button buttonAction={clearAction} text="Clear" />
+                    <Button buttonAction={undoAction} text="Undo" />
                 </View>
                 <View style={styles.topRightSection}>
                     <StrokeSlider
