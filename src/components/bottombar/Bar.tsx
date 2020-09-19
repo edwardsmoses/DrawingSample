@@ -6,6 +6,7 @@ import {StrokeSlider} from './tools/StrokeSlider';
 import {Button} from './tools/Button';
 
 type BarProps = {
+    currentColor: string;
     selectColor(color: string): void;
     undoAction(): void;
     clearAction(): void;
@@ -20,6 +21,7 @@ export const Bar = (props: BarProps) => {
         clearAction,
         strokeWidth,
         updateStrokeWidth,
+        currentColor,
     } = props;
 
     return (
@@ -38,7 +40,10 @@ export const Bar = (props: BarProps) => {
                 </View>
             </View>
             <View style={styles.bottomSection}>
-                <ColorSelector onSelectColor={selectColor} />
+                <ColorSelector
+                    onSelectColor={selectColor}
+                    currentColor={currentColor}
+                />
             </View>
         </View>
     );
