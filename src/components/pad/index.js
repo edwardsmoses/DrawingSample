@@ -1,13 +1,11 @@
 import React from 'react';
-import {View, PanResponder, StyleSheet, Platform} from 'react-native';
+import {View, PanResponder, StyleSheet} from 'react-native';
 import Svg, {G, Path} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
 
 import humps from 'humps';
 
-// const {OS} = Platform;
-// import Bezier from '../tools/bezier'
 
 export const convertStrokesToSvg = (strokes, layout = {}) => {
     return `
