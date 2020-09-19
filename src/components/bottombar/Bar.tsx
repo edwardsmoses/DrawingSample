@@ -34,6 +34,7 @@ export const Bar = (props: BarProps) => {
                         strokeWidth={strokeWidth}
                         updateStrokeWidth={updateStrokeWidth}
                     />
+                    <Button buttonAction={() => {}} text="Send" />
                 </View>
             </View>
             <View style={styles.bottomSection}>
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
     containerStyle: {
         backgroundColor: '#fff',
         width: '100%',
-        height: 100,
+        height: 120,
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
@@ -66,7 +67,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
     },
-    topRightSection: {},
+    topRightSection: {
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'flex-end',
+    },
     bottomSection: {
         flexDirection: 'row',
     },
