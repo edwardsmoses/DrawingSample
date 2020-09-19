@@ -1,21 +1,27 @@
 import React from 'react';
 
 import {StyleSheet, View} from 'react-native';
+import {ClearButton} from './tools/ClearButton';
 import {ColorSelector} from './tools/ColorSelector';
 import {UndoButton} from './tools/UndoButton';
 
 type BarProps = {
     selectColor(color: string): void;
     undoAction(): void;
+    clearAction(): void;
 };
 
 export const Bar = (props: BarProps) => {
-    const {selectColor, undoAction} = props;
+    const {selectColor, undoAction, clearAction} = props;
 
     return (
         <View style={styles.containerStyle}>
             <View style={styles.topSection}>
-                <UndoButton undoAction={undoAction} />
+                <View style={styles.topLeftSection}>
+                    <ClearButton clearAction={clearAction} />
+                    <UndoButton undoAction={undoAction} />
+                </View>
+                <View style={styles.topRightSection} />
             </View>
             <View style={styles.bottomSection}>
                 <ColorSelector onSelectColor={selectColor} />
@@ -37,7 +43,17 @@ const styles = StyleSheet.create({
     topSection: {
         flexDirection: 'row',
         flex: 1,
+        justifyContent: 'space-between',
+        alignContent: 'center',
+        alignItems: 'center',
     },
+    topLeftSection: {
+        marginHorizontal: 10,
+        flexDirection: 'row',
+        flex: 1,
+        justifyContent: 'flex-start',
+    },
+    topRightSection: {},
     bottomSection: {
         flexDirection: 'row',
     },
