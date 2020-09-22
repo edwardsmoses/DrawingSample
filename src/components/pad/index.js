@@ -291,12 +291,13 @@ export default class Whiteboard extends React.Component {
 
     /** When User releases on Screen, when drawing a Circle */
     circleDrawOnResponderRelease = () => {
+        const circleRadius = this.GetCircleRadius();
+
         //if user touched and released on screen, don't draw any Circles
-        if (this.state.endX === 0 || this.state.endY === 0) {
+        if (circleRadius === 0) {
             return;
         }
 
-        const circleRadius = this.GetCircleRadius();
         //build the Circle element
         const newCircleElement = (
             <Circle
@@ -318,8 +319,16 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    /** Get the Radius of the Circle */
+    /** Get the Radius of the Circle that's been drawn*/
     GetCircleRadius = () => {
+        if (
+            this.state.endX === 0 ||
+            this.state.endY === 0 ||
+            this.state.startX === 0 ||
+            this.state.startY === 0
+        ) {
+            return 0;
+        }
         const circleRadius = Math.sqrt(
             Math.pow(this.state.startX - this.state.endX, 2) +
                 Math.pow(this.state.startY - this.state.endY, 2),
@@ -487,11 +496,10 @@ export default class Whiteboard extends React.Component {
                                 {/* Show Visual Feedback as the User is drawing a Circle on the Screen */}
                                 {this.state.drawingToolType ===
                                     DrawType.Circle &&
-                                    this.state.endX > 0 &&
-                                    this.state.endY > 0 && (
+                                    this.GetCircleRadius() > 0 && (
                                         <Circle
-                                            x1={this.state.startX}
-                                            y1={this.state.startY}
+                                            cx={this.state.startX}
+                                            cy={this.state.startY}
                                             r={this.GetCircleRadius()}
                                             stroke={
                                                 this.props.color || '#000000'
