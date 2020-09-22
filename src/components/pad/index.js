@@ -223,6 +223,10 @@ export default class Whiteboard extends React.Component {
     };
 
     lineDrawOnResponderRelease = () => {
+        //if user touched and released on screen, don't draw any lines
+        if (this.state.endX === 0 || this.state.endY === 0) {
+            return;
+        }
         const newLineElement = (
             <Line
                 x1={this.state.startX}
