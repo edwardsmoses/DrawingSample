@@ -27,7 +27,6 @@ export const StrokeSlider = (props: SliderProps) => {
 
 const styles = StyleSheet.create({
     sliderStyle: {
-        width: 150,
-        height: 40,
+        width: 60,
     },
 });
