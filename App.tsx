@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {View, StyleSheet, Image} from 'react-native';
+import Svg, {Path} from 'react-native-svg';
 
 import Pad from './src/components/pad/';
 
@@ -19,7 +20,7 @@ const App = () => {
 
     return (
         <View style={styles.mainContainer}>
-            <View style={styles.imageContainer}>
+            {/* <View style={styles.imageContainer}>
                 <Image
                     source={require('./src/assets/playingGolf.png')}
                     style={styles.backgroundImage}
@@ -40,7 +41,15 @@ const App = () => {
                 strokeWidth={strokeWidth}
                 updateStrokeWidth={updateStrokeWidth}
                 onChangeStrokes={(strokes: any) => console.log(strokes)}
-            />
+            /> */}
+            <Svg viewBox="-16 -16 544 544">
+                <Path
+                    stroke="#000000"
+                    strokeWidth={4}
+                    fill="none"
+                    d="M 10 10 H 90 V 90 H 10 L 10 10"
+                />
+            </Svg>
         </View>
     );
 };
