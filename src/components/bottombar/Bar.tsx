@@ -32,14 +32,19 @@ export const Bar = (props: BarProps) => {
                     <Button buttonAction={undoAction} text="Undo" />
                 </View>
                 <View style={styles.topRightSection}>
-                    <StrokeSlider
-                        strokeWidth={strokeWidth}
-                        updateStrokeWidth={updateStrokeWidth}
-                    />
+                    <View style={styles.drawingTypeSection}>
+                        <Button buttonAction={() => {}} text="Pencil" />
+                        <Button buttonAction={() => {}} text="Line" />
+                        <Button buttonAction={() => {}} text="Cicle" />
+                    </View>
                     <Button buttonAction={() => {}} text="Send" />
                 </View>
             </View>
             <View style={styles.bottomSection}>
+                <StrokeSlider
+                    strokeWidth={strokeWidth}
+                    updateStrokeWidth={updateStrokeWidth}
+                />
                 <ColorSelector
                     onSelectColor={selectColor}
                     currentColor={currentColor}
@@ -76,6 +81,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         justifyContent: 'flex-end',
+    },
+    drawingTypeSection: {
+        flexDirection: 'row',
     },
     bottomSection: {
         flexDirection: 'row',
