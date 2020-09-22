@@ -38,6 +38,7 @@ export default class Whiteboard extends React.Component {
         super(props, context);
         this.state = {
             allDrawings: [], //hold Line and Circle Drawings
+            whatUserLastDrew: [], //to know what to remove from screen, on press of undo
             currentPoints: [],
             previousStrokes: this.props.strokes || [],
             newStroke: [],
@@ -98,26 +99,58 @@ export default class Whiteboard extends React.Component {
 
     /** When User Presses the Undo Button */
     rewind = () => {
+        //get what the user last drew
+        const whatTheUserLastDrew =
+            this.state.whatUserLastDrew.length > 0
+                ? this.state.whatUserLastDrew[
+                      this.state.whatUserLastDrew.length - 1
+                  ]
+                : '';
+
+        //if the user last drew a Line or Circle, remove from AllDrawings
         if (
-            this.state.currentPoints.length > 0 ||
-            this.state.previousStrokes.length < 1
+            this.state.allDrawings.length > 0 &&
+            (whatTheUserLastDrew === DrawType.Line ||
+                whatTheUserLastDrew === DrawType.Circle)
         ) {
-            return;
+            let drawings = this.state.allDrawings;
+            drawings.pop();
+
+            let allWhatUserDrew = this.state.whatUserLastDrew;
+            allWhatUserDrew.pop();
+
+            this.setState({
+                allDrawings: [...drawings],
+                whatUserLastDrew: [...allWhatUserDrew],
+            });
+        } else {
+            //if it was a Pencil, remove from the strokes
+            if (
+                this.state.currentPoints.length > 0 ||
+                this.state.previousStrokes.length < 1
+            ) {
+                return;
+            }
+
+            let strokes = this.state.previousStrokes;
+            strokes.pop();
+
+            this.state.pen.rewindStroke();
+
+            let allWhatUserDrew = this.state.whatUserLastDrew;
+            allWhatUserDrew.pop();
+
+            this.setState(
+                {
+                    previousStrokes: [...strokes],
+                    currentPoints: [],
+                    whatUserLastDrew: [...allWhatUserDrew],
+                },
+                () => {
+                    this._onChangeStrokes([...strokes]);
+                },
+            );
         }
-        let strokes = this.state.previousStrokes;
-        strokes.pop();
-
-        this.state.pen.rewindStroke();
-
-        this.setState(
-            {
-                previousStrokes: [...strokes],
-                currentPoints: [],
-            },
-            () => {
-                this._onChangeStrokes([...strokes]);
-            },
-        );
     };
 
     /** When User Presses the Clear Button */
@@ -256,6 +289,7 @@ export default class Whiteboard extends React.Component {
             endX: 0,
             endY: 0,
             allDrawings: [...this.state.allDrawings, newLineElement], //add the new line element to allDrawings
+            whatUserLastDrew: [...this.state.whatUserLastDrew, DrawType.Line], //user last drew a line on screen
         });
     };
 
@@ -305,6 +339,10 @@ export default class Whiteboard extends React.Component {
                         newElement,
                     ],
                     currentPoints: this.currentPoints || [],
+                    whatUserLastDrew: [
+                        ...this.state.whatUserLastDrew,
+                        DrawType.Pencil,
+                    ], //add Pencil to what user Drew on Screen
                 },
                 () => {
                     requestAnimationFrame(() => {
