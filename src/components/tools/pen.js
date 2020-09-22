@@ -49,11 +49,6 @@ export default class Pen {
         let offsetY = this._offsetY;
         if (points.length > 0) {
             let simplifiedPathPoints = simplify(points, tolerance, highQuality);
-            /*       var path = `M ${points[0].x},${points[0].y}`
-            simplified.forEach((point) => {
-              path = path + ` L ${point.x},${point.y}`
-            }); */
-            // var path = `M ${points[0].x},${points[0].y}`
             if (lineGenerator && typeof lineGenerator === 'function') {
                 return lineGenerator(simplifiedPathPoints);
             }
@@ -66,8 +61,4 @@ export default class Pen {
     clear = () => {
         this.strokes = [];
     };
-
-    copy() {
-        return new Reaction(this.strokes.slice());
-    }
 }

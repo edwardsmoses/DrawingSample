@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
-import Svg, {G, Path} from 'react-native-svg';
+import Svg, {G, Path, Circle, Rect} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
 
@@ -278,6 +278,21 @@ export default class Whiteboard extends React.Component {
                                     fill="none"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
+                                />
+                                <Circle
+                                    cx="50"
+                                    cy="50"
+                                    r="45"
+                                    stroke={this.props.color || '#000000'}
+                                    strokeWidth={this.props.strokeWidth || 4}
+                                />
+                                <Rect
+                                    x="15"
+                                    y="15"
+                                    width="70"
+                                    height="70"
+                                    stroke={this.props.color || '#000000'}
+                                    strokeWidth={this.props.strokeWidth || 4}
                                 />
                             </G>
                         </Svg>
