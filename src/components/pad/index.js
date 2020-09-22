@@ -152,7 +152,12 @@ export default class Whiteboard extends React.Component {
             case DrawType.Pencil:
                 this.pencilDrawOnTouch(evt);
                 break;
-
+            case DrawType.Line:
+                this.lineDrawOnTouch(evt);
+                break;
+            case DrawType.Circle:
+                this.circleDrawOnTouch(evt);
+                break;
             default:
                 break;
         }
@@ -188,6 +193,14 @@ export default class Whiteboard extends React.Component {
             previousStrokes: this.state.previousStrokes,
             currentPoints: newCurrentPoints,
         });
+    };
+
+    lineDrawOnTouch = (evt) => {
+        console.log('LineTouch', evt);
+    };
+
+    circleDrawOnTouch = (evt) => {
+        console.log('CircleTouch', evt);
     };
 
     pencilDrawResponderRelease = () => {
@@ -241,12 +254,25 @@ export default class Whiteboard extends React.Component {
         });
     };
 
+    lineDrawResponderRelease = () => {
+        console.log('Released Line');
+    };
+
+    circleDrawResponderRelease = () => {
+        console.log('Released Circle');
+    };
+
     onResponderRelease() {
         switch (this.state.drawingToolType) {
             case DrawType.Pencil:
                 this.pencilDrawResponderRelease();
                 break;
-
+            case DrawType.Line:
+                this.lineDrawResponderRelease();
+                break;
+            case DrawType.Circle:
+                this.circleDrawResponderRelease();
+                break;
             default:
                 break;
         }
