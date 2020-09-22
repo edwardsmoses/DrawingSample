@@ -37,25 +37,26 @@ export default class Whiteboard extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
-            allDrawings: [],
+            allDrawings: [], //hold Line and Circle Drawings
             currentPoints: [],
             previousStrokes: this.props.strokes || [],
             newStroke: [],
             pen: new Pen(),
-            drawingToolType: DrawType.Pencil,
-            startX: 0,
-            startY: 0,
-            endX: 0,
-            endY: 0,
+            drawingToolType: DrawType.Pencil, //hold the drawingType (Pencil, Circle, Line)
+            startX: 0, //hold the startX of when user Touches Screen
+            startY: 0, //hold the startY of when user Touches Screen
+            endX: 0, //hold the endX of when user is moving on Screen
+            endY: 0, //hold the endY of when user is moving on Screen
         };
 
+        //the PanResponder, and it's events.
         this._panResponder = PanResponder.create({
             onStartShouldSetPanResponder: (evt, gs) => true,
             onMoveShouldSetPanResponder: (evt, gs) => true,
-            onPanResponderGrant: (evt, gs) => this.onResponderGrant(evt, gs),
-            onPanResponderMove: (evt, gs) => this.onResponderMove(evt, gs),
+            onPanResponderGrant: (evt, gs) => this.onResponderGrant(evt, gs), //when user touches screen
+            onPanResponderMove: (evt, gs) => this.onResponderMove(evt, gs), //when user is moving on the screen
             onPanResponderRelease: (evt, gs) =>
-                this.onResponderRelease(evt, gs),
+                this.onResponderRelease(evt, gs), //when the user releases his touch
         });
         const rewind = props.rewind || function () {};
         const clear = props.clear || function () {};
@@ -95,6 +96,7 @@ export default class Whiteboard extends React.Component {
         return null;
     }
 
+    /** When User Presses the Undo Button */
     rewind = () => {
         if (
             this.state.currentPoints.length > 0 ||
@@ -118,6 +120,7 @@ export default class Whiteboard extends React.Component {
         );
     };
 
+    /** When User Presses the Clear Button */
     clear = () => {
         this.setState(
             {
@@ -140,6 +143,7 @@ export default class Whiteboard extends React.Component {
         });
     }
 
+    /** when user touches the screen **/
     onResponderGrant(evt) {
         switch (this.state.drawingToolType) {
             case DrawType.Pencil:
@@ -156,6 +160,7 @@ export default class Whiteboard extends React.Component {
         }
     }
 
+    /** when user is moving on the screeen */
     onResponderMove(evt) {
         switch (this.state.drawingToolType) {
             case DrawType.Pencil:
@@ -172,6 +177,7 @@ export default class Whiteboard extends React.Component {
         }
     }
 
+    /** Update the Drawing Type [Pencil, Line, Circle] */
     updateCurrentDrawingType = (newDrawingType) => {
         console.log(newDrawingType);
         this.setState({
@@ -179,6 +185,7 @@ export default class Whiteboard extends React.Component {
         });
     };
 
+    /** when user touches and Moves on the screen, for Pencil Drawing Type */
     pencilDrawOnTouch = (evt) => {
         let x, y, timestamp;
         [x, y, timestamp] = [
@@ -196,6 +203,7 @@ export default class Whiteboard extends React.Component {
         });
     };
 
+    /** when User Touches Screen, for Line Drawing Type */
     lineDrawOnResponderGrant = (evt) => {
         let x, y, timestamp;
         [x, y, timestamp] = [
@@ -209,6 +217,7 @@ export default class Whiteboard extends React.Component {
         });
     };
 
+    /** when User Moves on the Screen, for Line Drawing Type */
     lineDrawOnResponderMove = (evt) => {
         let x, y, timestamp;
         [x, y, timestamp] = [
@@ -222,11 +231,14 @@ export default class Whiteboard extends React.Component {
         });
     };
 
+    /** When User releases on Screen, for line Drawing Type */
     lineDrawOnResponderRelease = () => {
         //if user touched and released on screen, don't draw any lines
         if (this.state.endX === 0 || this.state.endY === 0) {
             return;
         }
+
+        //build the line element
         const newLineElement = (
             <Line
                 x1={this.state.startX}
@@ -238,23 +250,20 @@ export default class Whiteboard extends React.Component {
             />
         );
 
-        console.log(newLineElement);
-
         this.setState({
             startX: 0,
             startY: 0,
             endX: 0,
             endY: 0,
-            allDrawings: [...this.state.allDrawings, newLineElement],
+            allDrawings: [...this.state.allDrawings, newLineElement], //add the new line element to allDrawings
         });
-
-        console.log(this.state.allDrawings);
     };
 
     circleDrawOnTouch = (evt) => {
         console.log('CircleTouch', evt);
     };
 
+    /** When User releases on Screen, for Pencil Drawing Type */
     pencilDrawResponderRelease = () => {
         let strokes = this.state.previousStrokes;
         if (this.state.currentPoints.length < 1) {
@@ -392,6 +401,8 @@ export default class Whiteboard extends React.Component {
                                     stroke={this.props.color || '#000000'}
                                     strokeWidth={this.props.strokeWidth || 4}
                                 />
+
+                                {/* This shows the Line and Circle on the Screen */}
                                 {this.state.allDrawings.map(
                                     (drawing, index) => {
                                         return <G key={index}>{drawing}</G>;
@@ -405,6 +416,8 @@ export default class Whiteboard extends React.Component {
                                     stroke={this.props.color || '#000000'}
                                     strokeWidth={this.props.strokeWidth || 4}
                                 />
+
+                                {/* Show Visual Feedback as the User is drawing a Line on the Screen */}
                                 {this.state.endX > 0 && this.state.endY > 0 && (
                                     <Line
                                         x1={this.state.startX}
