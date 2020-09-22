@@ -179,7 +179,7 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    pencilDrawing = () => {
+    pencilDrawResponderRelease = () => {
         let strokes = this.state.previousStrokes;
         if (this.state.currentPoints.length < 1) {
             return;
@@ -233,7 +233,7 @@ export default class Whiteboard extends React.Component {
     onResponderRelease() {
         switch (this.state.drawingToolType) {
             case DrawType.Pencil:
-                this.pencilDrawing();
+                this.pencilDrawResponderRelease();
                 break;
 
             default:
