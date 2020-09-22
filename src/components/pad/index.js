@@ -9,6 +9,8 @@ import {Bar} from '../bottombar/Bar';
 import humps from 'humps';
 import {debounce} from 'lodash';
 
+import * as DrawType from '../tools/DrawType';
+
 export const convertStrokesToSvg = (strokes, layout = {}) => {
     return `
       <svg xmlns="http://www.w3.org/2000/svg" width="${layout.width}" height="${
@@ -39,6 +41,7 @@ export default class Whiteboard extends React.Component {
             previousStrokes: this.props.strokes || [],
             newStroke: [],
             pen: new Pen(),
+            drawingToolType: DrawType.Pencil,
         };
 
         this._panResponder = PanResponder.create({
@@ -169,7 +172,7 @@ export default class Whiteboard extends React.Component {
         this.onTouch(evt);
     }
 
-    onResponderRelease() {
+    pencilDrawing = () => {
         let strokes = this.state.previousStrokes;
         if (this.state.currentPoints.length < 1) {
             return;
@@ -218,6 +221,17 @@ export default class Whiteboard extends React.Component {
                 },
             );
         });
+    };
+
+    onResponderRelease() {
+        switch (this.state.drawingToolType) {
+            case DrawType.Pencil:
+                this.pencilDrawing();
+                break;
+
+            default:
+                break;
+        }
     }
 
     _onChangeStrokes = (strokes) => {
