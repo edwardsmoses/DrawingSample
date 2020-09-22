@@ -137,6 +137,7 @@ export default class Whiteboard extends React.Component {
                 previousStrokes: [],
                 currentPoints: [],
                 newStroke: [],
+                allDrawings: [],
             },
             () => {
                 this._onChangeStrokes([]);
