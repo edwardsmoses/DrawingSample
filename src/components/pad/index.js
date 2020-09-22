@@ -183,10 +183,8 @@ export default class Whiteboard extends React.Component {
                 this.pencilDrawOnTouch(evt);
                 break;
             case DrawType.Line:
-                this.lineDrawOnResponderGrant(evt);
-                break;
             case DrawType.Circle:
-                this.circleDrawOnTouch(evt);
+                this.shapeDrawOnResponderGrant(evt);
                 break;
             default:
                 break;
@@ -200,10 +198,8 @@ export default class Whiteboard extends React.Component {
                 this.pencilDrawOnTouch(evt);
                 break;
             case DrawType.Line:
-                this.lineDrawOnResponderMove(evt);
-                break;
             case DrawType.Circle:
-                this.circleDrawOnTouch(evt);
+                this.shapeDrawOnResponderMove(evt);
                 break;
             default:
                 break;
@@ -236,8 +232,8 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    /** when User Touches Screen, for Line Drawing Type */
-    lineDrawOnResponderGrant = (evt) => {
+    /** when User Touches Screen, for Line and Circle Drawing Type */
+    shapeDrawOnResponderGrant = (evt) => {
         let x, y, timestamp;
         [x, y, timestamp] = [
             evt.nativeEvent.locationX,
@@ -250,8 +246,8 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    /** when User Moves on the Screen, for Line Drawing Type */
-    lineDrawOnResponderMove = (evt) => {
+    /** when User Moves on the Screen, for Line and Circle Drawing Type */
+    shapeDrawOnResponderMove = (evt) => {
         let x, y, timestamp;
         [x, y, timestamp] = [
             evt.nativeEvent.locationX,
@@ -293,8 +289,42 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    circleDrawOnTouch = (evt) => {
-        console.log('CircleTouch', evt);
+    /** When User releases on Screen, when drawing a Circle */
+    circleDrawOnResponderRelease = () => {
+        //if user touched and released on screen, don't draw any Circles
+        if (this.state.endX === 0 || this.state.endY === 0) {
+            return;
+        }
+
+        const circleRadius = this.GetCircleRadius();
+        //build the Circle element
+        const newCircleElement = (
+            <Circle
+                cx={this.state.startX}
+                cy={this.state.startY}
+                r={circleRadius}
+                stroke={this.props.color || '#000000'}
+                strokeWidth={this.props.strokeWidth || 4}
+            />
+        );
+
+        this.setState({
+            startX: 0,
+            startY: 0,
+            endX: 0,
+            endY: 0,
+            allDrawings: [...this.state.allDrawings, newCircleElement], //add the new Circle element to allDrawings
+            whatUserLastDrew: [...this.state.whatUserLastDrew, DrawType.Circle], //user last drew a Circle on screen
+        });
+    };
+
+    /** Get the Radius of the Circle */
+    GetCircleRadius = () => {
+        const circleRadius = Math.sqrt(
+            Math.pow(this.state.startX - this.state.endX, 2) +
+                Math.pow(this.state.startY - this.state.endY, 2),
+        );
+        return circleRadius;
     };
 
     /** When User releases on Screen, for Pencil Drawing Type */
@@ -353,10 +383,6 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    circleDrawResponderRelease = () => {
-        console.log('Released Circle');
-    };
-
     onResponderRelease() {
         switch (this.state.drawingToolType) {
             case DrawType.Pencil:
@@ -366,7 +392,7 @@ export default class Whiteboard extends React.Component {
                 this.lineDrawOnResponderRelease();
                 break;
             case DrawType.Circle:
-                this.circleDrawResponderRelease();
+                this.circleDrawOnResponderRelease();
                 break;
             default:
                 break;
@@ -464,6 +490,24 @@ export default class Whiteboard extends React.Component {
                                             y1={this.state.startY}
                                             x2={this.state.endX}
                                             y2={this.state.endY}
+                                            stroke={
+                                                this.props.color || '#000000'
+                                            }
+                                            strokeWidth={
+                                                this.props.strokeWidth || 4
+                                            }
+                                        />
+                                    )}
+
+                                {/* Show Visual Feedback as the User is drawing a Circle on the Screen */}
+                                {this.state.drawingToolType ===
+                                    DrawType.Circle &&
+                                    this.state.endX > 0 &&
+                                    this.state.endY > 0 && (
+                                        <Circle
+                                            x1={this.state.startX}
+                                            y1={this.state.startY}
+                                            r={this.GetCircleRadius()}
                                             stroke={
                                                 this.props.color || '#000000'
                                             }
