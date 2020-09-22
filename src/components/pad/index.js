@@ -37,11 +37,16 @@ export default class Whiteboard extends React.Component {
     constructor(props, context) {
         super(props, context);
         this.state = {
+            allDrawings: [],
             currentPoints: [],
             previousStrokes: this.props.strokes || [],
             newStroke: [],
             pen: new Pen(),
             drawingToolType: DrawType.Pencil,
+            startX: 0,
+            startY: 0,
+            endX: 0,
+            endY: 0,
         };
 
         this._panResponder = PanResponder.create({
@@ -147,13 +152,13 @@ export default class Whiteboard extends React.Component {
         });
     }
 
-    onTouch(evt) {
+    onResponderGrant(evt) {
         switch (this.state.drawingToolType) {
             case DrawType.Pencil:
                 this.pencilDrawOnTouch(evt);
                 break;
             case DrawType.Line:
-                this.lineDrawOnTouch(evt);
+                this.lineDrawOnResponderGrant(evt);
                 break;
             case DrawType.Circle:
                 this.circleDrawOnTouch(evt);
@@ -163,12 +168,20 @@ export default class Whiteboard extends React.Component {
         }
     }
 
-    onResponderGrant(evt) {
-        this.onTouch(evt);
-    }
-
     onResponderMove(evt) {
-        this.onTouch(evt);
+        switch (this.state.drawingToolType) {
+            case DrawType.Pencil:
+                this.pencilDrawOnTouch(evt);
+                break;
+            case DrawType.Line:
+                this.lineDrawOnResponderMove(evt);
+                break;
+            case DrawType.Circle:
+                this.circleDrawOnTouch(evt);
+                break;
+            default:
+                break;
+        }
     }
 
     updateCurrentDrawingType = (newDrawingType) => {
@@ -195,8 +208,55 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    lineDrawOnTouch = (evt) => {
-        console.log('LineTouch', evt);
+    lineDrawOnResponderGrant = (evt) => {
+        let x, y, timestamp;
+        [x, y, timestamp] = [
+            evt.nativeEvent.locationX,
+            evt.nativeEvent.locationY,
+            evt.nativeEvent.timestamp,
+        ];
+        this.setState({
+            startX: x,
+            startY: y,
+        });
+    };
+
+    lineDrawOnResponderMove = (evt) => {
+        let x, y, timestamp;
+        [x, y, timestamp] = [
+            evt.nativeEvent.locationX,
+            evt.nativeEvent.locationY,
+            evt.nativeEvent.timestamp,
+        ];
+        this.setState({
+            endX: x,
+            endY: y,
+        });
+    };
+
+    lineDrawOnResponderRelease = () => {
+        const newLineElement = (
+            <Line
+                x1={this.state.startX}
+                y1={this.state.startY}
+                x2={this.state.endX}
+                y2={this.state.endY}
+                stroke={this.props.color || '#000000'}
+                strokeWidth={this.props.strokeWidth || 4}
+            />
+        );
+
+        console.log(newLineElement);
+
+        this.setState({
+            startX: null,
+            startY: null,
+            endX: null,
+            endY: null,
+            allDrawings: [...this.state.allDrawings, newLineElement],
+        });
+
+        console.log(this.state.allDrawings);
     };
 
     circleDrawOnTouch = (evt) => {
@@ -254,10 +314,6 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    lineDrawResponderRelease = () => {
-        console.log('Released Line');
-    };
-
     circleDrawResponderRelease = () => {
         console.log('Released Circle');
     };
@@ -268,7 +324,7 @@ export default class Whiteboard extends React.Component {
                 this.pencilDrawResponderRelease();
                 break;
             case DrawType.Line:
-                this.lineDrawResponderRelease();
+                this.lineDrawOnResponderRelease();
                 break;
             case DrawType.Circle:
                 this.circleDrawResponderRelease();
@@ -344,6 +400,11 @@ export default class Whiteboard extends React.Component {
                                     stroke={this.props.color || '#000000'}
                                     strokeWidth={this.props.strokeWidth || 4}
                                 />
+                                {this.state.allDrawings.map(
+                                    (drawing, index) => {
+                                        return <G key={index}>{drawing}</G>;
+                                    },
+                                )}
                                 <Rect
                                     x="100"
                                     y="100"
@@ -353,10 +414,10 @@ export default class Whiteboard extends React.Component {
                                     strokeWidth={this.props.strokeWidth || 4}
                                 />
                                 <Line
-                                    x1="250"
-                                    y1="250"
-                                    x2="300"
-                                    y2="300"
+                                    x1={this.state.startX}
+                                    y1={this.state.startY}
+                                    x2={this.state.endX}
+                                    y2={this.state.endY}
                                     stroke={this.props.color || '#000000'}
                                     strokeWidth={this.props.strokeWidth || 4}
                                 />
