@@ -5,6 +5,8 @@ import {ColorSelector} from './tools/ColorSelector';
 import {StrokeSlider} from './tools/StrokeSlider';
 import {Button} from './tools/Button';
 
+import * as DrawType from '../tools/DrawType';
+
 type BarProps = {
     currentColor: string;
     selectColor(color: string): void;
@@ -12,6 +14,8 @@ type BarProps = {
     clearAction(): void;
     strokeWidth: number;
     updateStrokeWidth(strokeWidth: number): void;
+    updateCurrentDrawingType(drawingType: string): void;
+    currentDrawingType: string;
 };
 
 export const Bar = (props: BarProps) => {
@@ -22,6 +26,8 @@ export const Bar = (props: BarProps) => {
         strokeWidth,
         updateStrokeWidth,
         currentColor,
+        updateCurrentDrawingType,
+        currentDrawingType,
     } = props;
 
     return (
@@ -33,9 +39,24 @@ export const Bar = (props: BarProps) => {
                 </View>
                 <View style={styles.topRightSection}>
                     <View style={styles.drawingTypeSection}>
-                        <Button buttonAction={() => {}} text="Pencil" />
-                        <Button buttonAction={() => {}} text="Line" />
-                        <Button buttonAction={() => {}} text="Cicle" />
+                        <Button
+                            buttonAction={() => {
+                                updateCurrentDrawingType(DrawType.Pencil);
+                            }}
+                            text="Pencil"
+                        />
+                        <Button
+                            buttonAction={() => {
+                                updateCurrentDrawingType(DrawType.Line);
+                            }}
+                            text="Line"
+                        />
+                        <Button
+                            buttonAction={() => {
+                                updateCurrentDrawingType(DrawType.Circle);
+                            }}
+                            text="Circle"
+                        />
                     </View>
                     <Button buttonAction={() => {}} text="Send" />
                 </View>

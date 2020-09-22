@@ -172,6 +172,13 @@ export default class Whiteboard extends React.Component {
         this.onTouch(evt);
     }
 
+    updateCurrentDrawingType = (newDrawingType) => {
+        console.log(newDrawingType);
+        this.setState({
+            drawingToolType: newDrawingType,
+        });
+    };
+
     pencilDrawing = () => {
         let strokes = this.state.previousStrokes;
         if (this.state.currentPoints.length < 1) {
@@ -334,6 +341,8 @@ export default class Whiteboard extends React.Component {
                     }}
                     strokeWidth={this.props.strokeWidth}
                     updateStrokeWidth={this.props.updateStrokeWidth}
+                    currentDrawingType={this.state.drawingToolType}
+                    updateCurrentDrawingType={this.updateCurrentDrawingType}
                 />
             </React.Fragment>
         );
