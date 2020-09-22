@@ -188,7 +188,7 @@ export default class Whiteboard extends React.Component {
             previousStrokes: this.state.previousStrokes,
             currentPoints: newCurrentPoints,
         });
-    }
+    };
 
     pencilDrawResponderRelease = () => {
         let strokes = this.state.previousStrokes;
