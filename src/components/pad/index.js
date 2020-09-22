@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
-import Svg, {G, Path, Circle, Rect, Line} from 'react-native-svg';
+import Svg, {G, Path, Circle, Line} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
 
@@ -234,12 +234,8 @@ export default class Whiteboard extends React.Component {
 
     /** when User Touches Screen, for Line and Circle Drawing Type */
     shapeDrawOnResponderGrant = (evt) => {
-        let x, y, timestamp;
-        [x, y, timestamp] = [
-            evt.nativeEvent.locationX,
-            evt.nativeEvent.locationY,
-            evt.nativeEvent.timestamp,
-        ];
+        let x, y;
+        [x, y] = [evt.nativeEvent.locationX, evt.nativeEvent.locationY];
         this.setState({
             startX: x,
             startY: y,
@@ -248,12 +244,8 @@ export default class Whiteboard extends React.Component {
 
     /** when User Moves on the Screen, for Line and Circle Drawing Type */
     shapeDrawOnResponderMove = (evt) => {
-        let x, y, timestamp;
-        [x, y, timestamp] = [
-            evt.nativeEvent.locationX,
-            evt.nativeEvent.locationY,
-            evt.nativeEvent.timestamp,
-        ];
+        let x, y;
+        [x, y] = [evt.nativeEvent.locationX, evt.nativeEvent.locationY];
         this.setState({
             endX: x,
             endY: y,
@@ -338,7 +330,7 @@ export default class Whiteboard extends React.Component {
 
     /** When User releases on Screen, for Pencil Drawing Type */
     pencilDrawResponderRelease = () => {
-        let strokes = this.state.previousStrokes;
+        // let strokes = this.state.previousStrokes;
         if (this.state.currentPoints.length < 1) {
             return;
         }
@@ -346,6 +338,7 @@ export default class Whiteboard extends React.Component {
         let points = this.state.currentPoints;
         if (points.length === 1) {
             let p = points[0];
+            // eslint-disable-next-line radix
             let distance = parseInt(Math.sqrt(this.props.strokeWidth || 4) / 2);
             points.push(new Point(p.x + distance, p.y + distance, p.time));
         }
