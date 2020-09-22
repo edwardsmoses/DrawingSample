@@ -418,18 +418,22 @@ export default class Whiteboard extends React.Component {
                                 />
 
                                 {/* Show Visual Feedback as the User is drawing a Line on the Screen */}
-                                {this.state.endX > 0 && this.state.endY > 0 && (
-                                    <Line
-                                        x1={this.state.startX}
-                                        y1={this.state.startY}
-                                        x2={this.state.endX}
-                                        y2={this.state.endY}
-                                        stroke={this.props.color || '#000000'}
-                                        strokeWidth={
-                                            this.props.strokeWidth || 4
-                                        }
-                                    />
-                                )}
+                                {this.state.drawingToolType === DrawType.Line &&
+                                    this.state.endX > 0 &&
+                                    this.state.endY > 0 && (
+                                        <Line
+                                            x1={this.state.startX}
+                                            y1={this.state.startY}
+                                            x2={this.state.endX}
+                                            y2={this.state.endY}
+                                            stroke={
+                                                this.props.color || '#000000'
+                                            }
+                                            strokeWidth={
+                                                this.props.strokeWidth || 4
+                                            }
+                                        />
+                                    )}
                             </G>
                         </Svg>
 
