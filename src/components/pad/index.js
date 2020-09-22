@@ -81,19 +81,6 @@ export default class Whiteboard extends React.Component {
         );
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        if (this.state.previousStrokes !== nextState.previousStrokes) {
-            return true;
-        }
-        if (this.state.currentPoints !== nextState.currentPoints) {
-            return true;
-        }
-        if (this.state.newStroke !== nextState.newStroke) {
-            return true;
-        }
-        return false;
-    }
-
     static getDerivedStateFromProps(nextProps, prevState) {
         if (
             nextProps.strokes &&
