@@ -458,28 +458,13 @@ export default class Whiteboard extends React.Component {
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
                                 />
-                                <Circle
-                                    cx="50"
-                                    cy="50"
-                                    r="50"
-                                    stroke={this.props.color || '#000000'}
-                                    strokeWidth={this.props.strokeWidth || 4}
-                                />
 
-                                {/* This shows the Line and Circle on the Screen */}
+                                {/* This shows the Line and Circle, after the User Releases Touch on the Screen */}
                                 {this.state.allDrawings.map(
                                     (drawing, index) => {
                                         return <G key={index}>{drawing}</G>;
                                     },
                                 )}
-                                <Rect
-                                    x="100"
-                                    y="100"
-                                    width="70"
-                                    height="70"
-                                    stroke={this.props.color || '#000000'}
-                                    strokeWidth={this.props.strokeWidth || 4}
-                                />
 
                                 {/* Show Visual Feedback as the User is drawing a Line on the Screen */}
                                 {this.state.drawingToolType === DrawType.Line &&
