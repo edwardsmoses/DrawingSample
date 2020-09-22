@@ -237,10 +237,10 @@ export default class Whiteboard extends React.Component {
         console.log(newLineElement);
 
         this.setState({
-            startX: null,
-            startY: null,
-            endX: null,
-            endY: null,
+            startX: 0,
+            startY: 0,
+            endX: 0,
+            endY: 0,
             allDrawings: [...this.state.allDrawings, newLineElement],
         });
 
