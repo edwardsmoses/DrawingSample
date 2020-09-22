@@ -148,20 +148,14 @@ export default class Whiteboard extends React.Component {
     }
 
     onTouch(evt) {
-        let x, y, timestamp;
-        [x, y, timestamp] = [
-            evt.nativeEvent.locationX,
-            evt.nativeEvent.locationY,
-            evt.nativeEvent.timestamp,
-        ];
-        let newPoint = new Point(x, y, timestamp);
-        let newCurrentPoints = this.state.currentPoints;
-        newCurrentPoints.push(newPoint);
+        switch (this.state.drawingToolType) {
+            case DrawType.Pencil:
+                this.pencilDrawOnTouch(evt);
+                break;
 
-        this.setState({
-            previousStrokes: this.state.previousStrokes,
-            currentPoints: newCurrentPoints,
-        });
+            default:
+                break;
+        }
     }
 
     onResponderGrant(evt) {
@@ -178,6 +172,23 @@ export default class Whiteboard extends React.Component {
             drawingToolType: newDrawingType,
         });
     };
+
+    pencilDrawOnTouch = (evt) => {
+        let x, y, timestamp;
+        [x, y, timestamp] = [
+            evt.nativeEvent.locationX,
+            evt.nativeEvent.locationY,
+            evt.nativeEvent.timestamp,
+        ];
+        let newPoint = new Point(x, y, timestamp);
+        let newCurrentPoints = this.state.currentPoints;
+        newCurrentPoints.push(newPoint);
+
+        this.setState({
+            previousStrokes: this.state.previousStrokes,
+            currentPoints: newCurrentPoints,
+        });
+    }
 
     pencilDrawResponderRelease = () => {
         let strokes = this.state.previousStrokes;
