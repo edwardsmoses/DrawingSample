@@ -401,14 +401,18 @@ export default class Whiteboard extends React.Component {
                                     stroke={this.props.color || '#000000'}
                                     strokeWidth={this.props.strokeWidth || 4}
                                 />
-                                <Line
-                                    x1={this.state.startX}
-                                    y1={this.state.startY}
-                                    x2={this.state.endX}
-                                    y2={this.state.endY}
-                                    stroke={this.props.color || '#000000'}
-                                    strokeWidth={this.props.strokeWidth || 4}
-                                />
+                                {this.state.endX > 0 && this.state.endY > 0 && (
+                                    <Line
+                                        x1={this.state.startX}
+                                        y1={this.state.startY}
+                                        x2={this.state.endX}
+                                        y2={this.state.endY}
+                                        stroke={this.props.color || '#000000'}
+                                        strokeWidth={
+                                            this.props.strokeWidth || 4
+                                        }
+                                    />
+                                )}
                             </G>
                         </Svg>
 
