@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
-// import {  } from 'react-native';
+import {PinchGestureHandler} from 'react-native-gesture-handler';
 import Svg, {G, Path, Circle, Line} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
@@ -49,6 +49,7 @@ export default class Whiteboard extends React.Component {
             startY: 0, //hold the startY of when user Touches Screen
             endX: 0, //hold the endX of when user is moving on Screen
             endY: 0, //hold the endY of when user is moving on Screen
+            userTouchedCircle: false, //know when user touches a Circle
         };
 
         //the PanResponder, and it's events.
@@ -194,16 +195,20 @@ export default class Whiteboard extends React.Component {
 
     /** when user is moving on the screeen */
     onResponderMove(evt) {
-        switch (this.state.drawingToolType) {
-            case DrawType.Pencil:
-                this.pencilDrawOnTouch(evt);
-                break;
-            case DrawType.Line:
-            case DrawType.Circle:
-                this.shapeDrawOnResponderMove(evt);
-                break;
-            default:
-                break;
+        if (this.state.userTouchedCircle) {
+            this.handleZoomOfCircle(evt);
+        } else {
+            switch (this.state.drawingToolType) {
+                case DrawType.Pencil:
+                    this.pencilDrawOnTouch(evt);
+                    break;
+                case DrawType.Line:
+                case DrawType.Circle:
+                    this.shapeDrawOnResponderMove(evt);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -316,6 +321,9 @@ export default class Whiteboard extends React.Component {
     /** When User Touches the Circle */
     OnPressCircle = () => {
         console.log('Circle was touched');
+        this.setState({
+            userTouchedCircle: true,
+        });
     };
 
     /** Get the Radius of the Circle that's been drawn*/
@@ -432,6 +440,15 @@ export default class Whiteboard extends React.Component {
     exportToSVG = () => {
         const strokes = [...this.state.previousStrokes];
         return convertStrokesToSvg(strokes, this._layout);
+    };
+
+    //when user is zooming on Circle
+    handleZoomOfCircle = (event) => {
+        const touches = event.nativeEvent.touches;
+        //if two touches on screen, we have a pinch-to-zoom movement.
+        if (touches.length >= 2) {
+            console.log("we're doing a zoom");
+        }
     };
 
     render() {
