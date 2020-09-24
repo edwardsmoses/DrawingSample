@@ -296,6 +296,7 @@ export default class Whiteboard extends React.Component {
                 cx={this.state.startX}
                 cy={this.state.startY}
                 r={circleRadius}
+                onPress={() => this.OnPressCircle()}
                 stroke={this.props.color || '#000000'}
                 strokeWidth={this.props.strokeWidth || 4}
             />
@@ -309,6 +310,11 @@ export default class Whiteboard extends React.Component {
             allDrawings: [...this.state.allDrawings, newCircleElement], //add the new Circle element to allDrawings
             whatUserLastDrew: [...this.state.whatUserLastDrew, DrawType.Circle], //user last drew a Circle on screen
         });
+    };
+
+    /** When User Touches the Circle */
+    OnPressCircle = () => {
+        console.log('Circle was touched');
     };
 
     /** Get the Radius of the Circle that's been drawn*/
