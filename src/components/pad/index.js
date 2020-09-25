@@ -488,11 +488,11 @@ export default class Whiteboard extends React.Component {
                 touch2.pageY,
             );
 
-            //build the new Circle Element using some new Props and Props of the former Circle
+            //build the new Circle Element using New Radius and Props of the former Circle
             const newCircleElement = (
                 <Circle
-                    cx={touch1.pageX}
-                    cy={touch1.pageY}
+                    cx={currentSelectedElement.props.cx}
+                    cy={currentSelectedElement.props.cy}
                     r={circleRadius}
                     onLongPress={() => {
                         this.OnPressCircle(currentSelectedIndex);
