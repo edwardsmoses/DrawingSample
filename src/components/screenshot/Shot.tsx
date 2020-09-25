@@ -11,6 +11,7 @@ type ShotProps = {
 const useCapture = () => {
     const viewShotRef = React.useRef<ViewShot>(null);
 
+    /** Captures ScreenShot, Reads ScreenShot, and then Shares Shot */
     const captureAndShareScreenshot = () => {
         captureRef(viewShotRef).then((uri) => {
             readFile(uri, 'base64').then((res) => {
