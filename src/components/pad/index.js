@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
-import {PinchGestureHandler} from 'react-native-gesture-handler';
 import Svg, {G, Path, Circle, Line} from 'react-native-svg';
 import Pen from '../tools/pen';
 import Point from '../tools/point';
