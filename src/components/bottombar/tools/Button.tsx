@@ -5,13 +5,14 @@ import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 type ButtonProps = {
     text: string;
     buttonAction(): void;
+    buttonStyle: {};
 };
 
 export const Button = (props: ButtonProps) => {
-    const {buttonAction, text} = props;
+    const {buttonAction, text, buttonStyle} = props;
     return (
         <TouchableOpacity
-            style={styles.buttonStyle}
+            style={[styles.buttonStyle, buttonStyle]}
             onPress={() => {
                 buttonAction();
             }}>
