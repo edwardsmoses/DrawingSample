@@ -11,6 +11,8 @@ import {debounce} from 'lodash';
 
 import * as DrawType from '../tools/DrawType';
 
+import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
+
 export const convertStrokesToSvg = (strokes, layout = {}) => {
     return `
       <svg xmlns="http://www.w3.org/2000/svg" width="${layout.width}" height="${
@@ -624,6 +626,7 @@ export default class Whiteboard extends React.Component {
                     updateStrokeWidth={this.props.updateStrokeWidth}
                     currentDrawingType={this.state.drawingToolType}
                     updateCurrentDrawingType={this.updateCurrentDrawingType}
+                    captureScreenShot={CaptureAndShareScreenshot}
                 />
             </React.Fragment>
         );
