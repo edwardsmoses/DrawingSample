@@ -16,7 +16,7 @@ export const Button = (props: ButtonProps) => {
             onPress={() => {
                 buttonAction();
             }}>
-            {/* would remove the style from the Text later -- When It's an Icon  */}
+            {/* TODO - would remove the style from the Text later -- When It's an Icon  */}
             <Text style={[styles.buttonTextStyle, buttonStyle]}>{text}</Text>
         </TouchableOpacity>
     );
