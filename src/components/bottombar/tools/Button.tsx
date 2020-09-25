@@ -5,7 +5,7 @@ import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 type ButtonProps = {
     text: string;
     buttonAction(): void;
-    buttonStyle: {};
+    buttonStyle?: {};
 };
 
 export const Button = (props: ButtonProps) => {
