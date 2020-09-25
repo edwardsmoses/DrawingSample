@@ -424,18 +424,22 @@ export default class Whiteboard extends React.Component {
     };
 
     onResponderRelease() {
-        switch (this.state.drawingToolType) {
-            case DrawType.Pencil:
-                this.pencilDrawResponderRelease();
-                break;
-            case DrawType.Line:
-                this.lineDrawOnResponderRelease();
-                break;
-            case DrawType.Circle:
-                this.circleDrawOnResponderRelease();
-                break;
-            default:
-                break;
+        if (this.state.didUserLongPressCircle) {
+            this.handleCircleZoomComplete();
+        } else {
+            switch (this.state.drawingToolType) {
+                case DrawType.Pencil:
+                    this.pencilDrawResponderRelease();
+                    break;
+                case DrawType.Line:
+                    this.lineDrawOnResponderRelease();
+                    break;
+                case DrawType.Circle:
+                    this.circleDrawOnResponderRelease();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -465,7 +469,7 @@ export default class Whiteboard extends React.Component {
         return convertStrokesToSvg(strokes, this._layout);
     };
 
-    //when user is zooming on Circle
+    /**when user is zooming on Circle */
     handleZoomOfCircle = (event) => {
         const touches = event.nativeEvent.touches;
         //if two touches on screen, we have a pinch-to-zoom movement.
@@ -509,6 +513,14 @@ export default class Whiteboard extends React.Component {
                 allDrawings: newDrawings,
             });
         }
+    };
+
+    /** when user releases hand from screen, and is done zooming */
+    handleCircleZoomComplete = () => {
+        this.setState({
+            didUserLongPressCircle: false,
+            currentUserSelectedCircle: {},
+        });
     };
 
     render() {
