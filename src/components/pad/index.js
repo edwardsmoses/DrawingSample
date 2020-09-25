@@ -179,40 +179,6 @@ export default class Whiteboard extends React.Component {
         });
     }
 
-    /** when user touches the screen **/
-    onResponderGrant(evt) {
-        switch (this.state.drawingToolType) {
-            case DrawType.Pencil:
-                this.pencilDrawOnTouch(evt);
-                break;
-            case DrawType.Line:
-            case DrawType.Circle:
-                this.shapeDrawOnResponderGrant(evt);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /** when user is moving on the screeen */
-    onResponderMove(evt) {
-        if (this.state.didUserLongPressCircle) {
-            this.handleZoomOfCircle(evt);
-        } else {
-            switch (this.state.drawingToolType) {
-                case DrawType.Pencil:
-                    this.pencilDrawOnTouch(evt);
-                    break;
-                case DrawType.Line:
-                case DrawType.Circle:
-                    this.shapeDrawOnResponderMove(evt);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
     /** Update the Drawing Type [Pencil, Line, Circle] */
     updateCurrentDrawingType = (newDrawingType) => {
         console.log(newDrawingType);
@@ -307,7 +273,7 @@ export default class Whiteboard extends React.Component {
                 cy={this.state.startY}
                 r={circleRadius}
                 onLongPress={() => {
-                    this.OnPressCircle(arrayLength); //pass the ArrayLength as index of the Circle.
+                    this.OnLongPressCircle(arrayLength); //pass the ArrayLength as index of the Circle.
                 }}
                 stroke={this.props.color || '#000000'}
                 strokeWidth={this.props.strokeWidth || 4}
@@ -322,48 +288,6 @@ export default class Whiteboard extends React.Component {
             allDrawings: [...this.state.allDrawings, newCircleElement], //add the new Circle element to allDrawings
             whatUserLastDrew: [...this.state.whatUserLastDrew, DrawType.Circle], //user last drew a Circle on screen
         });
-    };
-
-    /** When User Touches the Circle */
-    OnPressCircle = (elementIndex) => {
-        const circleElement = this.state.allDrawings[elementIndex];
-
-        //update drawing Type to circle
-        this.updateCurrentDrawingType(DrawType.Circle);
-
-        this.setState({
-            didUserLongPressCircle: true,
-            currentUserSelectedCircle: {
-                circleElementIndex: elementIndex,
-                circleElement: circleElement,
-            },
-        });
-    };
-
-    /** Get the Radius of the Circle that's been drawn*/
-    GetCircleRadiusFromState = () => {
-        if (
-            this.state.endX === 0 ||
-            this.state.endY === 0 ||
-            this.state.startX === 0 ||
-            this.state.startY === 0
-        ) {
-            return 0;
-        }
-        const circleRadius = this.GetCircleRadius(
-            this.state.startX,
-            this.state.startY,
-            this.state.endX,
-            this.state.endY,
-        );
-        return circleRadius;
-    };
-
-    GetCircleRadius = (startX, startY, endX, endY) => {
-        const circleRadius = Math.sqrt(
-            Math.pow(startX - endX, 2) + Math.pow(startY - endY, 2),
-        );
-        return circleRadius;
     };
 
     /** When User releases on Screen, for Pencil Drawing Type */
@@ -423,26 +347,6 @@ export default class Whiteboard extends React.Component {
         });
     };
 
-    onResponderRelease() {
-        if (this.state.didUserLongPressCircle) {
-            this.handleCircleZoomComplete();
-        } else {
-            switch (this.state.drawingToolType) {
-                case DrawType.Pencil:
-                    this.pencilDrawResponderRelease();
-                    break;
-                case DrawType.Line:
-                    this.lineDrawOnResponderRelease();
-                    break;
-                case DrawType.Circle:
-                    this.circleDrawOnResponderRelease();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
     _onChangeStrokes = (strokes) => {
         if (this.props.onChangeStrokes) {
             requestAnimationFrame(() => {
@@ -469,7 +373,23 @@ export default class Whiteboard extends React.Component {
         return convertStrokesToSvg(strokes, this._layout);
     };
 
-    /**when user is zooming on Circle */
+    /** When User LongPresses on the Circle */
+    OnLongPressCircle = (elementIndex) => {
+        const circleElement = this.state.allDrawings[elementIndex];
+
+        //update drawing Type to circle
+        this.updateCurrentDrawingType(DrawType.Circle);
+
+        this.setState({
+            didUserLongPressCircle: true,
+            currentUserSelectedCircle: {
+                circleElementIndex: elementIndex,
+                circleElement: circleElement,
+            },
+        });
+    };
+
+    /**when user is zooming on Circle after LongPress */
     handleZoomOfCircle = (event) => {
         const touches = event.nativeEvent.touches;
         //if two touches on screen, we have a pinch-to-zoom movement.
@@ -499,7 +419,7 @@ export default class Whiteboard extends React.Component {
                     cy={currentSelectedElement.props.cy}
                     r={circleRadius}
                     onLongPress={() => {
-                        this.OnPressCircle(currentSelectedIndex);
+                        this.OnLongPressCircle(currentSelectedIndex);
                     }}
                     stroke={currentSelectedElement.props.stroke}
                     strokeWidth={currentSelectedElement.props.strokeWidth}
@@ -522,6 +442,88 @@ export default class Whiteboard extends React.Component {
             currentUserSelectedCircle: {},
         });
     };
+
+    /** Get the Radius of the Circle (using Values from State) that's been drawn*/
+    GetCircleRadiusFromState = () => {
+        if (
+            this.state.endX === 0 ||
+            this.state.endY === 0 ||
+            this.state.startX === 0 ||
+            this.state.startY === 0
+        ) {
+            return 0;
+        }
+        const circleRadius = this.GetCircleRadius(
+            this.state.startX,
+            this.state.startY,
+            this.state.endX,
+            this.state.endY,
+        );
+        return circleRadius;
+    };
+
+    /** Get the Radius of Circle */
+    GetCircleRadius = (startX, startY, endX, endY) => {
+        const circleRadius = Math.sqrt(
+            Math.pow(startX - endX, 2) + Math.pow(startY - endY, 2),
+        );
+        return circleRadius;
+    };
+
+    /** When user touches the screen **/
+    onResponderGrant(evt) {
+        switch (this.state.drawingToolType) {
+            case DrawType.Pencil:
+                this.pencilDrawOnTouch(evt);
+                break;
+            case DrawType.Line:
+            case DrawType.Circle:
+                this.shapeDrawOnResponderGrant(evt);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** When user is moving on the screeen */
+    onResponderMove(evt) {
+        if (this.state.didUserLongPressCircle) {
+            this.handleZoomOfCircle(evt);
+        } else {
+            switch (this.state.drawingToolType) {
+                case DrawType.Pencil:
+                    this.pencilDrawOnTouch(evt);
+                    break;
+                case DrawType.Line:
+                case DrawType.Circle:
+                    this.shapeDrawOnResponderMove(evt);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /** When User releases hand from the Screen */
+    onResponderRelease() {
+        if (this.state.didUserLongPressCircle) {
+            this.handleCircleZoomComplete();
+        } else {
+            switch (this.state.drawingToolType) {
+                case DrawType.Pencil:
+                    this.pencilDrawResponderRelease();
+                    break;
+                case DrawType.Line:
+                    this.lineDrawOnResponderRelease();
+                    break;
+                case DrawType.Circle:
+                    this.circleDrawOnResponderRelease();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     render() {
         return (
