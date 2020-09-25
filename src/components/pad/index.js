@@ -387,6 +387,8 @@ export default class Whiteboard extends React.Component {
                 circleElement: circleElement,
             },
         });
+
+        //To-Do: Show Visual Feedback that the Circle has been selected.
     };
 
     /**when user is zooming on Circle after LongPress */
