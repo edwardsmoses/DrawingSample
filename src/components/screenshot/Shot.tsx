@@ -3,6 +3,7 @@ import React from 'react';
 import ViewShot, {captureRef} from 'react-native-view-shot';
 import {readFile} from 'react-native-fs';
 import Share from 'react-native-share';
+import {StyleSheet} from 'react-native';
 
 type ShotProps = {
     Child: React.ComponentType;
@@ -47,7 +48,10 @@ export const Shot = (props: ShotProps) => {
 
     const ViewWithScreenShot = (childProps: any) => {
         return (
-            <ViewShot ref={viewShotRef} options={{format: 'jpg', quality: 0.9}}>
+            <ViewShot
+                style={styles.container}
+                ref={viewShotRef}
+                options={{format: 'jpg', quality: 0.9}}>
                 <Child
                     {...childProps}
                     onCaptureScreenShot={captureAndShareScreenshot}
@@ -58,3 +62,10 @@ export const Shot = (props: ShotProps) => {
 
     return ViewWithScreenShot;
 };
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: 'red',
+        flex: 1,
+    },
+});

@@ -16,6 +16,7 @@ type BarProps = {
     updateStrokeWidth(strokeWidth: number): void;
     updateCurrentDrawingType(drawingType: string): void;
     currentDrawingType: string;
+    captureScreenShot(): void;
 };
 
 export const Bar = (props: BarProps) => {
@@ -28,6 +29,7 @@ export const Bar = (props: BarProps) => {
         currentColor,
         updateCurrentDrawingType,
         currentDrawingType,
+        captureScreenShot,
     } = props;
 
     return (
@@ -58,7 +60,12 @@ export const Bar = (props: BarProps) => {
                             text="Circle"
                         />
                     </View>
-                    <Button buttonAction={() => {}} text="Send" />
+                    <Button
+                        buttonAction={() => {
+                            captureScreenShot();
+                        }}
+                        text="Shot"
+                    />
                 </View>
             </View>
             <View style={styles.bottomSection}>
