@@ -275,6 +275,7 @@ export default class Whiteboard extends React.Component {
                 onLongPress={() => {
                     this.OnLongPressCircle(arrayLength); //pass the ArrayLength as index of the Circle.
                 }}
+                delayLongPress={600}
                 stroke={this.props.color || '#000000'}
                 strokeWidth={this.props.strokeWidth || 4}
             />
@@ -421,6 +422,7 @@ export default class Whiteboard extends React.Component {
                     onLongPress={() => {
                         this.OnLongPressCircle(currentSelectedIndex);
                     }}
+                    delayLongPress={600}
                     stroke={currentSelectedElement.props.stroke}
                     strokeWidth={currentSelectedElement.props.strokeWidth}
                 />
