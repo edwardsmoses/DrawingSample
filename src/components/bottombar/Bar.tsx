@@ -32,6 +32,14 @@ export const Bar = (props: BarProps) => {
         captureScreenShot,
     } = props;
 
+    const SelectedButtonStyle = (drawType: string) => {
+        const buttonStyle =
+            currentDrawingType === drawType
+                ? styles.selectedButtonType
+                : undefined;
+        return buttonStyle;
+    };
+
     return (
         <View style={styles.containerStyle}>
             <View style={styles.topSection}>
@@ -46,18 +54,21 @@ export const Bar = (props: BarProps) => {
                                 updateCurrentDrawingType(DrawType.Pencil);
                             }}
                             text="Pencil"
+                            buttonStyle={SelectedButtonStyle(DrawType.Pencil)}
                         />
                         <Button
                             buttonAction={() => {
                                 updateCurrentDrawingType(DrawType.Line);
                             }}
                             text="Line"
+                            buttonStyle={SelectedButtonStyle(DrawType.Line)}
                         />
                         <Button
                             buttonAction={() => {
                                 updateCurrentDrawingType(DrawType.Circle);
                             }}
                             text="Circle"
+                            buttonStyle={SelectedButtonStyle(DrawType.Circle)}
                         />
                     </View>
                     <Button
@@ -115,5 +126,9 @@ const styles = StyleSheet.create({
     },
     bottomSection: {
         flexDirection: 'row',
+    },
+    selectedButtonType: {
+        color: 'red',
+        fontWeight: 'bold',
     },
 });
