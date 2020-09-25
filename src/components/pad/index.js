@@ -49,7 +49,8 @@ export default class Whiteboard extends React.Component {
             startY: 0, //hold the startY of when user Touches Screen
             endX: 0, //hold the endX of when user is moving on Screen
             endY: 0, //hold the endY of when user is moving on Screen
-            userTouchedCircle: false, //know when user touches a Circle
+            didUserLongPressCircle: false, //know when user longPresses on a Circle
+            currentUserSelectedCircle: {}, //hold the Circle that the User Selected
         };
 
         //the PanResponder, and it's events.
@@ -195,7 +196,7 @@ export default class Whiteboard extends React.Component {
 
     /** when user is moving on the screeen */
     onResponderMove(evt) {
-        if (this.state.userTouchedCircle) {
+        if (this.state.didUserLongPressCircle) {
             this.handleZoomOfCircle(evt);
         } else {
             switch (this.state.drawingToolType) {
@@ -289,12 +290,15 @@ export default class Whiteboard extends React.Component {
 
     /** When User releases on Screen, when drawing a Circle */
     circleDrawOnResponderRelease = () => {
-        const circleRadius = this.GetCircleRadius();
+        const circleRadius = this.GetCircleRadiusFromState();
 
-        //if user touched and released on screen, don't draw any Circles
+        //if user touched and released on screen without moving, don't draw any Circles
         if (circleRadius === 0) {
             return;
         }
+
+        //get the arrayLength, as this would be the index of the Circle that is about to be added to the Array
+        const arrayLength = this.state.allDrawings.length;
 
         //build the Circle element
         const newCircleElement = (
@@ -302,7 +306,9 @@ export default class Whiteboard extends React.Component {
                 cx={this.state.startX}
                 cy={this.state.startY}
                 r={circleRadius}
-                onPress={() => this.OnPressCircle()}
+                onLongPress={() => {
+                    this.OnPressCircle(arrayLength); //pass the ArrayLength as index of the Circle.
+                }}
                 stroke={this.props.color || '#000000'}
                 strokeWidth={this.props.strokeWidth || 4}
             />
@@ -319,15 +325,23 @@ export default class Whiteboard extends React.Component {
     };
 
     /** When User Touches the Circle */
-    OnPressCircle = () => {
-        console.log('Circle was touched');
+    OnPressCircle = (elementIndex) => {
+        const circleElement = this.state.allDrawings[elementIndex];
+
+        //update drawing Type to circle
+        this.updateCurrentDrawingType(DrawType.Circle);
+
         this.setState({
-            userTouchedCircle: true,
+            didUserLongPressCircle: true,
+            currentUserSelectedCircle: {
+                circleElementIndex: elementIndex,
+                circleElement: circleElement,
+            },
         });
     };
 
     /** Get the Radius of the Circle that's been drawn*/
-    GetCircleRadius = () => {
+    GetCircleRadiusFromState = () => {
         if (
             this.state.endX === 0 ||
             this.state.endY === 0 ||
@@ -336,9 +350,18 @@ export default class Whiteboard extends React.Component {
         ) {
             return 0;
         }
+        const circleRadius = this.GetCircleRadius(
+            this.state.startX,
+            this.state.startY,
+            this.state.endX,
+            this.state.endY,
+        );
+        return circleRadius;
+    };
+
+    GetCircleRadius = (startX, startY, endX, endY) => {
         const circleRadius = Math.sqrt(
-            Math.pow(this.state.startX - this.state.endX, 2) +
-                Math.pow(this.state.startY - this.state.endY, 2),
+            Math.pow(startX - endX, 2) + Math.pow(startY - endY, 2),
         );
         return circleRadius;
     };
@@ -448,6 +471,52 @@ export default class Whiteboard extends React.Component {
         //if two touches on screen, we have a pinch-to-zoom movement.
         if (touches.length >= 2) {
             console.log("we're doing a zoom");
+
+            const [touch1, touch2] = touches;
+
+            this.setState({
+                startX: touch1.pageX,
+                startY: touch1.pageY,
+                endX: touch2.pageX,
+                endY: touch2.pageY,
+            });
+
+            const currentSelectedIndex = this.state.currentUserSelectedCircle
+                .circleElementIndex;
+
+            const currentSelectedElement = this.state.currentUserSelectedCircle
+                .circleElement;
+
+            const circleRadius = this.GetCircleRadius(
+                touch1.pageX,
+                touch1.pageY,
+                touch2.pageX,
+                touch2.pageY,
+            );
+
+            const newCircleElement = (
+                <Circle
+                    cx={touch1.pageX}
+                    cy={touch1.pageY}
+                    r={circleRadius}
+                    onLongPress={() => {
+                        this.OnPressCircle(currentSelectedIndex);
+                    }}
+                    stroke={currentSelectedElement.props.stroke}
+                    strokeWidth={currentSelectedElement.props.strokeWidth}
+                />
+            );
+
+            console.log('ElementUpdating', newCircleElement);
+
+            const newDrawings = [...this.state.allDrawings];
+            newDrawings[currentSelectedIndex] = newCircleElement;
+
+            this.setState({
+                allDrawings: newDrawings,
+            });
+
+            console.log('AllDrawings', this.state.allDrawings);
         }
     };
 
@@ -513,11 +582,11 @@ export default class Whiteboard extends React.Component {
                                 {/* Show Visual Feedback as the User is drawing a Circle on the Screen */}
                                 {this.state.drawingToolType ===
                                     DrawType.Circle &&
-                                    this.GetCircleRadius() > 0 && (
+                                    this.GetCircleRadiusFromState() > 0 && (
                                         <Circle
                                             cx={this.state.startX}
                                             cy={this.state.startY}
-                                            r={this.GetCircleRadius()}
+                                            r={this.GetCircleRadiusFromState()}
                                             stroke={
                                                 this.props.color || '#000000'
                                             }
