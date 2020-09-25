@@ -11,7 +11,7 @@ import {debounce} from 'lodash';
 
 import * as DrawType from '../tools/DrawType';
 
-import { CaptureAndShareScreenshot } from "../screenshot/CaptureScreenShot";
+import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 
 export const convertStrokesToSvg = (strokes, layout = {}) => {
     return `
