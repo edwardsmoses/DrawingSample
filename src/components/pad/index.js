@@ -470,23 +470,17 @@ export default class Whiteboard extends React.Component {
         const touches = event.nativeEvent.touches;
         //if two touches on screen, we have a pinch-to-zoom movement.
         if (touches.length >= 2) {
-            console.log("we're doing a zoom");
-
             const [touch1, touch2] = touches;
 
-            this.setState({
-                startX: touch1.pageX,
-                startY: touch1.pageY,
-                endX: touch2.pageX,
-                endY: touch2.pageY,
-            });
-
+            //get the element of the current Selected Circle
             const currentSelectedIndex = this.state.currentUserSelectedCircle
                 .circleElementIndex;
 
+            //get the Circle itself.
             const currentSelectedElement = this.state.currentUserSelectedCircle
                 .circleElement;
 
+            //calculate the Radius of the Circle
             const circleRadius = this.GetCircleRadius(
                 touch1.pageX,
                 touch1.pageY,
@@ -494,6 +488,7 @@ export default class Whiteboard extends React.Component {
                 touch2.pageY,
             );
 
+            //build the new Circle Element using some new Props and Props of the former Circle
             const newCircleElement = (
                 <Circle
                     cx={touch1.pageX}
@@ -507,16 +502,12 @@ export default class Whiteboard extends React.Component {
                 />
             );
 
-            console.log('ElementUpdating', newCircleElement);
-
             const newDrawings = [...this.state.allDrawings];
             newDrawings[currentSelectedIndex] = newCircleElement;
 
             this.setState({
                 allDrawings: newDrawings,
             });
-
-            console.log('AllDrawings', this.state.allDrawings);
         }
     };
 
