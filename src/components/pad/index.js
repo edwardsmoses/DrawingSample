@@ -443,6 +443,7 @@ export default class Whiteboard extends React.Component {
         this.setState({
             didUserLongPressCircle: false,
             currentUserSelectedCircle: {},
+            drawingToolType: '', //after user is finished zooming, don't let his touch draw another Circle.
         });
     };
 
