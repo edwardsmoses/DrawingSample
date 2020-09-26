@@ -131,7 +131,32 @@ export default class Whiteboard extends React.Component {
             } else if (
                 whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
             ) {
-                console.log('User last updated the circle size');
+                const currentSelectedIndex =
+                    whatTheUserLastDrew.ActionInfo.ElementIndex;
+                const previousCircleProps =
+                    whatTheUserLastDrew.ActionInfo.PreviousCircleProps;
+
+                //build the new Circle Element using New Radius and Props of the former Circle
+                const newCircleElement = (
+                    <Circle
+                        cx={previousCircleProps.cx}
+                        cy={previousCircleProps.cy}
+                        r={previousCircleProps.r}
+                        onLongPress={() => {
+                            this.OnLongPressCircle(currentSelectedIndex);
+                        }}
+                        delayLongPress={600}
+                        stroke={previousCircleProps.stroke}
+                        strokeWidth={previousCircleProps.strokeWidth}
+                    />
+                );
+
+                const newDrawings = [...this.state.allDrawings];
+                newDrawings[currentSelectedIndex] = newCircleElement;
+
+                this.setState({
+                    allDrawings: newDrawings,
+                });
             }
         } else {
             //if it was a Pencil, remove from the strokes
@@ -394,7 +419,13 @@ export default class Whiteboard extends React.Component {
             ActionType: DrawType.UpdateCircleSize,
             ActionInfo: {
                 ElementIndex: elementIndex,
-                PreviousSize: circleElement.props.r, //this is the only prop that would change the user zooms.
+                PreviousCircleProps: {
+                    r: circleElement.props.r,
+                    cx: circleElement.props.cx,
+                    cy: circleElement.props.cy,
+                    stroke: circleElement.props.stroke,
+                    strokeWidth: circleElement.props.strokeWidth,
+                }, //store the needed circle props in State for Undo
             },
         };
 
