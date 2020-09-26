@@ -111,22 +111,28 @@ export default class Whiteboard extends React.Component {
                   ]
                 : '';
 
-        //if the user last drew a Line or Circle, remove from AllDrawings
-        if (
-            this.state.allDrawings.length > 0 &&
-            (whatTheUserLastDrew === DrawType.Line ||
-                whatTheUserLastDrew === DrawType.Circle)
-        ) {
-            let drawings = this.state.allDrawings;
-            drawings.pop();
+        //if the user has made some drawings.
+        if (this.state.allDrawings.length > 0) {
+            //if the user last drew a line or circle, remove from All Drawings
+            if (
+                whatTheUserLastDrew === DrawType.Line ||
+                whatTheUserLastDrew === DrawType.Circle
+            ) {
+                let drawings = this.state.allDrawings;
+                drawings.pop();
 
-            let allWhatUserDrew = this.state.whatUserLastDrew;
-            allWhatUserDrew.pop();
+                let allWhatUserDrew = this.state.whatUserLastDrew;
+                allWhatUserDrew.pop();
 
-            this.setState({
-                allDrawings: [...drawings],
-                whatUserLastDrew: [...allWhatUserDrew],
-            });
+                this.setState({
+                    allDrawings: [...drawings],
+                    whatUserLastDrew: [...allWhatUserDrew],
+                });
+            } else if (
+                whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
+            ) {
+                console.log('User last updated the circle size');
+            }
         } else {
             //if it was a Pencil, remove from the strokes
             if (
