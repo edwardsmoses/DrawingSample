@@ -133,6 +133,7 @@ export default class Whiteboard extends React.Component {
             this.state.allDrawings.length > 0 &&
             whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
         ) {
+            console.log('Here');
             const currentSelectedIndex =
                 whatTheUserLastDrew.ActionInfo.ElementIndex;
             const previousCircleProps =
@@ -159,6 +160,10 @@ export default class Whiteboard extends React.Component {
             this.setState({
                 allDrawings: newDrawings,
             });
+
+            //this is no longer what the user last drew, so Pop
+            let allWhatUserDrew = this.state.whatUserLastDrew;
+            allWhatUserDrew.pop();
         } else {
             //if it was a Pencil, remove from the strokes
             if (
