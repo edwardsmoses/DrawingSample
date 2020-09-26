@@ -103,8 +103,6 @@ export default class Whiteboard extends React.Component {
 
     /** When User Presses the Undo Button */
     rewind = () => {
-        console.log(this.state.whatUserLastDrew);
-
         //get what the user last drew
         const whatTheUserLastDrew =
             this.state.whatUserLastDrew.length > 0
