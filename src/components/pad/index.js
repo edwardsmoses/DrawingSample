@@ -111,53 +111,54 @@ export default class Whiteboard extends React.Component {
                   ]
                 : '';
 
-        //if the user has made some drawings.
-        if (this.state.allDrawings.length > 0) {
-            //if the user last drew a line or circle, remove from All Drawings
-            if (
-                whatTheUserLastDrew === DrawType.Line ||
-                whatTheUserLastDrew === DrawType.Circle
-            ) {
-                let drawings = this.state.allDrawings;
-                drawings.pop();
+        console.log('What User Last Drew', whatTheUserLastDrew);
 
-                let allWhatUserDrew = this.state.whatUserLastDrew;
-                allWhatUserDrew.pop();
+        //if the user last drew a line or circle, remove from All Drawings
+        if (
+            this.state.allDrawings.length > 0 &&
+            (whatTheUserLastDrew === DrawType.Line ||
+                whatTheUserLastDrew === DrawType.Circle)
+        ) {
+            let drawings = this.state.allDrawings;
+            drawings.pop();
 
-                this.setState({
-                    allDrawings: [...drawings],
-                    whatUserLastDrew: [...allWhatUserDrew],
-                });
-            } else if (
-                whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
-            ) {
-                const currentSelectedIndex =
-                    whatTheUserLastDrew.ActionInfo.ElementIndex;
-                const previousCircleProps =
-                    whatTheUserLastDrew.ActionInfo.PreviousCircleProps;
+            let allWhatUserDrew = this.state.whatUserLastDrew;
+            allWhatUserDrew.pop();
 
-                //build the new Circle Element using New Radius and Props of the former Circle
-                const newCircleElement = (
-                    <Circle
-                        cx={previousCircleProps.cx}
-                        cy={previousCircleProps.cy}
-                        r={previousCircleProps.r}
-                        onLongPress={() => {
-                            this.OnLongPressCircle(currentSelectedIndex);
-                        }}
-                        delayLongPress={600}
-                        stroke={previousCircleProps.stroke}
-                        strokeWidth={previousCircleProps.strokeWidth}
-                    />
-                );
+            this.setState({
+                allDrawings: [...drawings],
+                whatUserLastDrew: [...allWhatUserDrew],
+            });
+        } else if (
+            this.state.allDrawings.length > 0 &&
+            whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
+        ) {
+            const currentSelectedIndex =
+                whatTheUserLastDrew.ActionInfo.ElementIndex;
+            const previousCircleProps =
+                whatTheUserLastDrew.ActionInfo.PreviousCircleProps;
 
-                const newDrawings = [...this.state.allDrawings];
-                newDrawings[currentSelectedIndex] = newCircleElement;
+            //build the new Circle Element using New Radius and Props of the former Circle
+            const newCircleElement = (
+                <Circle
+                    cx={previousCircleProps.cx}
+                    cy={previousCircleProps.cy}
+                    r={previousCircleProps.r}
+                    onLongPress={() => {
+                        this.OnLongPressCircle(currentSelectedIndex);
+                    }}
+                    delayLongPress={600}
+                    stroke={previousCircleProps.stroke}
+                    strokeWidth={previousCircleProps.strokeWidth}
+                />
+            );
 
-                this.setState({
-                    allDrawings: newDrawings,
-                });
-            }
+            const newDrawings = [...this.state.allDrawings];
+            newDrawings[currentSelectedIndex] = newCircleElement;
+
+            this.setState({
+                allDrawings: newDrawings,
+            });
         } else {
             //if it was a Pencil, remove from the strokes
             if (
