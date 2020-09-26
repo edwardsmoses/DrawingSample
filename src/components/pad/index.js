@@ -111,8 +111,6 @@ export default class Whiteboard extends React.Component {
                   ]
                 : '';
 
-        console.log('What User Last Drew', whatTheUserLastDrew);
-
         //if the user last drew a line or circle, remove from All Drawings
         if (
             this.state.allDrawings.length > 0 &&
@@ -133,7 +131,6 @@ export default class Whiteboard extends React.Component {
             this.state.allDrawings.length > 0 &&
             whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
         ) {
-            console.log('Here');
             const currentSelectedIndex =
                 whatTheUserLastDrew.ActionInfo.ElementIndex;
             const previousCircleProps =
@@ -219,7 +216,6 @@ export default class Whiteboard extends React.Component {
 
     /** Update the Drawing Type [Pencil, Line, Circle] */
     updateCurrentDrawingType = (newDrawingType) => {
-        console.log(newDrawingType);
         this.setState({
             drawingToolType: newDrawingType,
         });
