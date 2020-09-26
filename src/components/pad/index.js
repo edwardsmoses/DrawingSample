@@ -382,13 +382,29 @@ export default class Whiteboard extends React.Component {
         //update drawing Type to circle
         this.updateCurrentDrawingType(DrawType.Circle);
 
+        //when the user selects the circle for Updating
+        //store the current Props of the Circle for Undo
+        const updateCircleNewAction = {
+            ActionType: DrawType.UpdateCircleSize,
+            ActionInfo: {
+                ElementIndex: elementIndex,
+                PreviousSize: circleElement.props.r, //this is the only prop that would change the user zooms.
+            },
+        };
+
         this.setState({
             didUserLongPressCircle: true,
             currentUserSelectedCircle: {
                 circleElementIndex: elementIndex,
                 circleElement: circleElement,
             },
+            whatUserLastDrew: [
+                ...this.state.whatUserLastDrew,
+                updateCircleNewAction,
+            ], //user begins to update circle size.
         });
+
+        //when user seelects the circle for update
 
         //To-Do: Show Visual Feedback that the Circle has been selected.
     };
