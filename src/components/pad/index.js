@@ -111,7 +111,7 @@ export default class Whiteboard extends React.Component {
                   ]
                 : '';
 
-        //if the user last drew a Line or Circle, remove from AllDrawings
+        //if the user last drew a line or circle, remove from All Drawings
         if (
             this.state.allDrawings.length > 0 &&
             (whatTheUserLastDrew === DrawType.Line ||
@@ -127,6 +127,40 @@ export default class Whiteboard extends React.Component {
                 allDrawings: [...drawings],
                 whatUserLastDrew: [...allWhatUserDrew],
             });
+        } else if (
+            this.state.allDrawings.length > 0 &&
+            whatTheUserLastDrew.ActionType === DrawType.UpdateCircleSize
+        ) {
+            const currentSelectedIndex =
+                whatTheUserLastDrew.ActionInfo.ElementIndex;
+            const previousCircleProps =
+                whatTheUserLastDrew.ActionInfo.PreviousCircleProps;
+
+            //build the new Circle Element using New Radius and Props of the former Circle
+            const newCircleElement = (
+                <Circle
+                    cx={previousCircleProps.cx}
+                    cy={previousCircleProps.cy}
+                    r={previousCircleProps.r}
+                    onLongPress={() => {
+                        this.OnLongPressCircle(currentSelectedIndex);
+                    }}
+                    delayLongPress={600}
+                    stroke={previousCircleProps.stroke}
+                    strokeWidth={previousCircleProps.strokeWidth}
+                />
+            );
+
+            const newDrawings = [...this.state.allDrawings];
+            newDrawings[currentSelectedIndex] = newCircleElement;
+
+            this.setState({
+                allDrawings: newDrawings,
+            });
+
+            //this is no longer what the user last drew, so Pop
+            let allWhatUserDrew = this.state.whatUserLastDrew;
+            allWhatUserDrew.pop();
         } else {
             //if it was a Pencil, remove from the strokes
             if (
@@ -165,6 +199,7 @@ export default class Whiteboard extends React.Component {
                 currentPoints: [],
                 newStroke: [],
                 allDrawings: [],
+                whatUserLastDrew: [],
             },
             () => {
                 this._onChangeStrokes([]);
@@ -182,7 +217,6 @@ export default class Whiteboard extends React.Component {
 
     /** Update the Drawing Type [Pencil, Line, Circle] */
     updateCurrentDrawingType = (newDrawingType) => {
-        console.log(newDrawingType);
         this.setState({
             drawingToolType: newDrawingType,
         });
@@ -382,13 +416,35 @@ export default class Whiteboard extends React.Component {
         //update drawing Type to circle
         this.updateCurrentDrawingType(DrawType.Circle);
 
+        //when the user selects the circle for Updating
+        //store the current Props of the Circle for Undo
+        const updateCircleNewAction = {
+            ActionType: DrawType.UpdateCircleSize,
+            ActionInfo: {
+                ElementIndex: elementIndex,
+                PreviousCircleProps: {
+                    r: circleElement.props.r,
+                    cx: circleElement.props.cx,
+                    cy: circleElement.props.cy,
+                    stroke: circleElement.props.stroke,
+                    strokeWidth: circleElement.props.strokeWidth,
+                }, //store the needed circle props in State for Undo
+            },
+        };
+
         this.setState({
             didUserLongPressCircle: true,
             currentUserSelectedCircle: {
                 circleElementIndex: elementIndex,
                 circleElement: circleElement,
             },
+            whatUserLastDrew: [
+                ...this.state.whatUserLastDrew,
+                updateCircleNewAction,
+            ], //user begins to update circle size.
         });
+
+        //when user seelects the circle for update
 
         //To-Do: Show Visual Feedback that the Circle has been selected.
     };
