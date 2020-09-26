@@ -1,4 +1,4 @@
-import simplify from './simplify';
+import {Simplify} from './Simplify/';
 
 const d3 = require('d3-shape');
 const defaultLineGenerator = d3
@@ -48,7 +48,7 @@ export default class Pen {
         let offsetX = this._offsetX;
         let offsetY = this._offsetY;
         if (points.length > 0) {
-            let simplifiedPathPoints = simplify(points, tolerance, highQuality);
+            let simplifiedPathPoints = Simplify(points, tolerance, highQuality);
             if (lineGenerator && typeof lineGenerator === 'function') {
                 return lineGenerator(simplifiedPathPoints);
             }

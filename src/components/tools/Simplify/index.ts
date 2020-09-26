@@ -113,7 +113,7 @@ const simplifyDouglasPeucker = (points: Point[], sqTolerance: number) => {
 };
 
 /** both algorithms combined for awesome performance */
-const simplify = (
+export const Simplify = (
     points: Point[],
     tolerance: number | undefined,
     highestQuality: Point[],
@@ -129,5 +129,3 @@ const simplify = (
 
     return points;
 };
-
-export default simplify;
