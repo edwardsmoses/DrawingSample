@@ -4,6 +4,7 @@ import {View, StyleSheet, Image} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 
 import Pad from './src/components/pad/';
+import {Canvas} from './src/components/canvas/';
 
 const App = () => {
     const selectColor = (color: string) => {
@@ -27,7 +28,9 @@ const App = () => {
                 />
             </View>
 
-            <Pad
+            <Canvas />
+
+            {/* <Pad
                 strokes={[]}
                 containerStyle={styles.padView}
                 rewind={(undo: any) => {
@@ -41,7 +44,7 @@ const App = () => {
                 strokeWidth={strokeWidth}
                 updateStrokeWidth={updateStrokeWidth}
                 onChangeStrokes={(strokes: any) => console.log(strokes)}
-            />
+            /> */}
             {/* <Svg viewBox="-16 -16 544 544">
                 <Path
                     stroke="#000000"
