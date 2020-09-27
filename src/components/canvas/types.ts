@@ -1,7 +1,7 @@
 import {Pen} from '../tools/Pen/';
 
 /** The Drawing Types */
-enum DrawingType {
+export enum DrawingType {
     Pencil = 'Pencil',
     Line = 'Line',
     Circle = 'Circle',
@@ -9,25 +9,25 @@ enum DrawingType {
 }
 
 /** The UserActions */
-type UserAction = {
+export type UserAction = {
     ActionType: DrawingType;
     ActionInfo: object;
 };
 
 /** User Selects Element (Circle) */
-type ElementSelection = {
+export type ElementSelection = {
     ElementIndex: number;
     Element: React.ReactNode;
 };
 
-type Coordinates = {
+export type Coordinates = {
     StartX: number;
     StartY: number;
     EndX: number;
     EndY: number;
 };
 
-type CanvasState = {
+export type CanvasState = {
     /** Hold the Line and Circle Drawings */
     AllDrawings: React.ReactNode[];
 
