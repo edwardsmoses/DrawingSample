@@ -7,7 +7,7 @@
 // to suit your point format, run search/replace for '.x' and '.y';
 // for 3D version, see 3d branch (configurability would draw significant performance overhead)
 
-type Point = {
+export type Point = {
     x: number;
     y: number;
 };
@@ -116,7 +116,7 @@ const simplifyDouglasPeucker = (points: Point[], sqTolerance: number) => {
 export const Simplify = (
     points: Point[],
     tolerance: number | undefined,
-    highestQuality: Point[],
+    highestQuality: boolean,
 ) => {
     if (points.length <= 2) {
         return points;

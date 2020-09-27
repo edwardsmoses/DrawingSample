@@ -1,14 +1,76 @@
-import {Simplify} from '../Simplify/';
-import {line, curveCatmullRom} from 'd3-shape';
+import {Simplify, Point} from '../Simplify/';
+import {line, curveCatmullRom, Line} from 'd3-shape';
 
 const defaultLineGenerator = line()
-    .x(function (d) {
-        return d[0];
-    })
-    .y(function (d) {
-        return d[1];
-    })
+.x(function (d:any) {
+    return d.x;
+})
+.y(function (d:any) {
+    return d.y;
+})
     .curve(curveCatmullRom.alpha(0.5));
+
+const Pen = () => {
+    let strokes = [];
+    let offSetX = 0;
+    let offSetY = 0;
+
+    const setStrokes = (_strokes: []) => {
+        strokes = _strokes;
+    };
+
+    const addStroke = (points) => {
+        if (points.length > 0) {
+            strokes.push(points);
+        }
+    };
+
+    const rewindStroke = () => {
+        if (strokes.length < 1) {
+            return;
+        }
+        strokes.pop();
+    };
+
+    type OffSetOptions = {
+        x: number;
+        y: number;
+    };
+    const setOffSet = (options: OffSetOptions) => {
+        if (!options) {
+            return;
+        }
+        offSetX = options.x;
+        offSetY = options.y;
+    };
+
+    type PointsToSVGProps = {
+        points:any,
+        tolerance:number,
+
+    }
+    const pointsToSVG = (points:any, tolerance:number, lineGenerator:any , highQuality= true) => {
+       
+            if (points.length > 0) {
+                let simplifiedPathPoints = Simplify(points, tolerance, highQuality);
+                if (lineGenerator && typeof lineGenerator === 'function') {
+                    return lineGenerator(simplifiedPathPoints);
+                }
+                simplifiedPathPoints.forEach((item) => [item.x, item.y]);
+                return defaultLineGenerator([
+                simplifiedPathPoints.reduce((item) => [item.x, item.y]);
+                ])
+            } else {
+                return '';
+            }
+        }
+    
+        constclear = () => {
+            strokes = [];
+        };
+    }
+};
+
 
 export default class Pen {
     constructor(strokes) {
@@ -41,7 +103,7 @@ export default class Pen {
     pointsToSvg(
         points,
         tolerance = 1,
-        lineGenerator = null,
+        lineGenerator: Line<[number, number]>,
         highQuality = true,
     ) {
         let offsetX = this._offsetX;
@@ -58,6 +120,6 @@ export default class Pen {
     }
 
     clear = () => {
-        this.strokes = [];
+        strokes = [];
     };
 }
