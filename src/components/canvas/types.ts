@@ -27,9 +27,17 @@ export type Coordinates = {
     EndY: number;
 };
 
+export type StrokeInfo = {
+    Color: string;
+    Width: number;
+}
+
 export type CanvasState = {
     /** Hold the Line and Circle Drawings */
     AllDrawings: React.ReactNode[];
+
+    /** Hold the Stroke Information */
+    StrokeInfo: StrokeInfo;
 
     /** Hold the UserActions for Undo */
     UserActions: UserAction[];

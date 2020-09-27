@@ -17,6 +17,10 @@ export const Canvas = () => {
             StartX: 0,
             StartY: 0,
         },
+        StrokeInfo: {
+            Color: '#000000',
+            Width: 4,
+        },
         CurrentPoints: [],
         CurrentUserSelection: null,
         DrawingToolType: CanvasTypes.DrawingType.Pencil,
