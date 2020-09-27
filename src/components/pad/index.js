@@ -2,7 +2,8 @@ import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
 import Svg, {G, Path, Circle, Line} from 'react-native-svg';
 
-import {Pen, Point} from '../tools/Pen/index';
+import {Pen} from '../tools/Pen/index';
+import {Point} from '../tools/Point/';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -163,7 +164,10 @@ export default class Whiteboard extends React.Component {
             allWhatUserDrew.pop();
         } else {
             //if it was a Pencil, remove from the strokes
-            if ( this.state.currentPoints.length > 0 || this.state.previousStrokes.length < 1) {
+            if (
+                this.state.currentPoints.length > 0 ||
+                this.state.previousStrokes.length < 1
+            ) {
                 return;
             }
 
@@ -227,7 +231,9 @@ export default class Whiteboard extends React.Component {
             evt.nativeEvent.timestamp,
         ];
 
-        let newPoint = new Point(x, y, timestamp);
+        let newPoint = Point();
+        newPoint.setPoint({x, y, timestamp});
+
         let newCurrentPoints = this.state.currentPoints;
         newCurrentPoints.push(newPoint);
 
@@ -325,7 +331,6 @@ export default class Whiteboard extends React.Component {
 
     /** When User releases on Screen, for Pencil Drawing Type */
     pencilDrawResponderRelease = () => {
-        
         if (this.state.currentPoints.length < 1) {
             return;
         }
@@ -335,7 +340,15 @@ export default class Whiteboard extends React.Component {
             let p = points[0];
             // eslint-disable-next-line radix
             let distance = parseInt(Math.sqrt(this.props.strokeWidth || 4) / 2);
-            points.push(new Point(p.x + distance, p.y + distance, p.time));
+
+            let newPoint = Point();
+            newPoint.setPoint({
+                x: p.x + distance,
+                y: p.y + distance,
+                time: p.time,
+            });
+
+            points.push(newPoint);
         }
 
         let newElement = {
