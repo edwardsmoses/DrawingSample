@@ -389,7 +389,7 @@ export default class Whiteboard extends React.Component {
     };
 
     _onLayoutContainer = (e) => {
-        this.state.pen.setOffset(e.nativeEvent.layout);
+        this.state.pen.setOffSet(e.nativeEvent.layout);
         this._layout = e.nativeEvent.layout;
     };
 
