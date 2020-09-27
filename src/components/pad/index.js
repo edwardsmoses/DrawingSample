@@ -2,9 +2,6 @@ import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
 import Svg, {G, Path, Circle, Line} from 'react-native-svg';
 import Pen from '../tools/pen';
-import Point from '../tools/point';
-
-import {Point as NewPoint} from '../tools/Point/';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -336,11 +333,6 @@ export default class Whiteboard extends React.Component {
             let p = points[0];
             // eslint-disable-next-line radix
             let distance = parseInt(Math.sqrt(this.props.strokeWidth || 4) / 2);
-
-            const newPoint = NewPoint(p.x + distance, p.y + distance, p.time);
-            console.log('ThePoint', newPoint);
-
-            points.push(newPoint);
         }
 
         let newElement = {
