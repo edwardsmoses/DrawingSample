@@ -1,25 +1,27 @@
-export default class Point {
-    constructor(x, y, time) {
-        this.x = x;
-        this.y = y;
-        this.time = time || new Date().getTime();
-    }
+type PointProps = {
+    x: number;
+    y: number;
+    time: any;
+};
 
-    velocityFrom(start) {
-        return this.time !== start.time
-            ? this.distanceTo(start) / (this.time - start.time)
+export const Point = (props: PointProps) => {
+    const velocityFrom = (start: PointProps) => {
+        return props.time !== start.time
+            ? distanceTo(start) / (props.time - start.time)
             : 1;
-    }
+    };
 
-    distanceTo(start) {
+    const distanceTo = (start: PointProps) => {
         return Math.sqrt(
-            Math.pow(this.x - start.x, 2) + Math.pow(this.y - start.y, 2),
+            Math.pow(props.x - start.x, 2) + Math.pow(props.y - start.y, 2),
         );
-    }
+    };
 
-    equals(point) {
+    const equals = (point: PointProps) => {
         return (
-            this.x === point.x && this.y === point.y && this.time === point.time
+            props.x === point.x &&
+            props.y === point.y &&
+            props.time === point.time
         );
-    }
-}
+    };
+};
