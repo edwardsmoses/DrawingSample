@@ -2,7 +2,30 @@ import React from 'react';
 
 import {View, PanResponder, StyleSheet} from 'react-native';
 
+import {Pen} from '../tools/Pen/';
+
+import * as CanvasTypes from './types';
+
 export const Canvas = () => {
+    const [canvasState, setCanvasState] = React.useState<
+        CanvasTypes.CanvasState
+    >({
+        AllDrawings: [],
+        Coordinates: {
+            EndX: 0,
+            EndY: 0,
+            StartX: 0,
+            StartY: 0,
+        },
+        CurrentPoints: [],
+        CurrentUserSelection: null,
+        DrawingToolType: CanvasTypes.DrawingType.Pencil,
+        NewStroke: [],
+        Pen: Pen,
+        PreviousStrokes: [],
+        UserActions: [],
+    });
+
     const panResponder = React.useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: (evt, gestureState) => true,
