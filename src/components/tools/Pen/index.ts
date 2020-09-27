@@ -1,16 +1,10 @@
-import {Simplify, Point} from '../Simplify/';
-import {line, curveCatmullRom, Line} from 'd3-shape';
+export type Point = {
+    x: number;
+    y: number;
+};
 
-const defaultLineGenerator = line()
-.x(function (d:any) {
-    return d.x;
-})
-.y(function (d:any) {
-    return d.y;
-})
-    .curve(curveCatmullRom.alpha(0.5));
 
-const Pen = () => {
+export const Pen = () => {
     let strokes = [];
     let offSetX = 0;
     let offSetY = 0;
@@ -19,7 +13,7 @@ const Pen = () => {
         strokes = _strokes;
     };
 
-    const addStroke = (points) => {
+    const addStroke = (points: any) => {
         if (points.length > 0) {
             strokes.push(points);
         }
@@ -44,82 +38,27 @@ const Pen = () => {
         offSetY = options.y;
     };
 
-    type PointsToSVGProps = {
-        points:any,
-        tolerance:number,
-
-    }
-    const pointsToSVG = (points:any, tolerance:number, lineGenerator:any , highQuality= true) => {
-       
-            if (points.length > 0) {
-                let simplifiedPathPoints = Simplify(points, tolerance, highQuality);
-                if (lineGenerator && typeof lineGenerator === 'function') {
-                    return lineGenerator(simplifiedPathPoints);
-                }
-                simplifiedPathPoints.forEach((item) => [item.x, item.y]);
-                return defaultLineGenerator([
-                simplifiedPathPoints.reduce((item) => [item.x, item.y]);
-                ])
-            } else {
-                return '';
-            }
-        }
-    
-        constclear = () => {
-            strokes = [];
-        };
-    }
-};
-
-
-export default class Pen {
-    constructor(strokes) {
-        this.strokes = strokes || [];
-        this._offsetX = 0;
-        this._offsetY = 0;
-    }
-
-    addStroke(points) {
+    const pointsToSVG = (points: Point[]) => {
         if (points.length > 0) {
-            this.strokes.push(points);
-        }
-    }
-
-    rewindStroke() {
-        if (this.strokes.length < 1) {
-            return;
-        }
-        this.strokes.pop();
-    }
-
-    setOffset(options) {
-        if (!options) {
-            return;
-        }
-        this._offsetX = options.x;
-        this._offsetY = options.y;
-    }
-
-    pointsToSvg(
-        points,
-        tolerance = 1,
-        lineGenerator: Line<[number, number]>,
-        highQuality = true,
-    ) {
-        let offsetX = this._offsetX;
-        let offsetY = this._offsetY;
-        if (points.length > 0) {
-            let simplifiedPathPoints = Simplify(points, tolerance, highQuality);
-            if (lineGenerator && typeof lineGenerator === 'function') {
-                return lineGenerator(simplifiedPathPoints);
-            }
-            return defaultLineGenerator(simplifiedPathPoints);
+            var path = `M ${points[0].x},${points[0].y}`;
+            points.forEach((point) => {
+                path = path + ` L ${point.x},${point.y}`;
+            });
+            return path;
         } else {
             return '';
         }
-    }
+    };
 
-    clear = () => {
+    const clear = () => {
         strokes = [];
     };
-}
+
+    return {
+        setStrokes,
+        addStroke,
+        rewindStroke,
+        setOffSet,
+        pointsToSVG,
+    };
+};
