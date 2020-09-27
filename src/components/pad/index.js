@@ -1,7 +1,8 @@
 import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
 import Svg, {G, Path, Circle, Line} from 'react-native-svg';
-import Pen from '../tools/pen';
+
+import {Pen} from '../tools/Pen/index';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -42,7 +43,7 @@ export default class Whiteboard extends React.Component {
             whatUserLastDrew: [], //to know what to remove from screen, on press of undo
             previousStrokes: this.props.strokes || [],
             newStroke: [],
-            pen: new Pen(),
+            pen: Pen(),
             drawingToolType: DrawType.Pencil, //hold the drawingType (Pencil, Circle, Line)
             startX: 0, //hold the startX of when user Touches Screen
             startY: 0, //hold the startY of when user Touches Screen
