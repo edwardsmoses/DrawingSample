@@ -3,11 +3,8 @@ export type Point = {
     y: number;
 };
 
-
 export const Pen = () => {
     let strokes: any[] = [];
-    let offSetX = 0;
-    let offSetY = 0;
 
     const setStrokes = (_strokes: []) => {
         strokes = _strokes;
@@ -34,8 +31,6 @@ export const Pen = () => {
         if (!options) {
             return;
         }
-        offSetX = options.x;
-        offSetY = options.y;
     };
 
     const pointsToSVG = (points: Point[]) => {
