@@ -2,7 +2,7 @@ import React from 'react';
 import {View, PanResponder, StyleSheet, InteractionManager} from 'react-native';
 import Svg, {G, Path, Circle, Line} from 'react-native-svg';
 
-import {Pen} from '../tools/Pen/index';
+import {Pen, Point} from '../tools/Pen/index';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -43,6 +43,7 @@ export default class Whiteboard extends React.Component {
             whatUserLastDrew: [], //to know what to remove from screen, on press of undo
             previousStrokes: this.props.strokes || [],
             newStroke: [],
+            currentPoints: [],
             pen: Pen(),
             drawingToolType: DrawType.Pencil, //hold the drawingType (Pencil, Circle, Line)
             startX: 0, //hold the startX of when user Touches Screen
@@ -162,7 +163,7 @@ export default class Whiteboard extends React.Component {
             allWhatUserDrew.pop();
         } else {
             //if it was a Pencil, remove from the strokes
-            if (this.state.previousStrokes.length < 1) {
+            if ( this.state.currentPoints.length > 0 || this.state.previousStrokes.length < 1) {
                 return;
             }
 
@@ -191,6 +192,7 @@ export default class Whiteboard extends React.Component {
         this.setState(
             {
                 previousStrokes: [],
+                currentPoints: [],
                 newStroke: [],
                 allDrawings: [],
                 whatUserLastDrew: [],
@@ -225,8 +227,13 @@ export default class Whiteboard extends React.Component {
             evt.nativeEvent.timestamp,
         ];
 
+        let newPoint = new Point(x, y, timestamp);
+        let newCurrentPoints = this.state.currentPoints;
+        newCurrentPoints.push(newPoint);
+
         this.setState({
             previousStrokes: this.state.previousStrokes,
+            currentPoints: newCurrentPoints,
         });
     };
 
@@ -318,11 +325,24 @@ export default class Whiteboard extends React.Component {
 
     /** When User releases on Screen, for Pencil Drawing Type */
     pencilDrawResponderRelease = () => {
+        
+        if (this.state.currentPoints.length < 1) {
+            return;
+        }
+
+        let points = this.state.currentPoints;
+        if (points.length === 1) {
+            let p = points[0];
+            // eslint-disable-next-line radix
+            let distance = parseInt(Math.sqrt(this.props.strokeWidth || 4) / 2);
+            points.push(new Point(p.x + distance, p.y + distance, p.time));
+        }
+
         let newElement = {
             type: 'Path',
             attributes: {
-                d: this.state.pen.pointsToSvg(
-                    null,
+                d: this.state.pen.pointsToSVG(
+                    points,
                     this.props.simplifyTolerance,
                     this.props.lineGenerator,
                 ),
@@ -334,6 +354,10 @@ export default class Whiteboard extends React.Component {
             },
         };
 
+        this.state.pen.addStroke(points);
+
+        this.currentPoints = [];
+
         InteractionManager.runAfterInteractions(() => {
             this.setState(
                 {
@@ -341,6 +365,7 @@ export default class Whiteboard extends React.Component {
                         ...this.state.previousStrokes,
                         newElement,
                     ],
+                    currentPoints: this.currentPoints || [],
                     whatUserLastDrew: [
                         ...this.state.whatUserLastDrew,
                         DrawType.Pencil,
@@ -580,8 +605,8 @@ export default class Whiteboard extends React.Component {
                                 )}
                                 <Path
                                     key={this.state.previousStrokes.length}
-                                    d={this.state.pen.pointsToSvg(
-                                        null,
+                                    d={this.state.pen.pointsToSVG(
+                                        this.state.currentPoints,
                                         this.props.simplifyTolerance,
                                         this.props.lineGenerator,
                                         false,
