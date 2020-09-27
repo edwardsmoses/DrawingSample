@@ -40,7 +40,6 @@ export default class Whiteboard extends React.Component {
         this.state = {
             allDrawings: [], //hold Line and Circle Drawings
             whatUserLastDrew: [], //to know what to remove from screen, on press of undo
-            currentPoints: [],
             previousStrokes: this.props.strokes || [],
             newStroke: [],
             pen: new Pen(),
@@ -162,10 +161,7 @@ export default class Whiteboard extends React.Component {
             allWhatUserDrew.pop();
         } else {
             //if it was a Pencil, remove from the strokes
-            if (
-                this.state.currentPoints.length > 0 ||
-                this.state.previousStrokes.length < 1
-            ) {
+            if (this.state.previousStrokes.length < 1) {
                 return;
             }
 
@@ -180,7 +176,6 @@ export default class Whiteboard extends React.Component {
             this.setState(
                 {
                     previousStrokes: [...strokes],
-                    currentPoints: [],
                     whatUserLastDrew: [...allWhatUserDrew],
                 },
                 () => {
@@ -195,7 +190,6 @@ export default class Whiteboard extends React.Component {
         this.setState(
             {
                 previousStrokes: [],
-                currentPoints: [],
                 newStroke: [],
                 allDrawings: [],
                 whatUserLastDrew: [],
@@ -323,23 +317,11 @@ export default class Whiteboard extends React.Component {
 
     /** When User releases on Screen, for Pencil Drawing Type */
     pencilDrawResponderRelease = () => {
-        // let strokes = this.state.previousStrokes;
-        if (this.state.currentPoints.length < 1) {
-            return;
-        }
-
-        let points = this.state.currentPoints;
-        if (points.length === 1) {
-            let p = points[0];
-            // eslint-disable-next-line radix
-            let distance = parseInt(Math.sqrt(this.props.strokeWidth || 4) / 2);
-        }
-
         let newElement = {
             type: 'Path',
             attributes: {
                 d: this.state.pen.pointsToSvg(
-                    points,
+                    null,
                     this.props.simplifyTolerance,
                     this.props.lineGenerator,
                 ),
@@ -351,10 +333,6 @@ export default class Whiteboard extends React.Component {
             },
         };
 
-        this.state.pen.addStroke(points);
-
-        this.currentPoints = [];
-
         InteractionManager.runAfterInteractions(() => {
             this.setState(
                 {
@@ -362,7 +340,6 @@ export default class Whiteboard extends React.Component {
                         ...this.state.previousStrokes,
                         newElement,
                     ],
-                    currentPoints: this.currentPoints || [],
                     whatUserLastDrew: [
                         ...this.state.whatUserLastDrew,
                         DrawType.Pencil,
@@ -603,7 +580,7 @@ export default class Whiteboard extends React.Component {
                                 <Path
                                     key={this.state.previousStrokes.length}
                                     d={this.state.pen.pointsToSvg(
-                                        this.state.currentPoints,
+                                        null,
                                         this.props.simplifyTolerance,
                                         this.props.lineGenerator,
                                         false,
