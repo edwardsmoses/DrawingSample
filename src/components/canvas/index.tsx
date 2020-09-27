@@ -2,33 +2,17 @@ import React from 'react';
 
 import {View, PanResponder, StyleSheet} from 'react-native';
 
-import {Pen} from '../tools/Pen/';
+import {Bar} from '../bottombar/Bar';
 
-import * as CanvasTypes from './types';
+import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
+
+import {CanvasReducer, InitialCanvasState} from './reducer/';
 
 export const Canvas = () => {
-    const [canvasState, setCanvasState] = React.useState<
-        CanvasTypes.CanvasState
-    >({
-        AllDrawings: [],
-        Coordinates: {
-            EndX: 0,
-            EndY: 0,
-            StartX: 0,
-            StartY: 0,
-        },
-        StrokeInfo: {
-            Color: '#000000',
-            Width: 4,
-        },
-        CurrentPoints: [],
-        CurrentUserSelection: null,
-        DrawingToolType: CanvasTypes.DrawingType.Pencil,
-        NewStroke: [],
-        Pen: Pen,
-        PreviousStrokes: [],
-        UserActions: [],
-    });
+    const [state, dispatch] = React.useReducer(
+        CanvasReducer,
+        InitialCanvasState,
+    );
 
     const panResponder = React.useRef(
         PanResponder.create({
@@ -60,10 +44,33 @@ export const Canvas = () => {
     ).current;
 
     return (
-        <View
-            style={styles.drawCanvasContainer}
-            {...panResponder.panHandlers}
-        />
+        <React.Fragment>
+            <View
+                style={styles.drawCanvasContainer}
+                {...panResponder.panHandlers}
+            />
+            <Bar
+                currentColor={state.StrokeColor}
+                selectColor={(color) =>
+                    dispatch({type: 'UpdateStrokeColor', newColor: color})
+                }
+                undoAction={() => {
+                    console.log('Pressed Undo');
+                }}
+                clearAction={() => {
+                    console.log('Pressed Clear');
+                }}
+                strokeWidth={state.StrokeWidth}
+                updateStrokeWidth={(width) =>
+                    dispatch({type: 'UpdateStrokeWidth', newStrokeWidth: width})
+                }
+                currentDrawingType={state.DrawingToolType}
+                updateCurrentDrawingType={(type) =>
+                    dispatch({type: 'UpdateDrawingType', newDrawingType: type})
+                }
+                captureScreenShot={CaptureAndShareScreenshot}
+            />
+        </React.Fragment>
     );
 };
 

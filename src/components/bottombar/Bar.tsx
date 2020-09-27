@@ -5,7 +5,7 @@ import {ColorSelector} from './tools/ColorSelector';
 import {StrokeSlider} from './tools/StrokeSlider';
 import {Button} from './tools/Button';
 
-import * as DrawType from '../tools/DrawType';
+import {DrawingType} from '../canvas/types';
 
 type BarProps = {
     currentColor: string;
@@ -14,7 +14,7 @@ type BarProps = {
     clearAction(): void;
     strokeWidth: number;
     updateStrokeWidth(strokeWidth: number): void;
-    updateCurrentDrawingType(drawingType: string): void;
+    updateCurrentDrawingType(drawingType: DrawingType): void;
     currentDrawingType: string;
     captureScreenShot(): void;
 };
@@ -32,7 +32,7 @@ export const Bar = (props: BarProps) => {
         captureScreenShot,
     } = props;
 
-    const SelectedButtonStyle = (drawType: string) => {
+    const SelectedButtonStyle = (drawType: DrawingType) => {
         const buttonStyle =
             currentDrawingType === drawType
                 ? styles.selectedButtonType
@@ -51,24 +51,28 @@ export const Bar = (props: BarProps) => {
                     <View style={styles.drawingTypeSection}>
                         <Button
                             buttonAction={() => {
-                                updateCurrentDrawingType(DrawType.Pencil);
+                                updateCurrentDrawingType(DrawingType.Pencil);
                             }}
                             text="Pencil"
-                            buttonStyle={SelectedButtonStyle(DrawType.Pencil)}
+                            buttonStyle={SelectedButtonStyle(
+                                DrawingType.Pencil,
+                            )}
                         />
                         <Button
                             buttonAction={() => {
-                                updateCurrentDrawingType(DrawType.Line);
+                                updateCurrentDrawingType(DrawingType.Line);
                             }}
                             text="Line"
-                            buttonStyle={SelectedButtonStyle(DrawType.Line)}
+                            buttonStyle={SelectedButtonStyle(DrawingType.Line)}
                         />
                         <Button
                             buttonAction={() => {
-                                updateCurrentDrawingType(DrawType.Circle);
+                                updateCurrentDrawingType(DrawingType.Circle);
                             }}
                             text="Circle"
-                            buttonStyle={SelectedButtonStyle(DrawType.Circle)}
+                            buttonStyle={SelectedButtonStyle(
+                                DrawingType.Circle,
+                            )}
                         />
                     </View>
                     <Button
