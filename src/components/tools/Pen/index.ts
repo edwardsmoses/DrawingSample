@@ -1,7 +1,4 @@
-export type Point = {
-    x: number;
-    y: number;
-};
+import {PointProps} from '../Point/';
 
 export const Pen = () => {
     let strokes: any[] = [];
@@ -33,7 +30,7 @@ export const Pen = () => {
         }
     };
 
-    const pointsToSVG = (points: Point[]) => {
+    const pointsToSVG = (points: PointProps[]) => {
         if (points.length > 0) {
             var path = `M ${points[0].x},${points[0].y}`;
             points.forEach((point) => {
