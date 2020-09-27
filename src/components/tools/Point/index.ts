@@ -4,18 +4,22 @@ export type PointProps = {
     time: any;
 };
 
-export const Point = (
-    props: PointProps = {x: 0, y: 0, time: new Date().getTime()},
-) => {
+export const Point = () => {
     const point: PointProps = {
-        x: props.x,
-        y: props.y,
-        time: props.time,
+        x: 0,
+        y: 0,
+        time: new Date().getTime(),
+    };
+
+    const setPoint = (props: PointProps) => {
+        point.x = props.x;
+        point.y = props.y;
+        point.time = props.time;
     };
 
     const velocityFrom = (start: PointProps) => {
         return point.time !== start.time
-            ? distanceTo(start) / (props.time - start.time)
+            ? distanceTo(start) / (point.time - start.time)
             : 1;
     };
 
@@ -35,6 +39,7 @@ export const Point = (
 
     return {
         point,
+        setPoint,
         velocityFrom,
         distanceTo,
         equals,
