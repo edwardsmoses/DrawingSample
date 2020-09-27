@@ -232,10 +232,10 @@ export default class Whiteboard extends React.Component {
         ];
 
         let newPoint = Point();
-        newPoint.setPoint({x, y, timestamp});
+        newPoint.setPoint({x, y, time: timestamp});
 
         let newCurrentPoints = this.state.currentPoints;
-        newCurrentPoints.push(newPoint);
+        newCurrentPoints.push(newPoint.point);
 
         this.setState({
             previousStrokes: this.state.previousStrokes,
@@ -348,7 +348,7 @@ export default class Whiteboard extends React.Component {
                 time: p.time,
             });
 
-            points.push(newPoint);
+            points.push(newPoint.point);
         }
 
         let newElement = {
