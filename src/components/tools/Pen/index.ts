@@ -5,7 +5,7 @@ export type Point = {
 
 
 export const Pen = () => {
-    let strokes = [];
+    let strokes: any[] = [];
     let offSetX = 0;
     let offSetY = 0;
 
