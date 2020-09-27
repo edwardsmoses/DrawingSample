@@ -1,13 +1,13 @@
 import {PointProps} from '../Point/';
 
 export const Pen = () => {
-    let strokes: any[] = [];
+    let strokes: PointProps[][] = [];
 
-    const setStrokes = (_strokes: []) => {
+    const setStrokes = (_strokes: PointProps[][]) => {
         strokes = _strokes;
     };
 
-    const addStroke = (points: any) => {
+    const addStroke = (points: PointProps[]) => {
         if (points.length > 0) {
             strokes.push(points);
         }
