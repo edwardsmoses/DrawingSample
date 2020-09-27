@@ -60,5 +60,6 @@ export const Pen = () => {
         rewindStroke,
         setOffSet,
         pointsToSVG,
+        clear,
     };
 };
