@@ -3,11 +3,13 @@ import {Pen} from '../../tools/Pen/';
 
 export const InitialCanvasState: Types.CanvasState = {
     AllDrawings: [],
-    Coordinates: {
-        EndX: 0,
-        EndY: 0,
-        StartX: 0,
-        StartY: 0,
+    StartCoordinates: {
+        X: 0,
+        Y: 0,
+    },
+    EndCoordinates: {
+        X: 0,
+        Y: 0,
     },
     StrokeColor: '#000000',
     StrokeWidth: 4,
@@ -24,7 +26,9 @@ export const InitialCanvasState: Types.CanvasState = {
 export type CanvasAction =
     | {type: 'UpdateStrokeColor'; newColor: string}
     | {type: 'UpdateStrokeWidth'; newStrokeWidth: number}
-    | {type: 'UpdateDrawingType'; newDrawingType: Types.DrawingType};
+    | {type: 'UpdateDrawingType'; newDrawingType: Types.DrawingType}
+    | {type: 'UpdateStartCoordinates'; startCoordinates: Types.Coordinates}
+    | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates};
 
 export const CanvasReducer = (
     state: Types.CanvasState,
@@ -37,6 +41,11 @@ export const CanvasReducer = (
             return {...state, StrokeWidth: action.newStrokeWidth};
         case 'UpdateDrawingType':
             return {...state, DrawingToolType: action.newDrawingType};
+        case 'UpdateStartCoordinates':
+            return {...state, StartCoordinates: action.startCoordinates};
+        case 'UpdateEndCoordinates':
+            return {...state, EndCoordinates: action.endCoordinates};
+
         default:
             throw new Error();
     }

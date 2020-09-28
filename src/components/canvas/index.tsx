@@ -1,12 +1,18 @@
 import React from 'react';
 
-import {View, PanResponder, StyleSheet} from 'react-native';
+import {
+    View,
+    PanResponder,
+    StyleSheet,
+    GestureResponderEvent,
+} from 'react-native';
 
 import {Bar} from '../bottombar/Bar';
 
 import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 
 import {CanvasReducer, InitialCanvasState} from './reducer/';
+import {DrawingType} from './types';
 
 export const Canvas = () => {
     const [state, dispatch] = React.useReducer(
@@ -14,34 +20,59 @@ export const Canvas = () => {
         InitialCanvasState,
     );
 
-    const panResponder = React.useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponder: (evt, gestureState) => true,
 
-            onPanResponderGrant: (evt, gestureState) => {
-                console.log(
-                    'Touched',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
+        onPanResponderGrant: (evt, gestureState) => {
+            console.log(
+                'Touched',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            onScreenTouch(evt);
+        },
+        onPanResponderMove: (evt, gestureState) => {
+            console.log(
+                'Moved',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+            console.log(
+                'Release',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            console.log('State', state);
+        },
+    });
+
+    /** When User Touches Screen */
+    const onScreenTouch = (evt: GestureResponderEvent) => {
+        switch (state.DrawingToolType) {
+            case DrawingType.Pencil:
+                break;
+            case DrawingType.Line:
+            case DrawingType.Circle:
+                ShapeOnScreenTouch(evt);
+                break;
+            default:
+                break;
+        }
+    };
+
+    /** When User Touches Screen for Shape (Line, Circle) */
+    const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'UpdateStartCoordinates',
+            startCoordinates: {
+                X: evt.nativeEvent.locationX,
+                Y: evt.nativeEvent.locationY,
             },
-            onPanResponderMove: (evt, gestureState) => {
-                console.log(
-                    'Moved',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
-            },
-            onPanResponderRelease: (evt, gestureState) => {
-                console.log(
-                    'Released',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
-            },
-        }),
-    ).current;
+        });
+    };
 
     return (
         <React.Fragment>

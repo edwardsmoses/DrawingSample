@@ -21,10 +21,8 @@ export type ElementSelection = {
 };
 
 export type Coordinates = {
-    StartX: number;
-    StartY: number;
-    EndX: number;
-    EndY: number;
+    X: number;
+    Y: number;
 };
 
 export type CanvasState = {
@@ -54,8 +52,11 @@ export type CanvasState = {
     /** Hold the Drawing Type */
     DrawingToolType: DrawingType;
 
-    /** Store the Coordinates as User Touches and Moves on Screen (Circle, Line) */
-    Coordinates: Coordinates;
+    /** Store the Start Coordinates when User Touches Screen (Circle, Line) */
+    StartCoordinates: Coordinates;
+
+    /** Store the End Coordinates when User Moves on Screen (Circle, Line) */
+    EndCoordinates: Coordinates;
 
     /** Store the User Selection - When User LongPresses on Circle */
     CurrentUserSelection: ElementSelection | null;
