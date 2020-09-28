@@ -14,42 +14,47 @@ import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 import {CanvasReducer, InitialCanvasState} from './reducer/';
 import {DrawingType} from './types';
 
+import {BuildLine, ShowLineAsUserDraws} from './utils/';
+
 export const Canvas = () => {
     const [state, dispatch] = React.useReducer(
         CanvasReducer,
         InitialCanvasState,
     );
 
-    const panResponder = PanResponder.create({
-        onStartShouldSetPanResponder: (evt, gestureState) => true,
-        onMoveShouldSetPanResponder: (evt, gestureState) => true,
+    const panResponder = React.useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: (evt, gestureState) => true,
+            onMoveShouldSetPanResponder: (evt, gestureState) => true,
 
-        onPanResponderGrant: (evt, gestureState) => {
-            console.log(
-                'Touched',
-                evt.nativeEvent.locationX,
-                evt.nativeEvent.locationY,
-            );
-            onScreenTouch(evt);
-        },
-        onPanResponderMove: (evt, gestureState) => {
-            console.log(
-                'Moved',
-                evt.nativeEvent.locationX,
-                evt.nativeEvent.locationY,
-            );
-        },
-        onPanResponderRelease: (evt, gestureState) => {
-            console.log(
-                'Release',
-                evt.nativeEvent.locationX,
-                evt.nativeEvent.locationY,
-            );
-            console.log('State', state);
-        },
-    });
+            onPanResponderGrant: (evt, gestureState) => {
+                console.log(
+                    'Touched',
+                    evt.nativeEvent.locationX,
+                    evt.nativeEvent.locationY,
+                );
+                onScreenTouch(evt);
+            },
+            onPanResponderMove: (evt, gestureState) => {
+                console.log(
+                    'Moved',
+                    evt.nativeEvent.locationX,
+                    evt.nativeEvent.locationY,
+                );
+                onScreenMove(evt);
+            },
+            onPanResponderRelease: (evt, gestureState) => {
+                console.log(
+                    'Release',
+                    evt.nativeEvent.locationX,
+                    evt.nativeEvent.locationY,
+                );
+                console.log('State', state);
+            },
+        }),
+    ).current;
 
-    /** When User Touches Screen */
+    /** Is Called When User Touches Screen */
     const onScreenTouch = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
@@ -74,12 +79,49 @@ export const Canvas = () => {
         });
     };
 
+    /** Is Called When User Moves on Screen */
+    const onScreenMove = (evt: GestureResponderEvent) => {
+        switch (state.DrawingToolType) {
+            case DrawingType.Pencil:
+                break;
+            case DrawingType.Line:
+            case DrawingType.Circle:
+                ShapeOnScreenMove(evt);
+                break;
+            default:
+                break;
+        }
+    };
+
+    /** When User Moves on  Screen for Shape (Line, Circle) */
+    const ShapeOnScreenMove = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'UpdateEndCoordinates',
+            endCoordinates: {
+                X: evt.nativeEvent.locationX,
+                Y: evt.nativeEvent.locationY,
+            },
+        });
+    };
+
     return (
         <React.Fragment>
             <View
                 style={styles.drawCanvasContainer}
-                {...panResponder.panHandlers}
-            />
+                {...panResponder.panHandlers}>
+                {ShowLineAsUserDraws(
+                    state.DrawingToolType,
+                    state.EndCoordinates,
+                ) &&
+                    BuildLine({
+                        EndX: state.EndCoordinates.X,
+                        EndY: state.EndCoordinates.Y,
+                        StartX: state.StartCoordinates.X,
+                        StartY: state.StartCoordinates.Y,
+                        StrokeColor: state.StrokeColor,
+                        StrokeWidth: state.StrokeWidth,
+                    })}
+            </View>
             <Bar
                 currentColor={state.StrokeColor}
                 selectColor={(color) =>
