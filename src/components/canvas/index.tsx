@@ -49,7 +49,7 @@ export const Canvas = () => {
                 evt.nativeEvent.locationX,
                 evt.nativeEvent.locationY,
             );
-            console.log('State', state);
+            onScrenRelease();
         },
     });
 
@@ -67,17 +67,6 @@ export const Canvas = () => {
         }
     };
 
-    /** When User Touches Screen for Shape (Line, Circle) */
-    const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
-        dispatch({
-            type: 'UpdateStartCoordinates',
-            startCoordinates: {
-                X: evt.nativeEvent.locationX,
-                Y: evt.nativeEvent.locationY,
-            },
-        });
-    };
-
     /** Is Called When User Moves on Screen */
     const onScreenMove = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
@@ -90,6 +79,32 @@ export const Canvas = () => {
             default:
                 break;
         }
+    };
+
+    /** Is Called When User Releases Touch from Screen */
+    const onScrenRelease = () => {
+        console.log('CanvasState', state);
+        switch (state.DrawingToolType) {
+            case DrawingType.Pencil:
+                break;
+            case DrawingType.Line:
+                break;
+            case DrawingType.Circle:
+                break;
+            default:
+                break;
+        }
+    };
+
+    /** When User Touches Screen for Shape (Line, Circle) */
+    const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'UpdateStartCoordinates',
+            startCoordinates: {
+                X: evt.nativeEvent.locationX,
+                Y: evt.nativeEvent.locationY,
+            },
+        });
     };
 
     /** When User Moves on  Screen for Shape (Line, Circle) */
