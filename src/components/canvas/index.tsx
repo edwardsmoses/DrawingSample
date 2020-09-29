@@ -22,37 +22,35 @@ export const Canvas = () => {
         InitialCanvasState,
     );
 
-    const panResponder = React.useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponder: (evt, gestureState) => true,
 
-            onPanResponderGrant: (evt, gestureState) => {
-                console.log(
-                    'Touched',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
-                onScreenTouch(evt);
-            },
-            onPanResponderMove: (evt, gestureState) => {
-                console.log(
-                    'Moved',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
-                onScreenMove(evt);
-            },
-            onPanResponderRelease: (evt, gestureState) => {
-                console.log(
-                    'Release',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
-                console.log('State', state);
-            },
-        }),
-    ).current;
+        onPanResponderGrant: (evt, gestureState) => {
+            console.log(
+                'Touched',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            onScreenTouch(evt);
+        },
+        onPanResponderMove: (evt, gestureState) => {
+            console.log(
+                'Moved',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            onScreenMove(evt);
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+            console.log(
+                'Release',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            console.log('State', state);
+        },
+    });
 
     /** Is Called When User Touches Screen */
     const onScreenTouch = (evt: GestureResponderEvent) => {
@@ -114,10 +112,8 @@ export const Canvas = () => {
                     state.EndCoordinates,
                 ) &&
                     BuildLine({
-                        EndX: state.EndCoordinates.X,
-                        EndY: state.EndCoordinates.Y,
-                        StartX: state.StartCoordinates.X,
-                        StartY: state.StartCoordinates.Y,
+                        Start: state.StartCoordinates,
+                        End: state.EndCoordinates,
                         StrokeColor: state.StrokeColor,
                         StrokeWidth: state.StrokeWidth,
                     })}
