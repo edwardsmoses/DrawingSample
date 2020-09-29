@@ -8,7 +8,6 @@ export const ShowLineAsUserDraws = (
     currentDrawingType: DrawingType,
     End: Coordinates,
 ) => {
-    console.log('Here');
     return currentDrawingType === DrawingType.Line && End.X > 0 && End.Y > 0;
 };
 
@@ -22,7 +21,6 @@ type BuildLineProps = {
 /** Build the Line Element  */
 export const BuildLine = (props: BuildLineProps) => {
     const {Start, End, StrokeColor, StrokeWidth} = props;
-    console.log('Draw Line');
     return (
         <Line
             x1={Start.X}
