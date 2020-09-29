@@ -6,6 +6,7 @@ import {
     StyleSheet,
     GestureResponderEvent,
 } from 'react-native';
+import Svg, {G, Line} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -107,16 +108,20 @@ export const Canvas = () => {
             <View
                 style={styles.drawCanvasContainer}
                 {...panResponder.panHandlers}>
-                {ShowLineAsUserDraws(
-                    state.DrawingToolType,
-                    state.EndCoordinates,
-                ) &&
-                    BuildLine({
-                        Start: state.StartCoordinates,
-                        End: state.EndCoordinates,
-                        StrokeColor: state.StrokeColor,
-                        StrokeWidth: state.StrokeWidth,
-                    })}
+                <Svg style={styles.drawCanvasContainer}>
+                    <G>
+                        {ShowLineAsUserDraws(
+                            state.DrawingToolType,
+                            state.EndCoordinates,
+                        ) &&
+                            BuildLine({
+                                Start: state.StartCoordinates,
+                                End: state.EndCoordinates,
+                                StrokeColor: state.StrokeColor,
+                                StrokeWidth: state.StrokeWidth,
+                            })}
+                    </G>
+                </Svg>
             </View>
             <Bar
                 currentColor={state.StrokeColor}
