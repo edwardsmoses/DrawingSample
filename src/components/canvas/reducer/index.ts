@@ -28,7 +28,8 @@ export type CanvasAction =
     | {type: 'UpdateStrokeWidth'; newStrokeWidth: number}
     | {type: 'UpdateDrawingType'; newDrawingType: Types.DrawingType}
     | {type: 'UpdateStartCoordinates'; startCoordinates: Types.Coordinates}
-    | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates};
+    | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates}
+    | {type: 'CompleteLineDrawing'; LineElement: React.ReactNode};
 
 export const CanvasReducer = (
     state: Types.CanvasState,
@@ -45,7 +46,17 @@ export const CanvasReducer = (
             return {...state, StartCoordinates: action.startCoordinates};
         case 'UpdateEndCoordinates':
             return {...state, EndCoordinates: action.endCoordinates};
-
+        case 'CompleteLineDrawing':
+            return {
+                ...state,
+                AllDrawings: [...state.AllDrawings, action.LineElement], //add the New Line Element to All Drawings
+                UserActions: [
+                    ...state.UserActions,
+                    {ActionType: Types.DrawingType.Line, ActionInfo: {}},
+                ], //add the Line Drawn to UserActions (for Undo)
+                EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
+                StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
+            };
         default:
             throw new Error();
     }
