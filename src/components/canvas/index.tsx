@@ -118,7 +118,7 @@ export const Canvas = () => {
         });
     };
 
-    /** When User Completes Drawing, and Releases On Screen (Line) */
+    /** When User Completes Drawing Line, and Releases On Screen (Line) */
     const LineOnScreenRelease = () => {
         //if user touched and released on screen, don't draw any lines
         if (state.EndCoordinates.X === 0 && state.EndCoordinates.Y === 0) {
