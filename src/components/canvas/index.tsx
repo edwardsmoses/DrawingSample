@@ -6,7 +6,7 @@ import {
     StyleSheet,
     GestureResponderEvent,
 } from 'react-native';
-import Svg, {G, Line} from 'react-native-svg';
+import Svg, {G} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -53,6 +53,8 @@ export const Canvas = () => {
         },
     });
 
+    //#region PanResponder Functions
+
     /** Is Called When User Touches Screen */
     const onScreenTouch = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
@@ -96,6 +98,7 @@ export const Canvas = () => {
                 break;
         }
     };
+    //#endregion
 
     /** When User Touches Screen for Shape (Line, Circle) */
     const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
@@ -145,10 +148,11 @@ export const Canvas = () => {
                 {...panResponder.panHandlers}>
                 <Svg style={styles.drawCanvasContainer}>
                     <G>
-                        {/* This shows the Line and Circle, after the User Releases Touch on the Screen */}
-                        {state.AllDrawings.map((drawing, index) => {
-                            return <G key={index}>{drawing}</G>;
-                        })}
+                        <G>
+                            {state.AllDrawings.map((drawing, index) => {
+                                return <G key={index}>{drawing}</G>;
+                            })}
+                        </G>
 
                         {ShowLineAsUserDraws(
                             state.DrawingToolType,
