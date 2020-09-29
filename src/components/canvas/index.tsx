@@ -87,7 +87,7 @@ export const Canvas = () => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
                 break;
-            case DrawingType.Line:
+            case DrawingType.Line:                LineOnScreenRelease();
                 break;
             case DrawingType.Circle:
                 break;
@@ -116,6 +116,25 @@ export const Canvas = () => {
                 Y: evt.nativeEvent.locationY,
             },
         });
+    };
+
+    /** When User Releases On Screen (Line) */
+    const LineOnScreenRelease = () => {
+        //if user touched and released on screen, don't draw any lines
+        if (state.EndCoordinates.X === 0 && state.EndCoordinates.Y === 0) {
+            return;
+        }
+
+        //get the Line Element
+        const NewLineElement = BuildLine({
+            End: state.EndCoordinates,
+            Start: state.EndCoordinates,
+            StrokeColor: state.StrokeColor,
+            StrokeWidth: state.StrokeWidth,
+        });
+
+        //update the State
+        dispatch({type: 'CompleteLineDrawing', LineElement: NewLineElement});
     };
 
     return (
