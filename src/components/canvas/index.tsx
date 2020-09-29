@@ -87,7 +87,8 @@ export const Canvas = () => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
                 break;
-            case DrawingType.Line:                LineOnScreenRelease();
+            case DrawingType.Line:
+                LineOnScreenRelease();
                 break;
             case DrawingType.Circle:
                 break;
@@ -144,6 +145,11 @@ export const Canvas = () => {
                 {...panResponder.panHandlers}>
                 <Svg style={styles.drawCanvasContainer}>
                     <G>
+                        {/* This shows the Line and Circle, after the User Releases Touch on the Screen */}
+                        {state.AllDrawings.map((drawing, index) => {
+                            return <G key={index}>{drawing}</G>;
+                        })}
+
                         {ShowLineAsUserDraws(
                             state.DrawingToolType,
                             state.EndCoordinates,
