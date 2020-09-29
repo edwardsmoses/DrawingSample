@@ -3,6 +3,7 @@ import {Pen} from '../../tools/Pen/';
 
 export const InitialCanvasState: Types.CanvasState = {
     AllDrawings: [],
+    DrawingList: [],
     StartCoordinates: {
         X: 0,
         Y: 0,
@@ -29,7 +30,7 @@ export type CanvasAction =
     | {type: 'UpdateDrawingType'; newDrawingType: Types.DrawingType}
     | {type: 'UpdateStartCoordinates'; startCoordinates: Types.Coordinates}
     | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates}
-    | {type: 'CompleteLineDrawing'; LineElement: React.ReactNode};
+    | {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo};
 
 export const CanvasReducer = (
     state: Types.CanvasState,
@@ -49,7 +50,10 @@ export const CanvasReducer = (
         case 'CompleteLineDrawing':
             return {
                 ...state,
-                AllDrawings: [...state.AllDrawings, action.LineElement], //add the New Line Element to All Drawings
+                DrawingList: [
+                    ...state.DrawingList,
+                    {Type: Types.DrawingType.Line, Info: action.LineInfo},
+                ], //add the New Line Info to the Drawing.
                 UserActions: [
                     ...state.UserActions,
                     {ActionType: Types.DrawingType.Line, ActionInfo: {}},

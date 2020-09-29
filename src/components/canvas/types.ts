@@ -17,7 +17,7 @@ export type UserAction = {
 /** User Selects Element (Circle) */
 export type ElementSelection = {
     ElementIndex: number;
-    Element: React.ReactNode;
+    Element: JSX.Element;
 };
 
 export type Coordinates = {
@@ -25,9 +25,25 @@ export type Coordinates = {
     Y: number;
 };
 
+export type DrawingInfo = {
+    StrokeWidth: number;
+    StrokeColor: string;
+    LineEnd?: Coordinates;
+    LineStart?: Coordinates;
+    CircleCenter?: Coordinates;
+    CircleRadius?: number;
+};
+
+export type Drawing = {
+    Type: DrawingType;
+    Info: DrawingInfo;
+};
+
 export type CanvasState = {
     /** Hold the Line and Circle Drawings */
-    AllDrawings: React.ReactNode[];
+    AllDrawings: JSX.Element[];
+
+    DrawingList: Drawing[];
 
     /** Hold the Stroke Color */
     StrokeColor: string;

@@ -15,7 +15,7 @@ import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 import {CanvasReducer, InitialCanvasState} from './reducer/';
 import {DrawingType} from './types';
 
-import {BuildLine, ShowLineAsUserDraws} from './utils/';
+import {BuildLine, ShowLineAsUserDraws, BuildDrawing} from './utils/';
 
 export const Canvas = () => {
     const [state, dispatch] = React.useReducer(
@@ -138,7 +138,15 @@ export const Canvas = () => {
         });
 
         //update the State
-        dispatch({type: 'CompleteLineDrawing', LineElement: NewLineElement});
+        dispatch({
+            type: 'CompleteLineDrawing',
+            LineInfo: {
+                LineEnd: state.EndCoordinates,
+                LineStart: state.EndCoordinates,
+                StrokeColor: state.StrokeColor,
+                StrokeWidth: state.StrokeWidth,
+            },
+        });
     };
 
     return (
@@ -148,11 +156,9 @@ export const Canvas = () => {
                 {...panResponder.panHandlers}>
                 <Svg style={styles.drawCanvasContainer}>
                     <G>
-                        <G>
-                            {state.AllDrawings.map((drawing, index) => {
-                                return <G key={index}>{drawing}</G>;
-                            })}
-                        </G>
+                        {state.DrawingList.map((drawing, index) => {
+                            return BuildDrawing(drawing, index);
+                        })}
 
                         {ShowLineAsUserDraws(
                             state.DrawingToolType,

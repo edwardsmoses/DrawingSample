@@ -1,25 +1,28 @@
 import React from 'react';
-import {Line} from 'react-native-svg';
+import {G, Line} from 'react-native-svg';
 
-import {DrawingType, Coordinates} from '../types';
+import * as Types from '../types';
 
 /** Decide whether to Show Visual Line Feedback as the User Moves on the Screen */
 export const ShowLineAsUserDraws = (
-    currentDrawingType: DrawingType,
-    End: Coordinates,
+    currentDrawingType: Types.DrawingType,
+    End: Types.Coordinates,
 ) => {
-    return currentDrawingType === DrawingType.Line && End.X > 0 && End.Y > 0;
+    return (
+        currentDrawingType === Types.DrawingType.Line && End.X > 0 && End.Y > 0
+    );
 };
 
 type BuildLineProps = {
-    Start: Coordinates;
-    End: Coordinates;
+    Start: Types.Coordinates;
+    End: Types.Coordinates;
     StrokeColor: string;
     StrokeWidth: number;
 };
 
 /** Build the Line Element  */
 export const BuildLine = (props: BuildLineProps) => {
+    console.log('Yes', props);
     const {Start, End, StrokeColor, StrokeWidth} = props;
     return (
         <Line
@@ -31,4 +34,23 @@ export const BuildLine = (props: BuildLineProps) => {
             strokeWidth={StrokeWidth}
         />
     );
+};
+
+export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
+    console.log('DrawingInfo', key, Drawing);
+    switch (Drawing.Type) {
+        case Types.DrawingType.Line:
+            return (
+                <G key={key}>
+                    {BuildLine({
+                        Start: Drawing.Info.LineStart!,
+                        End: Drawing.Info.LineEnd!,
+                        StrokeColor: Drawing.Info.StrokeColor,
+                        StrokeWidth: Drawing.Info.StrokeWidth,
+                    })}
+                </G>
+            );
+        default:
+            return null;
+    }
 };
