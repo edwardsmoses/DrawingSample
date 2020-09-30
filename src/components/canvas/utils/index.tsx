@@ -1,40 +1,16 @@
 import React from 'react';
-import {G, Line} from 'react-native-svg';
+import {Circle, G, Line} from 'react-native-svg';
 
 import * as Types from '../types';
 
-/** Decide whether to Show Visual Line Feedback as the User Moves on the Screen */
-export const ShowLineAsUserDraws = (
-    currentDrawingType: Types.DrawingType,
-    End: Types.Coordinates,
-) => {
-    return (
-        currentDrawingType === Types.DrawingType.Line && End.X > 0 && End.Y > 0
-    );
-};
-
-type BuildLineProps = {
+type BuildShapeProps = {
     Start: Types.Coordinates;
     End: Types.Coordinates;
     StrokeColor: string;
     StrokeWidth: number;
 };
 
-/** Build the Line Element  */
-export const BuildLine = (props: BuildLineProps) => {
-    const {Start, End, StrokeColor, StrokeWidth} = props;
-    return (
-        <Line
-            x1={Start.X}
-            y1={Start.Y}
-            x2={End.X}
-            y2={End.Y}
-            stroke={StrokeColor}
-            strokeWidth={StrokeWidth}
-        />
-    );
-};
-
+/** Build the Drawing (Lines, Circles) */
 export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
     switch (Drawing.Type) {
         case Types.DrawingType.Line:
@@ -48,7 +24,80 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
                     })}
                 </G>
             );
+        case Types.DrawingType.Circle:
+            return (
+                <G key={key}>
+                    {BuildCircle({
+                        Start: Drawing.Info.LineStart!,
+                        End: Drawing.Info.LineEnd!,
+                        StrokeColor: Drawing.Info.StrokeColor,
+                        StrokeWidth: Drawing.Info.StrokeWidth,
+                    })}
+                </G>
+            );
         default:
             return null;
     }
+};
+
+/** Build the Line Element  */
+export const BuildLine = (props: BuildShapeProps) => {
+    const {Start, End, StrokeColor, StrokeWidth} = props;
+    return (
+        <Line
+            x1={Start.X}
+            y1={Start.Y}
+            x2={End.X}
+            y2={End.Y}
+            stroke={StrokeColor}
+            strokeWidth={StrokeWidth}
+        />
+    );
+};
+
+/** Build the Circle Element  */
+export const BuildCircle = (props: BuildShapeProps) => {
+    const {Start, End, StrokeColor, StrokeWidth} = props;
+    return (
+        <Circle
+            cx={Start.X}
+            cy={Start.Y}
+            r={CalculateCircleRadius(Start, End)}
+            stroke={StrokeColor}
+            strokeWidth={StrokeWidth}
+        />
+    );
+};
+
+/** Decide whether to Show Visual Line Feedback as the User Moves on the Screen */
+export const ShowLineAsUserDraws = (
+    currentDrawingType: Types.DrawingType,
+    End: Types.Coordinates,
+) => {
+    return (
+        currentDrawingType === Types.DrawingType.Line && End.X > 0 && End.Y > 0
+    );
+};
+
+/** Decide whether to Show Visual Circle Feedback as the User Moves on the Screen */
+export const ShowCircleAsUserDraws = (
+    currentDrawingType: Types.DrawingType,
+    End: Types.Coordinates,
+    Start: Types.Coordinates,
+) => {
+    return (
+        currentDrawingType === Types.DrawingType.Line &&
+        CalculateCircleRadius(Start, End)
+    );
+};
+
+/** Calculate the Radius of Circle */
+const CalculateCircleRadius = (
+    Start: Types.Coordinates,
+    End: Types.Coordinates,
+) => {
+    const circleRadius = Math.sqrt(
+        Math.pow(Start.X - End.X, 2) + Math.pow(Start.Y - End.Y, 2),
+    );
+    return circleRadius;
 };
