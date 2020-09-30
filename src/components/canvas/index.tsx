@@ -6,6 +6,7 @@ import {
     StyleSheet,
     GestureResponderEvent,
 } from 'react-native';
+import {stat} from 'react-native-fs';
 import Svg, {G, Line} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
@@ -15,7 +16,13 @@ import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 import {CanvasReducer, InitialCanvasState} from './reducer/';
 import {DrawingType} from './types';
 
-import {BuildLine, ShowLineAsUserDraws, BuildDrawing} from './utils/';
+import {
+    BuildLine,
+    ShouldShowLine,
+    BuildDrawing,
+    ShouldShowCircle,
+    BuildCircle,
+} from './utils/';
 
 export const Canvas = () => {
     const [state, dispatch] = React.useReducer(
@@ -93,6 +100,7 @@ export const Canvas = () => {
                 LineOnScreenRelease();
                 break;
             case DrawingType.Circle:
+                CircleOnScreenRelease();
                 break;
             default:
                 break;
@@ -124,8 +132,7 @@ export const Canvas = () => {
 
     /** When User Completes Drawing Line, and Releases On Screen (Line) */
     const LineOnScreenRelease = () => {
-        //if user touched and released on screen, don't draw any lines
-        if (state.EndCoordinates.X === 0 && state.EndCoordinates.Y === 0) {
+        if (!ShouldShowLine(state.DrawingToolType, state.EndCoordinates)) {
             return;
         }
 
@@ -133,8 +140,32 @@ export const Canvas = () => {
         dispatch({
             type: 'CompleteLineDrawing',
             LineInfo: {
-                LineEnd: state.EndCoordinates,
-                LineStart: state.StartCoordinates,
+                ShapeEnd: state.EndCoordinates,
+                ShapeStart: state.StartCoordinates,
+                StrokeColor: state.StrokeColor,
+                StrokeWidth: state.StrokeWidth,
+            },
+        });
+    };
+
+    /** When User Completes Drawing Circle, and Releases On Screen (Circle) */
+    const CircleOnScreenRelease = () => {
+        if (
+            !ShouldShowCircle(
+                state.DrawingToolType,
+                state.StartCoordinates,
+                state.EndCoordinates,
+            )
+        ) {
+            return;
+        }
+
+        //update the State
+        dispatch({
+            type: 'CompleteCircleDrawing',
+            CircleInfo: {
+                ShapeEnd: state.EndCoordinates,
+                ShapeStart: state.StartCoordinates,
                 StrokeColor: state.StrokeColor,
                 StrokeWidth: state.StrokeWidth,
             },
@@ -152,11 +183,23 @@ export const Canvas = () => {
                             return BuildDrawing(drawing, index);
                         })}
 
-                        {ShowLineAsUserDraws(
+                        {ShouldShowLine(
                             state.DrawingToolType,
                             state.EndCoordinates,
                         ) &&
                             BuildLine({
+                                Start: state.StartCoordinates,
+                                End: state.EndCoordinates,
+                                StrokeColor: state.StrokeColor,
+                                StrokeWidth: state.StrokeWidth,
+                            })}
+
+                        {ShouldShowCircle(
+                            state.DrawingToolType,
+                            state.StartCoordinates,
+                            state.EndCoordinates,
+                        ) &&
+                            BuildCircle({
                                 Start: state.StartCoordinates,
                                 End: state.EndCoordinates,
                                 StrokeColor: state.StrokeColor,

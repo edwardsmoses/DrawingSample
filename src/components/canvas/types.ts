@@ -28,10 +28,8 @@ export type Coordinates = {
 export type DrawingInfo = {
     StrokeWidth: number;
     StrokeColor: string;
-    LineEnd?: Coordinates;
-    LineStart?: Coordinates;
-    CircleCenter?: Coordinates;
-    CircleRadius?: number;
+    ShapeEnd?: Coordinates;
+    ShapeStart?: Coordinates;
 };
 
 export type Drawing = {

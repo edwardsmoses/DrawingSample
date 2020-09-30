@@ -17,8 +17,8 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
             return (
                 <G key={key}>
                     {BuildLine({
-                        Start: Drawing.Info.LineStart!,
-                        End: Drawing.Info.LineEnd!,
+                        Start: Drawing.Info.ShapeStart!,
+                        End: Drawing.Info.ShapeEnd!,
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
                     })}
@@ -28,8 +28,8 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
             return (
                 <G key={key}>
                     {BuildCircle({
-                        Start: Drawing.Info.LineStart!,
-                        End: Drawing.Info.LineEnd!,
+                        Start: Drawing.Info.ShapeStart!,
+                        End: Drawing.Info.ShapeEnd!,
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
                     })}
@@ -69,8 +69,8 @@ export const BuildCircle = (props: BuildShapeProps) => {
     );
 };
 
-/** Decide whether to Show Visual Line Feedback as the User Moves on the Screen */
-export const ShowLineAsUserDraws = (
+/** Decide whether to Show Line if Drawing Type is Circle and End Coordinates are greater than Zero */
+export const ShouldShowLine = (
     currentDrawingType: Types.DrawingType,
     End: Types.Coordinates,
 ) => {
@@ -79,15 +79,15 @@ export const ShowLineAsUserDraws = (
     );
 };
 
-/** Decide whether to Show Visual Circle Feedback as the User Moves on the Screen */
-export const ShowCircleAsUserDraws = (
+/** Decide whether to Show Circle if Drawing Type is Circle and the Radius of the Circle is Greater than Zero */
+export const ShouldShowCircle = (
     currentDrawingType: Types.DrawingType,
-    End: Types.Coordinates,
     Start: Types.Coordinates,
+    End: Types.Coordinates,
 ) => {
     return (
-        currentDrawingType === Types.DrawingType.Line &&
-        CalculateCircleRadius(Start, End)
+        currentDrawingType === Types.DrawingType.Circle &&
+        CalculateCircleRadius(Start, End) > 0
     );
 };
 

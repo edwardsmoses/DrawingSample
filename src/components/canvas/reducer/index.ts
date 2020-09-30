@@ -1,6 +1,7 @@
 import * as Types from '../types';
 import {Pen} from '../../tools/Pen/';
 
+/** Initial State for the Drawing Canvas */
 export const InitialCanvasState: Types.CanvasState = {
     AllDrawings: [],
     DrawingList: [],
@@ -24,14 +25,17 @@ export const InitialCanvasState: Types.CanvasState = {
     UserActions: [],
 };
 
+/** The Action Types for Drawing Canvas */
 export type CanvasAction =
     | {type: 'UpdateStrokeColor'; newColor: string}
     | {type: 'UpdateStrokeWidth'; newStrokeWidth: number}
     | {type: 'UpdateDrawingType'; newDrawingType: Types.DrawingType}
     | {type: 'UpdateStartCoordinates'; startCoordinates: Types.Coordinates}
     | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates}
-    | {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo};
+    | {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo}
+    | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo};
 
+/** The Reducer for Drawing Canvas */
 export const CanvasReducer = (
     state: Types.CanvasState,
     action: CanvasAction,
@@ -58,6 +62,20 @@ export const CanvasReducer = (
                     ...state.UserActions,
                     {ActionType: Types.DrawingType.Line, ActionInfo: {}},
                 ], //add the Line Drawn to UserActions (for Undo)
+                EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
+                StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
+            };
+        case 'CompleteCircleDrawing':
+            return {
+                ...state,
+                DrawingList: [
+                    ...state.DrawingList,
+                    {Type: Types.DrawingType.Circle, Info: action.CircleInfo},
+                ], //add the New Circle Info to the Drawing.
+                UserActions: [
+                    ...state.UserActions,
+                    {ActionType: Types.DrawingType.Circle, ActionInfo: {}},
+                ], //add the Circle Drawn to UserActions (for Undo)
                 EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
                 StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
             };
