@@ -1,12 +1,21 @@
 import React from 'react';
 
-import {View, PanResponder, StyleSheet} from 'react-native';
+import {
+    View,
+    PanResponder,
+    StyleSheet,
+    GestureResponderEvent,
+} from 'react-native';
+import Svg, {G, Line} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
 
 import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 
 import {CanvasReducer, InitialCanvasState} from './reducer/';
+import {DrawingType} from './types';
+
+import {BuildLine, ShowLineAsUserDraws, BuildDrawing} from './utils/';
 
 export const Canvas = () => {
     const [state, dispatch] = React.useReducer(
@@ -14,41 +23,148 @@ export const Canvas = () => {
         InitialCanvasState,
     );
 
-    const panResponder = React.useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: (evt, gestureState) => true,
-            onMoveShouldSetPanResponder: (evt, gestureState) => true,
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: (evt, gestureState) => true,
+        onMoveShouldSetPanResponder: (evt, gestureState) => true,
 
-            onPanResponderGrant: (evt, gestureState) => {
-                console.log(
-                    'Touched',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
+        onPanResponderGrant: (evt, gestureState) => {
+            console.log(
+                'Touched',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            onScreenTouch(evt);
+        },
+        onPanResponderMove: (evt, gestureState) => {
+            console.log(
+                'Moved',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            onScreenMove(evt);
+        },
+        onPanResponderRelease: (evt, gestureState) => {
+            console.log(
+                'Release',
+                evt.nativeEvent.locationX,
+                evt.nativeEvent.locationY,
+            );
+            onScrenRelease();
+        },
+    });
+
+    //#region PanResponder Functions
+
+    /** Is Called When User Touches Screen */
+    const onScreenTouch = (evt: GestureResponderEvent) => {
+        switch (state.DrawingToolType) {
+            case DrawingType.Pencil:
+                break;
+            case DrawingType.Line:
+            case DrawingType.Circle:
+                ShapeOnScreenTouch(evt);
+                break;
+            default:
+                break;
+        }
+    };
+
+    /** Is Called When User Moves on Screen */
+    const onScreenMove = (evt: GestureResponderEvent) => {
+        switch (state.DrawingToolType) {
+            case DrawingType.Pencil:
+                break;
+            case DrawingType.Line:
+            case DrawingType.Circle:
+                ShapeOnScreenMove(evt);
+                break;
+            default:
+                break;
+        }
+    };
+
+    /** Is Called When User Releases Touch from Screen */
+    const onScrenRelease = () => {
+        console.log('CanvasState', state);
+        switch (state.DrawingToolType) {
+            case DrawingType.Pencil:
+                break;
+            case DrawingType.Line:
+                LineOnScreenRelease();
+                break;
+            case DrawingType.Circle:
+                break;
+            default:
+                break;
+        }
+    };
+    //#endregion
+
+    /** When User Touches Screen for Shape (Line, Circle) */
+    const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'UpdateStartCoordinates',
+            startCoordinates: {
+                X: evt.nativeEvent.locationX,
+                Y: evt.nativeEvent.locationY,
             },
-            onPanResponderMove: (evt, gestureState) => {
-                console.log(
-                    'Moved',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
+        });
+    };
+
+    /** When User Moves on  Screen for Shape (Line, Circle) */
+    const ShapeOnScreenMove = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'UpdateEndCoordinates',
+            endCoordinates: {
+                X: evt.nativeEvent.locationX,
+                Y: evt.nativeEvent.locationY,
             },
-            onPanResponderRelease: (evt, gestureState) => {
-                console.log(
-                    'Released',
-                    evt.nativeEvent.locationX,
-                    evt.nativeEvent.locationY,
-                );
+        });
+    };
+
+    /** When User Completes Drawing Line, and Releases On Screen (Line) */
+    const LineOnScreenRelease = () => {
+        //if user touched and released on screen, don't draw any lines
+        if (state.EndCoordinates.X === 0 && state.EndCoordinates.Y === 0) {
+            return;
+        }
+
+        //update the State
+        dispatch({
+            type: 'CompleteLineDrawing',
+            LineInfo: {
+                LineEnd: state.EndCoordinates,
+                LineStart: state.StartCoordinates,
+                StrokeColor: state.StrokeColor,
+                StrokeWidth: state.StrokeWidth,
             },
-        }),
-    ).current;
+        });
+    };
 
     return (
         <React.Fragment>
             <View
                 style={styles.drawCanvasContainer}
-                {...panResponder.panHandlers}
-            />
+                {...panResponder.panHandlers}>
+                <Svg style={styles.drawCanvasContainer}>
+                    <G>
+                        {state.DrawingList.map((drawing, index) => {
+                            return BuildDrawing(drawing, index);
+                        })}
+
+                        {ShowLineAsUserDraws(
+                            state.DrawingToolType,
+                            state.EndCoordinates,
+                        ) &&
+                            BuildLine({
+                                Start: state.StartCoordinates,
+                                End: state.EndCoordinates,
+                                StrokeColor: state.StrokeColor,
+                                StrokeWidth: state.StrokeWidth,
+                            })}
+                    </G>
+                </Svg>
+            </View>
             <Bar
                 currentColor={state.StrokeColor}
                 selectColor={(color) =>

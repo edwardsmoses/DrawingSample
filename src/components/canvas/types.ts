@@ -17,19 +17,33 @@ export type UserAction = {
 /** User Selects Element (Circle) */
 export type ElementSelection = {
     ElementIndex: number;
-    Element: React.ReactNode;
+    Element: JSX.Element;
 };
 
 export type Coordinates = {
-    StartX: number;
-    StartY: number;
-    EndX: number;
-    EndY: number;
+    X: number;
+    Y: number;
+};
+
+export type DrawingInfo = {
+    StrokeWidth: number;
+    StrokeColor: string;
+    LineEnd?: Coordinates;
+    LineStart?: Coordinates;
+    CircleCenter?: Coordinates;
+    CircleRadius?: number;
+};
+
+export type Drawing = {
+    Type: DrawingType;
+    Info: DrawingInfo;
 };
 
 export type CanvasState = {
     /** Hold the Line and Circle Drawings */
-    AllDrawings: React.ReactNode[];
+    AllDrawings: JSX.Element[];
+
+    DrawingList: Drawing[];
 
     /** Hold the Stroke Color */
     StrokeColor: string;
@@ -54,8 +68,11 @@ export type CanvasState = {
     /** Hold the Drawing Type */
     DrawingToolType: DrawingType;
 
-    /** Store the Coordinates as User Touches and Moves on Screen (Circle, Line) */
-    Coordinates: Coordinates;
+    /** Store the Start Coordinates when User Touches Screen (Circle, Line) */
+    StartCoordinates: Coordinates;
+
+    /** Store the End Coordinates when User Moves on Screen (Circle, Line) */
+    EndCoordinates: Coordinates;
 
     /** Store the User Selection - When User LongPresses on Circle */
     CurrentUserSelection: ElementSelection | null;
