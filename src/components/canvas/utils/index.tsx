@@ -22,7 +22,6 @@ type BuildLineProps = {
 
 /** Build the Line Element  */
 export const BuildLine = (props: BuildLineProps) => {
-    console.log('Yes', props);
     const {Start, End, StrokeColor, StrokeWidth} = props;
     return (
         <Line
@@ -37,7 +36,6 @@ export const BuildLine = (props: BuildLineProps) => {
 };
 
 export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
-    console.log('DrawingInfo', key, Drawing);
     switch (Drawing.Type) {
         case Types.DrawingType.Line:
             return (

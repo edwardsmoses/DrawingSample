@@ -6,7 +6,7 @@ import {
     StyleSheet,
     GestureResponderEvent,
 } from 'react-native';
-import Svg, {G} from 'react-native-svg';
+import Svg, {G, Line} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -129,20 +129,12 @@ export const Canvas = () => {
             return;
         }
 
-        //get the Line Element
-        const NewLineElement = BuildLine({
-            End: state.EndCoordinates,
-            Start: state.EndCoordinates,
-            StrokeColor: state.StrokeColor,
-            StrokeWidth: state.StrokeWidth,
-        });
-
         //update the State
         dispatch({
             type: 'CompleteLineDrawing',
             LineInfo: {
                 LineEnd: state.EndCoordinates,
-                LineStart: state.EndCoordinates,
+                LineStart: state.StartCoordinates,
                 StrokeColor: state.StrokeColor,
                 StrokeWidth: state.StrokeWidth,
             },
