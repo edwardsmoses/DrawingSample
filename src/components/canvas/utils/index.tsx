@@ -96,6 +96,9 @@ const CalculateCircleRadius = (
     Start: Types.Coordinates,
     End: Types.Coordinates,
 ) => {
+    if (Start.X === 0 || Start.Y === 0 || End.X === 0 || End.Y === 0) {
+        return 0;
+    }
     const circleRadius = Math.sqrt(
         Math.pow(Start.X - End.X, 2) + Math.pow(Start.Y - End.Y, 2),
     );
