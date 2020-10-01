@@ -6,8 +6,7 @@ import {
     StyleSheet,
     GestureResponderEvent,
 } from 'react-native';
-import {stat} from 'react-native-fs';
-import Svg, {G, Line} from 'react-native-svg';
+import Svg, {G} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
 
