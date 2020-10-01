@@ -82,6 +82,7 @@ export const Canvas = () => {
     const onScreenMove = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
+                PencilOnScreenTouch(evt);
                 break;
             case DrawingType.Line:
             case DrawingType.Circle:

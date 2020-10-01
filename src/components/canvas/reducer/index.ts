@@ -90,7 +90,7 @@ export const CanvasReducer = (
             }); //set the Point
             return {
                 ...state,
-                CurrentPoints: [...state.PreviousStrokes, newPoint.point],
+                CurrentPoints: [...state.CurrentPoints, newPoint.point],
             };
         }
 
