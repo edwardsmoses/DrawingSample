@@ -21,6 +21,8 @@ import {
     BuildDrawing,
     ShouldShowCircle,
     BuildCircle,
+    ShouldShowPencilPath,
+    BuildPencilPath,
 } from './utils/';
 
 export const Canvas = () => {
@@ -196,6 +198,13 @@ export const Canvas = () => {
                         {state.DrawingList.map((drawing, index) => {
                             return BuildDrawing(drawing, index);
                         })}
+
+                        {ShouldShowPencilPath(state.DrawingToolType) &&
+                            BuildPencilPath({
+                                StrokeColor: state.StrokeColor,
+                                StrokeWidth: state.StrokeWidth,
+                                Points: state.CurrentPoints,
+                            })}
 
                         {ShouldShowLine(
                             state.DrawingToolType,
