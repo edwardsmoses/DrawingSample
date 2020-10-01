@@ -1,4 +1,5 @@
 import {Pen} from '../tools/Pen/';
+import {PointProps} from '../tools/Point';
 
 /** The Drawing Types */
 export enum DrawingType {
@@ -32,6 +33,11 @@ export type DrawingInfo = {
     ShapeStart?: Coordinates;
 };
 
+export type PencilInfo = {
+    Start: Coordinates;
+    TimeStamp: number;
+};
+
 export type Drawing = {
     Type: DrawingType;
     Info: DrawingInfo;
@@ -58,7 +64,7 @@ export type CanvasState = {
     NewStroke: [];
 
     /**Hold the Points that User has Drawn on Screen */
-    CurrentPoints: [];
+    CurrentPoints: PointProps[];
 
     /** Hold the Pen used */
     Pen: typeof Pen;

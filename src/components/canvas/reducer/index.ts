@@ -1,5 +1,6 @@
 import * as Types from '../types';
 import {Pen} from '../../tools/Pen/';
+import {Point} from '../../tools/Point';
 
 /** Initial State for the Drawing Canvas */
 export const InitialCanvasState: Types.CanvasState = {
@@ -33,7 +34,8 @@ export type CanvasAction =
     | {type: 'UpdateStartCoordinates'; startCoordinates: Types.Coordinates}
     | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates}
     | {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo}
-    | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo};
+    | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo}
+    | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo};
 
 /** The Reducer for Drawing Canvas */
 export const CanvasReducer = (
@@ -79,6 +81,19 @@ export const CanvasReducer = (
                 EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
                 StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
             };
+        case 'TouchPencilDrawing': {
+            let newPoint = Point();
+            newPoint.setPoint({
+                x: action.PencilInfo.Start.X,
+                y: action.PencilInfo.Start.Y,
+                time: action.PencilInfo.TimeStamp!,
+            }); //set the Point
+            return {
+                ...state,
+                CurrentPoints: [...state.PreviousStrokes, newPoint.point],
+            };
+        }
+
         default:
             throw new Error();
     }

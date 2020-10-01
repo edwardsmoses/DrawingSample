@@ -65,6 +65,7 @@ export const Canvas = () => {
     const onScreenTouch = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
+                PencilOnScreenTouch(evt);
                 break;
             case DrawingType.Line:
             case DrawingType.Circle:
@@ -106,6 +107,20 @@ export const Canvas = () => {
         }
     };
     //#endregion
+
+    /** When User Touches Screen for Pencil */
+    const PencilOnScreenTouch = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'TouchPencilDrawing',
+            PencilInfo: {
+                TimeStamp: evt.nativeEvent.timestamp,
+                Start: {
+                    X: evt.nativeEvent.locationX,
+                    Y: evt.nativeEvent.locationY,
+                },
+            },
+        });
+    };
 
     /** When User Touches Screen for Shape (Line, Circle) */
     const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
