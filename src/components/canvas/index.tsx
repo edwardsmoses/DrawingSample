@@ -199,7 +199,6 @@ export const Canvas = () => {
         const points = state.CurrentPoints;
         if (points.length === 1) {
             let p = points[0];
-            // eslint-disable-next-line radix
             let distance = Math.sqrt(state.StrokeWidth || 4) / 2;
             points.push({X: p.X + distance, Y: p.Y + distance});
         }
