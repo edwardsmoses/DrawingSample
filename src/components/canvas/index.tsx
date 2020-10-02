@@ -33,10 +33,10 @@ export const Canvas = () => {
     );
 
     const panResponder = PanResponder.create({
-        onStartShouldSetPanResponder: (evt, gestureState) => true,
-        onMoveShouldSetPanResponder: (evt, gestureState) => true,
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
 
-        onPanResponderGrant: (evt, gestureState) => {
+        onPanResponderGrant: (evt) => {
             console.log(
                 'Touched',
                 evt.nativeEvent.locationX,
@@ -44,7 +44,7 @@ export const Canvas = () => {
             );
             onScreenTouch(evt);
         },
-        onPanResponderMove: (evt, gestureState) => {
+        onPanResponderMove: (evt) => {
             console.log(
                 'Moved',
                 evt.nativeEvent.locationX,
@@ -52,7 +52,7 @@ export const Canvas = () => {
             );
             onScreenMove(evt);
         },
-        onPanResponderRelease: (evt, gestureState) => {
+        onPanResponderRelease: (evt) => {
             console.log(
                 'Release',
                 evt.nativeEvent.locationX,
