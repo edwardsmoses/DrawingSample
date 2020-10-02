@@ -268,7 +268,7 @@ export const Canvas = () => {
                     console.log('Pressed Undo');
                 }}
                 clearAction={() => {
-                    console.log('Pressed Clear');
+                    dispatch({type: 'ClearDrawing'})
                 }}
                 strokeWidth={state.StrokeWidth}
                 updateStrokeWidth={(width) =>
