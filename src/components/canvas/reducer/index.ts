@@ -1,10 +1,7 @@
 import * as Types from '../types';
-import {Pen} from '../../tools/Pen/';
-import {Point} from '../../tools/Point';
 
 /** Initial State for the Drawing Canvas */
 export const InitialCanvasState: Types.CanvasState = {
-    AllDrawings: [],
     DrawingList: [],
     StartCoordinates: {
         X: 0,
@@ -20,9 +17,6 @@ export const InitialCanvasState: Types.CanvasState = {
     CurrentPoints: [],
     CurrentUserSelection: null,
     DrawingToolType: Types.DrawingType.Pencil,
-    NewStroke: [],
-    Pen: Pen,
-    PreviousStrokes: [],
     UserActions: [],
 };
 
@@ -83,15 +77,12 @@ export const CanvasReducer = (
                 StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
             };
         case 'TouchPencilDrawing': {
-            let newPoint = Point();
-            newPoint.setPoint({
-                x: action.PencilInfo.Start.X,
-                y: action.PencilInfo.Start.Y,
-                time: action.PencilInfo.TimeStamp!,
-            }); //set the Point
             return {
                 ...state,
-                CurrentPoints: [...state.CurrentPoints, newPoint.point],
+                CurrentPoints: [
+                    ...state.CurrentPoints,
+                    action.PencilInfo.Start,
+                ],
             };
         }
         case 'CompletePencilDrawing': {

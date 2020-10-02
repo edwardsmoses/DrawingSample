@@ -45,9 +45,7 @@ export type Drawing = {
 };
 
 export type CanvasState = {
-    /** Hold the Line and Circle Drawings */
-    AllDrawings: JSX.Element[];
-
+    /** Hold All Drawings (Pencil, Line, Circle) */
     DrawingList: Drawing[];
 
     /** Hold the Stroke Color */
@@ -59,16 +57,8 @@ export type CanvasState = {
     /** Hold the UserActions for Undo */
     UserActions: UserAction[];
 
-    /** Hold the Strokes for Pencil Drawings  */
-    PreviousStrokes: [];
-
-    NewStroke: [];
-
     /**Hold the Points that User has Drawn on Screen */
-    CurrentPoints: PointProps[];
-
-    /** Hold the Pen used */
-    Pen: typeof Pen;
+    CurrentPoints: Coordinates[];
 
     /** Hold the Drawing Type */
     DrawingToolType: DrawingType;

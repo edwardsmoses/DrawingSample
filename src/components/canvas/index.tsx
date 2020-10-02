@@ -11,8 +11,6 @@ import Svg, {G} from 'react-native-svg';
 import {Bar} from '../bottombar/Bar';
 
 import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
-import {Pen} from '../tools/Pen';
-import {Point} from '../tools/Point';
 
 import {CanvasReducer, InitialCanvasState} from './reducer/';
 import {DrawingType} from './types';
@@ -25,6 +23,7 @@ import {
     BuildCircle,
     ShouldShowPencilPath,
     BuildPencilPath,
+    PointsToSVG,
 } from './utils/';
 
 export const Canvas = () => {
@@ -202,15 +201,7 @@ export const Canvas = () => {
             let p = points[0];
             // eslint-disable-next-line radix
             let distance = Math.sqrt(state.StrokeWidth || 4) / 2;
-
-            let newPoint = Point();
-            newPoint.setPoint({
-                x: p.x + distance,
-                y: p.y + distance,
-                time: p.time,
-            });
-
-            points.push(newPoint.point);
+            points.push({X: p.X + distance, Y: p.Y + distance});
         }
 
         dispatch({
@@ -218,7 +209,7 @@ export const Canvas = () => {
             PencilInfo: {
                 StrokeColor: state.StrokeColor,
                 StrokeWidth: state.StrokeWidth,
-                PencilPath: Pen().pointsToSVG(points),
+                PencilPath: PointsToSVG(points),
             },
         });
     };

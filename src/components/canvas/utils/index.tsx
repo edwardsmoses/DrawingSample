@@ -16,7 +16,7 @@ type BuildShapeProps = BuildProps & {
 };
 
 type BuildLineProps = BuildProps & {
-    Points: PointProps[];
+    Points: Types.Coordinates[];
     PointPath?: string;
 };
 
@@ -94,11 +94,9 @@ export const BuildCircle = (props: BuildShapeProps) => {
 export const BuildPencilPath = (props: BuildLineProps) => {
     const {StrokeColor, StrokeWidth, Points, PointPath} = props;
 
-    const pen = Pen();
-
     return (
         <Path
-            d={PointPath || pen.pointsToSVG(Points)}
+            d={PointPath || PointsToSVG(Points)}
             stroke={StrokeColor}
             strokeWidth={StrokeWidth}
             fill="none"
@@ -133,12 +131,25 @@ export const ShouldShowCircle = (
 /** Decide whether to Show Pencil if Drawing Type is Pencil */
 export const ShouldShowPencilPath = (
     currentDrawingType: Types.DrawingType,
-    currentPoints: PointProps[],
+    currentPoints: Types.Coordinates[],
 ) => {
     return (
         currentDrawingType === Types.DrawingType.Pencil &&
         currentPoints.length > 1
     );
+};
+
+/** Convert Points to SVG Path */
+export const PointsToSVG = (points: Types.Coordinates[]) => {
+    if (points.length > 0) {
+        var path = `M ${points[0].X},${points[0].Y}`;
+        points.forEach((point) => {
+            path = path + ` L ${point.X},${point.Y}`;
+        });
+        return path;
+    } else {
+        return '';
+    }
 };
 
 /** Calculate the Radius of Circle */
