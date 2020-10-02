@@ -1,6 +1,3 @@
-import {Pen} from '../tools/Pen/';
-import {PointProps} from '../tools/Point';
-
 /** The Drawing Types */
 export enum DrawingType {
     Pencil = 'Pencil',
