@@ -6,8 +6,7 @@ import {
     StyleSheet,
     GestureResponderEvent,
 } from 'react-native';
-import {stat} from 'react-native-fs';
-import Svg, {G, Line} from 'react-native-svg';
+import Svg, {G} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
 
@@ -22,6 +21,9 @@ import {
     BuildDrawing,
     ShouldShowCircle,
     BuildCircle,
+    ShouldShowPencilPath,
+    BuildPencilPath,
+    PointsToSVG,
 } from './utils/';
 
 export const Canvas = () => {
@@ -66,6 +68,7 @@ export const Canvas = () => {
     const onScreenTouch = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
+                PencilOnScreenTouchAndMove(evt);
                 break;
             case DrawingType.Line:
             case DrawingType.Circle:
@@ -80,6 +83,7 @@ export const Canvas = () => {
     const onScreenMove = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
+                PencilOnScreenTouchAndMove(evt);
                 break;
             case DrawingType.Line:
             case DrawingType.Circle:
@@ -95,6 +99,7 @@ export const Canvas = () => {
         console.log('CanvasState', state);
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
+                PencilOnScreenRelease();
                 break;
             case DrawingType.Line:
                 LineOnScreenRelease();
@@ -107,6 +112,20 @@ export const Canvas = () => {
         }
     };
     //#endregion
+
+    /** When User Touches And Moves on Screen for Pencil */
+    const PencilOnScreenTouchAndMove = (evt: GestureResponderEvent) => {
+        dispatch({
+            type: 'TouchPencilDrawing',
+            PencilInfo: {
+                TimeStamp: evt.nativeEvent.timestamp,
+                Start: {
+                    X: evt.nativeEvent.locationX,
+                    Y: evt.nativeEvent.locationY,
+                },
+            },
+        });
+    };
 
     /** When User Touches Screen for Shape (Line, Circle) */
     const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
@@ -172,6 +191,29 @@ export const Canvas = () => {
         });
     };
 
+    const PencilOnScreenRelease = () => {
+        if (!ShouldShowPencilPath(state.DrawingToolType, state.CurrentPoints)) {
+            return;
+        }
+
+        const points = state.CurrentPoints;
+        if (points.length === 1) {
+            let p = points[0];
+            // eslint-disable-next-line radix
+            let distance = Math.sqrt(state.StrokeWidth || 4) / 2;
+            points.push({X: p.X + distance, Y: p.Y + distance});
+        }
+
+        dispatch({
+            type: 'CompletePencilDrawing',
+            PencilInfo: {
+                StrokeColor: state.StrokeColor,
+                StrokeWidth: state.StrokeWidth,
+                PencilPath: PointsToSVG(points),
+            },
+        });
+    };
+
     return (
         <React.Fragment>
             <View
@@ -182,6 +224,16 @@ export const Canvas = () => {
                         {state.DrawingList.map((drawing, index) => {
                             return BuildDrawing(drawing, index);
                         })}
+
+                        {ShouldShowPencilPath(
+                            state.DrawingToolType,
+                            state.CurrentPoints,
+                        ) &&
+                            BuildPencilPath({
+                                StrokeColor: state.StrokeColor,
+                                StrokeWidth: state.StrokeWidth,
+                                Points: state.CurrentPoints,
+                            })}
 
                         {ShouldShowLine(
                             state.DrawingToolType,

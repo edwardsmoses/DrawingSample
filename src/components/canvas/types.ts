@@ -1,4 +1,5 @@
 import {Pen} from '../tools/Pen/';
+import {PointProps} from '../tools/Point';
 
 /** The Drawing Types */
 export enum DrawingType {
@@ -30,6 +31,12 @@ export type DrawingInfo = {
     StrokeColor: string;
     ShapeEnd?: Coordinates;
     ShapeStart?: Coordinates;
+    PencilPath?: string;
+};
+
+export type PencilInfo = {
+    Start: Coordinates;
+    TimeStamp: number;
 };
 
 export type Drawing = {
@@ -38,9 +45,7 @@ export type Drawing = {
 };
 
 export type CanvasState = {
-    /** Hold the Line and Circle Drawings */
-    AllDrawings: JSX.Element[];
-
+    /** Hold All Drawings (Pencil, Line, Circle) */
     DrawingList: Drawing[];
 
     /** Hold the Stroke Color */
@@ -52,16 +57,8 @@ export type CanvasState = {
     /** Hold the UserActions for Undo */
     UserActions: UserAction[];
 
-    /** Hold the Strokes for Pencil Drawings  */
-    PreviousStrokes: [];
-
-    NewStroke: [];
-
     /**Hold the Points that User has Drawn on Screen */
-    CurrentPoints: [];
-
-    /** Hold the Pen used */
-    Pen: typeof Pen;
+    CurrentPoints: Coordinates[];
 
     /** Hold the Drawing Type */
     DrawingToolType: DrawingType;

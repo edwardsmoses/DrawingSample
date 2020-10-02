@@ -1,13 +1,23 @@
 import React from 'react';
-import {Circle, G, Line} from 'react-native-svg';
+import {Circle, G, Line, Path} from 'react-native-svg';
+import {Pen} from '../../tools/Pen';
+import {PointProps} from '../../tools/Point';
 
 import * as Types from '../types';
 
-type BuildShapeProps = {
-    Start: Types.Coordinates;
-    End: Types.Coordinates;
+type BuildProps = {
     StrokeColor: string;
     StrokeWidth: number;
+};
+
+type BuildShapeProps = BuildProps & {
+    Start: Types.Coordinates;
+    End: Types.Coordinates;
+};
+
+type BuildLineProps = BuildProps & {
+    Points: Types.Coordinates[];
+    PointPath?: string;
 };
 
 /** Build the Drawing (Lines, Circles) */
@@ -32,6 +42,17 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
                         End: Drawing.Info.ShapeEnd!,
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
+                    })}
+                </G>
+            );
+        case Types.DrawingType.Pencil:
+            return (
+                <G key={key}>
+                    {BuildPencilPath({
+                        StrokeColor: Drawing.Info.StrokeColor,
+                        StrokeWidth: Drawing.Info.StrokeWidth,
+                        PointPath: Drawing.Info.PencilPath!,
+                        Points: [],
                     })}
                 </G>
             );
@@ -69,6 +90,22 @@ export const BuildCircle = (props: BuildShapeProps) => {
     );
 };
 
+/** Build the Path Element - Used for Pencil Drawing */
+export const BuildPencilPath = (props: BuildLineProps) => {
+    const {StrokeColor, StrokeWidth, Points, PointPath} = props;
+
+    return (
+        <Path
+            d={PointPath || PointsToSVG(Points)}
+            stroke={StrokeColor}
+            strokeWidth={StrokeWidth}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+    );
+};
+
 /** Decide whether to Show Line if Drawing Type is Circle and End Coordinates are greater than Zero */
 export const ShouldShowLine = (
     currentDrawingType: Types.DrawingType,
@@ -89,6 +126,30 @@ export const ShouldShowCircle = (
         currentDrawingType === Types.DrawingType.Circle &&
         CalculateCircleRadius(Start, End) > 0
     );
+};
+
+/** Decide whether to Show Pencil if Drawing Type is Pencil */
+export const ShouldShowPencilPath = (
+    currentDrawingType: Types.DrawingType,
+    currentPoints: Types.Coordinates[],
+) => {
+    return (
+        currentDrawingType === Types.DrawingType.Pencil &&
+        currentPoints.length > 1
+    );
+};
+
+/** Convert Points to SVG Path */
+export const PointsToSVG = (points: Types.Coordinates[]) => {
+    if (points.length > 0) {
+        var path = `M ${points[0].X},${points[0].Y}`;
+        points.forEach((point) => {
+            path = path + ` L ${point.X},${point.Y}`;
+        });
+        return path;
+    } else {
+        return '';
+    }
 };
 
 /** Calculate the Radius of Circle */

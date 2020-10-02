@@ -1,9 +1,7 @@
 import * as Types from '../types';
-import {Pen} from '../../tools/Pen/';
 
 /** Initial State for the Drawing Canvas */
 export const InitialCanvasState: Types.CanvasState = {
-    AllDrawings: [],
     DrawingList: [],
     StartCoordinates: {
         X: 0,
@@ -19,9 +17,6 @@ export const InitialCanvasState: Types.CanvasState = {
     CurrentPoints: [],
     CurrentUserSelection: null,
     DrawingToolType: Types.DrawingType.Pencil,
-    NewStroke: [],
-    Pen: Pen,
-    PreviousStrokes: [],
     UserActions: [],
 };
 
@@ -33,7 +28,9 @@ export type CanvasAction =
     | {type: 'UpdateStartCoordinates'; startCoordinates: Types.Coordinates}
     | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates}
     | {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo}
-    | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo};
+    | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo}
+    | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo}
+    | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo};
 
 /** The Reducer for Drawing Canvas */
 export const CanvasReducer = (
@@ -79,6 +76,32 @@ export const CanvasReducer = (
                 EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
                 StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
             };
+        case 'TouchPencilDrawing': {
+            return {
+                ...state,
+                CurrentPoints: [
+                    ...state.CurrentPoints,
+                    action.PencilInfo.Start,
+                ],
+            };
+        }
+        case 'CompletePencilDrawing': {
+            return {
+                ...state,
+                DrawingList: [
+                    ...state.DrawingList,
+                    {Type: Types.DrawingType.Pencil, Info: action.PencilInfo},
+                ], //add the New Pencil Info to the Drawing.
+                UserActions: [
+                    ...state.UserActions,
+                    {ActionType: Types.DrawingType.Pencil, ActionInfo: {}},
+                ], //add the Pencil Drawn to UserActions (for Undo)
+                CurrentPoints: [], //clear the Current Points...
+                EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
+                StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
+            };
+        }
+
         default:
             throw new Error();
     }
