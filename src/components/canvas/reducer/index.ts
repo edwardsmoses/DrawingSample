@@ -35,7 +35,8 @@ export type CanvasAction =
     | {type: 'UpdateEndCoordinates'; endCoordinates: Types.Coordinates}
     | {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo}
     | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo}
-    | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo};
+    | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo}
+    | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo};
 
 /** The Reducer for Drawing Canvas */
 export const CanvasReducer = (
@@ -91,6 +92,22 @@ export const CanvasReducer = (
             return {
                 ...state,
                 CurrentPoints: [...state.CurrentPoints, newPoint.point],
+            };
+        }
+        case 'CompletePencilDrawing': {
+            return {
+                ...state,
+                DrawingList: [
+                    ...state.DrawingList,
+                    {Type: Types.DrawingType.Pencil, Info: action.PencilInfo},
+                ], //add the New Pencil Info to the Drawing.
+                UserActions: [
+                    ...state.UserActions,
+                    {ActionType: Types.DrawingType.Pencil, ActionInfo: {}},
+                ], //add the Pencil Drawn to UserActions (for Undo)
+                CurrentPoints: [], //clear the Current Points...
+                EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
+                StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
             };
         }
 

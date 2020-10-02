@@ -31,6 +31,7 @@ export type DrawingInfo = {
     StrokeColor: string;
     ShapeEnd?: Coordinates;
     ShapeStart?: Coordinates;
+    PencilPath?: string;
 };
 
 export type PencilInfo = {

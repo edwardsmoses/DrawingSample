@@ -17,6 +17,7 @@ type BuildShapeProps = BuildProps & {
 
 type BuildLineProps = BuildProps & {
     Points: PointProps[];
+    PointPath?: string;
 };
 
 /** Build the Drawing (Lines, Circles) */
@@ -41,6 +42,17 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
                         End: Drawing.Info.ShapeEnd!,
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
+                    })}
+                </G>
+            );
+        case Types.DrawingType.Pencil:
+            return (
+                <G key={key}>
+                    {BuildPencilPath({
+                        StrokeColor: Drawing.Info.StrokeColor,
+                        StrokeWidth: Drawing.Info.StrokeWidth,
+                        PointPath: Drawing.Info.PencilPath!,
+                        Points: [],
                     })}
                 </G>
             );
@@ -80,13 +92,13 @@ export const BuildCircle = (props: BuildShapeProps) => {
 
 /** Build the Path Element - Used for Pencil Drawing */
 export const BuildPencilPath = (props: BuildLineProps) => {
-    const {StrokeColor, StrokeWidth, Points} = props;
+    const {StrokeColor, StrokeWidth, Points, PointPath} = props;
 
     const pen = Pen();
 
     return (
         <Path
-            d={pen.pointsToSVG(Points)}
+            d={PointPath || pen.pointsToSVG(Points)}
             stroke={StrokeColor}
             strokeWidth={StrokeWidth}
             fill="none"
@@ -119,8 +131,14 @@ export const ShouldShowCircle = (
 };
 
 /** Decide whether to Show Pencil if Drawing Type is Pencil */
-export const ShouldShowPencilPath = (currentDrawingType: Types.DrawingType) => {
-    return currentDrawingType === Types.DrawingType.Pencil;
+export const ShouldShowPencilPath = (
+    currentDrawingType: Types.DrawingType,
+    currentPoints: PointProps[],
+) => {
+    return (
+        currentDrawingType === Types.DrawingType.Pencil &&
+        currentPoints.length > 1
+    );
 };
 
 /** Calculate the Radius of Circle */

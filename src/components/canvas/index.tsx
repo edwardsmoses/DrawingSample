@@ -11,6 +11,8 @@ import Svg, {G} from 'react-native-svg';
 import {Bar} from '../bottombar/Bar';
 
 import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
+import {Pen} from '../tools/Pen';
+import {Point} from '../tools/Point';
 
 import {CanvasReducer, InitialCanvasState} from './reducer/';
 import {DrawingType} from './types';
@@ -67,7 +69,7 @@ export const Canvas = () => {
     const onScreenTouch = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
-                PencilOnScreenTouch(evt);
+                PencilOnScreenTouchAndMove(evt);
                 break;
             case DrawingType.Line:
             case DrawingType.Circle:
@@ -82,7 +84,7 @@ export const Canvas = () => {
     const onScreenMove = (evt: GestureResponderEvent) => {
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
-                PencilOnScreenTouch(evt);
+                PencilOnScreenTouchAndMove(evt);
                 break;
             case DrawingType.Line:
             case DrawingType.Circle:
@@ -98,6 +100,7 @@ export const Canvas = () => {
         console.log('CanvasState', state);
         switch (state.DrawingToolType) {
             case DrawingType.Pencil:
+                PencilOnScreenRelease();
                 break;
             case DrawingType.Line:
                 LineOnScreenRelease();
@@ -111,8 +114,8 @@ export const Canvas = () => {
     };
     //#endregion
 
-    /** When User Touches Screen for Pencil */
-    const PencilOnScreenTouch = (evt: GestureResponderEvent) => {
+    /** When User Touches And Moves on Screen for Pencil */
+    const PencilOnScreenTouchAndMove = (evt: GestureResponderEvent) => {
         dispatch({
             type: 'TouchPencilDrawing',
             PencilInfo: {
@@ -189,6 +192,37 @@ export const Canvas = () => {
         });
     };
 
+    const PencilOnScreenRelease = () => {
+        if (!ShouldShowPencilPath(state.DrawingToolType, state.CurrentPoints)) {
+            return;
+        }
+
+        const points = state.CurrentPoints;
+        if (points.length === 1) {
+            let p = points[0];
+            // eslint-disable-next-line radix
+            let distance = Math.sqrt(state.StrokeWidth || 4) / 2;
+
+            let newPoint = Point();
+            newPoint.setPoint({
+                x: p.x + distance,
+                y: p.y + distance,
+                time: p.time,
+            });
+
+            points.push(newPoint.point);
+        }
+
+        dispatch({
+            type: 'CompletePencilDrawing',
+            PencilInfo: {
+                StrokeColor: state.StrokeColor,
+                StrokeWidth: state.StrokeWidth,
+                PencilPath: Pen().pointsToSVG(points),
+            },
+        });
+    };
+
     return (
         <React.Fragment>
             <View
@@ -200,7 +234,10 @@ export const Canvas = () => {
                             return BuildDrawing(drawing, index);
                         })}
 
-                        {ShouldShowPencilPath(state.DrawingToolType) &&
+                        {ShouldShowPencilPath(
+                            state.DrawingToolType,
+                            state.CurrentPoints,
+                        ) &&
                             BuildPencilPath({
                                 StrokeColor: state.StrokeColor,
                                 StrokeWidth: state.StrokeWidth,
