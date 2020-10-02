@@ -31,7 +31,8 @@ export type CanvasAction =
     | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo}
     | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo}
     | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo}
-    | {type: 'ClearDrawing'};
+    | {type: 'ClearDrawing'}
+    | {type: 'UndoAction'};
 
 /** The Reducer for Drawing Canvas */
 export const CanvasReducer = (
@@ -110,6 +111,17 @@ export const CanvasReducer = (
                 CurrentPoints: [],
                 EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
                 StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
+            };
+        }
+        case 'UndoAction': {
+            return {
+                ...state,
+                DrawingList: state.DrawingList.filter(
+                    (_, i) => i !== state.DrawingList.length - 1,
+                ), //remove the last element of the Drawing List
+                UserActions: state.UserActions.filter(
+                    (_, i) => i !== state.UserActions.length - 1,
+                ), //remove the last element of the UserActions
             };
         }
         default:

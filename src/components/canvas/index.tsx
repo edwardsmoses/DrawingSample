@@ -265,7 +265,10 @@ export const Canvas = () => {
                     dispatch({type: 'UpdateStrokeColor', newColor: color})
                 }
                 undoAction={() => {
-                    console.log('Pressed Undo');
+                    if (state.UserActions.length === 0) {
+                        return;
+                    }
+                    dispatch({type: 'UndoAction'});
                 }}
                 clearAction={() => {
                     dispatch({type: 'ClearDrawing'});
