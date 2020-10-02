@@ -114,6 +114,9 @@ export const CanvasReducer = (
             };
         }
         case 'UndoAction': {
+            if (state.UserActions.length === 0) {
+                return state;
+            }
             return {
                 ...state,
                 DrawingList: state.DrawingList.filter(
