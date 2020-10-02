@@ -223,7 +223,7 @@ export const Canvas = () => {
                         {state.DrawingList.map((drawing, index) => {
                             return BuildDrawing(drawing, index);
                         })}
-
+                        {/* ShowVisual Feedback as user draws */}
                         {ShouldShowPencilPath(
                             state.DrawingToolType,
                             state.CurrentPoints,
@@ -233,7 +233,6 @@ export const Canvas = () => {
                                 StrokeWidth: state.StrokeWidth,
                                 Points: state.CurrentPoints,
                             })}
-
                         {ShouldShowLine(
                             state.DrawingToolType,
                             state.EndCoordinates,
@@ -244,7 +243,6 @@ export const Canvas = () => {
                                 StrokeColor: state.StrokeColor,
                                 StrokeWidth: state.StrokeWidth,
                             })}
-
                         {ShouldShowCircle(
                             state.DrawingToolType,
                             state.StartCoordinates,
@@ -256,6 +254,7 @@ export const Canvas = () => {
                                 StrokeColor: state.StrokeColor,
                                 StrokeWidth: state.StrokeWidth,
                             })}
+                        {/* #End of Showing Visual Feedback as User Draws */}
                     </G>
                 </Svg>
             </View>
