@@ -54,121 +54,176 @@ export const CanvasReducer = (
     case 'UpdateEndCoordinates':
       return {...state, EndCoordinates: action.endCoordinates};
     case 'CompleteLineDrawing':
-      return {
-        ...state,
-        DrawingList: [
-          ...state.DrawingList,
-          {Type: Types.DrawingType.Line, Info: action.LineInfo},
-        ], //add the New Line Info to the Drawing.
-        UserActions: [
-          ...state.UserActions,
-          {ActionType: Types.DrawingType.Line},
-        ], //add the Line Drawn to UserActions (for Undo)
-        EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
-        StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
-      };
+      return CompleteLineDrawing(state, action);
     case 'CompleteCircleDrawing':
-      return {
-        ...state,
-        DrawingList: [
-          ...state.DrawingList,
-          {Type: Types.DrawingType.Circle, Info: action.CircleInfo},
-        ], //add the New Circle Info to the Drawing.
-        UserActions: [
-          ...state.UserActions,
-          {ActionType: Types.DrawingType.Circle},
-        ], //add the Circle Drawn to UserActions (for Undo)
-        EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
-        StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
-      };
+      return CompleteCircleDrawing(state, action);
     case 'TouchPencilDrawing': {
-      return {
-        ...state,
-        CurrentPoints: [...state.CurrentPoints, action.PencilInfo.Start],
-      };
+      return TouchPencilDrawing(state, action);
     }
     case 'CompletePencilDrawing': {
-      return {
-        ...state,
-        DrawingList: [
-          ...state.DrawingList,
-          {Type: Types.DrawingType.Pencil, Info: action.PencilInfo},
-        ], //add the New Pencil Info to the Drawing.
-        UserActions: [
-          ...state.UserActions,
-          {ActionType: Types.DrawingType.Pencil},
-        ], //add the Pencil Drawn to UserActions (for Undo)
-        CurrentPoints: [], //clear the Current Points...
-        EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
-        StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
-      };
+      return CompletePencilDrawing(state, action);
     }
     case 'SelectCircleElement': {
-      return {
-        ...state,
-        UserActions: [
-          ...state.UserActions,
-          {
-            ActionType: Types.DrawingType.SelectElement,
-            ActionInfo: {
-              ElementIndex: action.SelectInfo.SelectedCircleIndex,
-              PreviousCircleRadius: action.SelectInfo.PreviousCircleRadius,
-            },
-          },
-        ], //Save the Current Radius of the Circle (For Undo)
-        CurrentUserSelection: {
-          ElementIndex: action.SelectInfo.SelectedCircleIndex,
-        }, //Save the Selected Circle Index
-        DrawingToolType: Types.DrawingType.SelectElement, //Update the Drawing Type to Select Element
-      };
+      return SelectCircleElement(state, action);
     }
     case 'UpdateCircleElement': {
-      return {
-        ...state,
-        DrawingList: state.DrawingList.map((drawing, i) =>
-          i === action.CircleInfo.CircleIndex
-            ? {
-                ...drawing,
-                Info: {
-                  ...drawing.Info,
-                  CircleRadius: action.CircleInfo.NewCircleRadius,
-                },
-              }
-            : drawing,
-        ),
-      };
+      return UpdateCircleElement(state, action);
     }
     case 'CompleteCircleZoom': {
-      return {
-        ...state,
-        DrawingToolType: Types.DrawingType.Circle, //update drawing type to Circle
-        CurrentUserSelection: null, //no element is selected when circle zoom complete
-      };
+      return CompleteCircleZoom(state);
     }
     case 'ClearDrawing': {
-      return {
-        ...state,
-        DrawingList: [],
-        UserActions: [],
-        CurrentPoints: [],
-        EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
-        StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
-      };
+      return ClearDrawing(state);
     }
     case 'UndoAction': {
-      return {
-        ...state,
-        DrawingList: action.LastActionWasZoom
-          ? state.DrawingList
-          : state.DrawingList.filter(
-              (_, i) => i !== state.DrawingList.length - 1,
-            ), //if last Action was Zoom, don't remove the last element of the Drawing List (If It wasn't, Remove)
-        UserActions: state.UserActions.filter(
-          (_, i) => i !== state.UserActions.length - 1,
-        ), //remove the last element of the UserActions
-      };
+      return UndoAction(state, action);
     }
     default:
       throw new Error();
   }
+};
+
+/** Undo Action Reducer */
+const UndoAction = (
+  state: Types.CanvasState,
+  action: {type: 'UndoAction'; LastActionWasZoom: boolean},
+) => {
+  return {
+    ...state,
+    DrawingList: action.LastActionWasZoom
+      ? state.DrawingList
+      : state.DrawingList.filter((_, i) => i !== state.DrawingList.length - 1),
+    UserActions: state.UserActions.filter(
+      (_, i) => i !== state.UserActions.length - 1,
+    ),
+  };
+};
+
+/** Clear All Drawing Action Reducer */
+const ClearDrawing = (state: Types.CanvasState): Types.CanvasState => {
+  return {
+    ...state,
+    DrawingList: [],
+    UserActions: [],
+    CurrentPoints: [],
+    EndCoordinates: {X: 0, Y: 0},
+    StartCoordinates: {X: 0, Y: 0},
+  };
+};
+
+/** Complete Circle Zoom Action Reducer  */
+const CompleteCircleZoom = (state: Types.CanvasState): Types.CanvasState => {
+  return {
+    ...state,
+    DrawingToolType: Types.DrawingType.Circle,
+    CurrentUserSelection: null,
+  };
+};
+
+/** Update Circle Element Action Reducer */
+const UpdateCircleElement = (
+  state: Types.CanvasState,
+  action: {type: 'UpdateCircleElement'; CircleInfo: Types.UpdateCircleInfo},
+): Types.CanvasState => {
+  return {
+    ...state,
+    DrawingList: state.DrawingList.map((drawing, i) =>
+      i === action.CircleInfo.CircleIndex
+        ? {
+            ...drawing,
+            Info: {
+              ...drawing.Info,
+              CircleRadius: action.CircleInfo.NewCircleRadius,
+            },
+          }
+        : drawing,
+    ),
+  };
+};
+
+/** When User Selects Circle Action Reducer */
+const SelectCircleElement = (
+  state: Types.CanvasState,
+  action: {type: 'SelectCircleElement'; SelectInfo: Types.SelectCircleInfo},
+): Types.CanvasState => {
+  return {
+    ...state,
+    UserActions: [
+      ...state.UserActions,
+      {
+        ActionType: Types.DrawingType.SelectElement,
+        ActionInfo: {
+          ElementIndex: action.SelectInfo.SelectedCircleIndex,
+          PreviousCircleRadius: action.SelectInfo.PreviousCircleRadius,
+        },
+      },
+    ],
+    CurrentUserSelection: {
+      ElementIndex: action.SelectInfo.SelectedCircleIndex,
+    },
+    DrawingToolType: Types.DrawingType.SelectElement,
+  };
+};
+
+/** When User Completes Pencil Drawing Action Reducer */
+const CompletePencilDrawing = (
+  state: Types.CanvasState,
+  action: {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo},
+): Types.CanvasState => {
+  return {
+    ...state,
+    DrawingList: [
+      ...state.DrawingList,
+      {Type: Types.DrawingType.Pencil, Info: action.PencilInfo},
+    ],
+    UserActions: [...state.UserActions, {ActionType: Types.DrawingType.Pencil}],
+    CurrentPoints: [],
+    EndCoordinates: {X: 0, Y: 0},
+    StartCoordinates: {X: 0, Y: 0},
+  };
+};
+
+/** When User is Touches and Moves on Screen Action Reducer */
+const TouchPencilDrawing = (
+  state: Types.CanvasState,
+  action: {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo},
+): Types.CanvasState => {
+  return {
+    ...state,
+    CurrentPoints: [...state.CurrentPoints, action.PencilInfo.Start],
+  };
+};
+
+/** When User Completes Drawing Circle Action Reducer */
+const CompleteCircleDrawing = (
+  state: Types.CanvasState,
+  action: {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo},
+): Types.CanvasState => {
+  return {
+    ...state,
+    DrawingList: [
+      ...state.DrawingList,
+      {Type: Types.DrawingType.Circle, Info: action.CircleInfo},
+    ],
+    UserActions: [...state.UserActions, {ActionType: Types.DrawingType.Circle}],
+    EndCoordinates: {X: 0, Y: 0},
+    StartCoordinates: {X: 0, Y: 0},
+  };
+};
+
+/** When User Completes Drawing Line Action Reducer */
+const CompleteLineDrawing = (
+  state: Types.CanvasState,
+  action: {type: 'CompleteLineDrawing'; LineInfo: Types.DrawingInfo},
+): Types.CanvasState => {
+  return {
+    ...state,
+    DrawingList: [
+      ...state.DrawingList,
+      {Type: Types.DrawingType.Line, Info: action.LineInfo},
+    ],
+    UserActions: [...state.UserActions, {ActionType: Types.DrawingType.Line}],
+    EndCoordinates: {X: 0, Y: 0},
+    StartCoordinates: {X: 0, Y: 0},
+  };
 };
