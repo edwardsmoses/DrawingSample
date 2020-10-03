@@ -31,7 +31,7 @@ type BuildDrawingProps = {
   SelectElement(Index: number): void;
 };
 
-/** Build the Drawing (Lines, Circles,Pencils) */
+/** Build the Drawing from the Drawing List (Lines, Circles,Pencils) */
 export const BuildDrawing = (props: BuildDrawingProps) => {
   const {Drawing, Key, SelectElement} = props;
   switch (Drawing.Type) {
@@ -73,6 +73,43 @@ export const BuildDrawing = (props: BuildDrawingProps) => {
       );
     default:
       return null;
+  }
+};
+
+/** Display Visual Feedback as User Draws */
+export const DisplayVisualFeedback = (state: Types.CanvasState) => {
+  if (ShouldShowPencilPath(state.DrawingToolType, state.CurrentPoints)) {
+    return BuildPencilPath({
+      StrokeColor: state.StrokeColor,
+      StrokeWidth: state.StrokeWidth,
+      Points: state.CurrentPoints,
+    });
+  }
+
+  if (ShouldShowLine(state.DrawingToolType, state.EndCoordinates)) {
+    return BuildLine({
+      Start: state.StartCoordinates,
+      End: state.EndCoordinates,
+      StrokeColor: state.StrokeColor,
+      StrokeWidth: state.StrokeWidth,
+    });
+  }
+
+  if (
+    ShouldShowCircle(
+      state.DrawingToolType,
+      state.StartCoordinates,
+      state.EndCoordinates,
+    )
+  ) {
+    return BuildCircle({
+      Start: state.StartCoordinates,
+      End: state.EndCoordinates,
+      StrokeColor: state.StrokeColor,
+      StrokeWidth: state.StrokeWidth,
+      ElementIndex: 0,
+      SelectCircle: () => {},
+    });
   }
 };
 
@@ -190,3 +227,5 @@ export const CalculateCircleRadius = (
   );
   return circleRadius;
 };
+
+

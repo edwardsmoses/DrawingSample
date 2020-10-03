@@ -17,15 +17,7 @@ import {DrawingType} from './types';
 
 import * as CanvasHandlers from './Handlers';
 
-import {
-  BuildLine,
-  ShouldShowLine,
-  BuildDrawing,
-  ShouldShowCircle,
-  BuildCircle,
-  ShouldShowPencilPath,
-  BuildPencilPath,
-} from './utils/';
+import {BuildDrawing, DisplayVisualFeedback} from './utils/';
 
 export const Canvas = () => {
   const [state, dispatch] = React.useReducer(CanvasReducer, InitialCanvasState);
@@ -118,34 +110,7 @@ export const Canvas = () => {
                 SelectElement: SelectCircleForZoom,
               });
             })}
-            {/* ShowVisual Feedback as user draws */}
-            {ShouldShowPencilPath(state.DrawingToolType, state.CurrentPoints) &&
-              BuildPencilPath({
-                StrokeColor: state.StrokeColor,
-                StrokeWidth: state.StrokeWidth,
-                Points: state.CurrentPoints,
-              })}
-            {ShouldShowLine(state.DrawingToolType, state.EndCoordinates) &&
-              BuildLine({
-                Start: state.StartCoordinates,
-                End: state.EndCoordinates,
-                StrokeColor: state.StrokeColor,
-                StrokeWidth: state.StrokeWidth,
-              })}
-            {ShouldShowCircle(
-              state.DrawingToolType,
-              state.StartCoordinates,
-              state.EndCoordinates,
-            ) &&
-              BuildCircle({
-                Start: state.StartCoordinates,
-                End: state.EndCoordinates,
-                StrokeColor: state.StrokeColor,
-                StrokeWidth: state.StrokeWidth,
-                ElementIndex: 0,
-                SelectCircle: () => {},
-              })}
-            {/* #End of Showing Visual Feedback as User Draws */}
+            {DisplayVisualFeedback(state)}
           </G>
         </Svg>
       </View>
