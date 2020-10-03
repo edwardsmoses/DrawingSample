@@ -95,8 +95,56 @@ export const HandleOnScrenRelease = (props: HandlerWithStateProps) => {
   }
 };
 
+/** When User Selects a Circle */
+export const HandleCircleOnPress = (props: SelectCircleHandlerProps) => {
+  const {dispatch, state, elementIndex} = props;
+  const selectedCircle = state.DrawingList[elementIndex];
+  if (selectedCircle) {
+    const currentCircleRadius = CalculateCircleRadius(
+      selectedCircle.Info.ShapeStart!,
+      selectedCircle.Info.ShapeEnd!,
+    );
+    dispatch({
+      type: 'SelectCircleElement',
+      SelectInfo: {
+        PreviousCircleRadius: currentCircleRadius,
+        SelectedCircleIndex: elementIndex,
+      },
+    });
+  }
+};
+
+/** When User Presses the Undo Button */
+export const HandleOnUndo = (props: HandlerWithStateProps) => {
+  const {dispatch, state} = props;
+  if (state.UserActions.length === 0) {
+    return;
+  }
+
+  const LastUserAction = state.UserActions[state.UserActions.length - 1];
+
+  //if the last user action was Selecting a Circle
+  if (
+    LastUserAction &&
+    LastUserAction.ActionType === DrawingType.SelectElement
+  ) {
+    //update the Circle Info
+    dispatch({
+      type: 'UpdateCircleElement',
+      CircleInfo: {
+        CircleIndex: LastUserAction.ActionInfo?.ElementIndex!,
+        NewCircleRadius: LastUserAction.ActionInfo?.PreviousCircleRadius!,
+      },
+    });
+    dispatch({type: 'UndoAction', LastActionWasZoom: true});
+    return;
+  } else {
+    dispatch({type: 'UndoAction', LastActionWasZoom: false});
+  }
+};
+
 /** When User Touches And Moves on Screen for Pencil */
-export const HandlePencilOnTouchAndMove = (props: HandlerProps) => {
+const HandlePencilOnTouchAndMove = (props: HandlerProps) => {
   const {dispatch, evt} = props;
   dispatch({
     type: 'TouchPencilDrawing',
@@ -111,7 +159,7 @@ export const HandlePencilOnTouchAndMove = (props: HandlerProps) => {
 };
 
 /** When User Touches Screen for Shape (Line, Circle) */
-export const HandleShapeOnTouch = (props: HandlerProps) => {
+const HandleShapeOnTouch = (props: HandlerProps) => {
   const {dispatch, evt} = props;
   dispatch({
     type: 'UpdateStartCoordinates',
@@ -123,7 +171,7 @@ export const HandleShapeOnTouch = (props: HandlerProps) => {
 };
 
 /** When User Moves on  Screen for Shape (Line, Circle) */
-export const HandleShapeOnMove = (props: HandlerProps) => {
+const HandleShapeOnMove = (props: HandlerProps) => {
   const {dispatch, evt} = props;
   dispatch({
     type: 'UpdateEndCoordinates',
@@ -135,7 +183,7 @@ export const HandleShapeOnMove = (props: HandlerProps) => {
 };
 
 /** When User Completes Drawing Line, and Releases On Screen (Line) */
-export const HandleLineOnRelease = (props: HandlerWithStateProps) => {
+const HandleLineOnRelease = (props: HandlerWithStateProps) => {
   const {dispatch, state} = props;
 
   if (!ShouldShowLine(state.DrawingToolType, state.EndCoordinates)) {
@@ -155,7 +203,7 @@ export const HandleLineOnRelease = (props: HandlerWithStateProps) => {
 };
 
 /** When User Completes Drawing Circle, and Releases On Screen (Circle) */
-export const HandleCircleOnRelease = (props: HandlerWithStateProps) => {
+const HandleCircleOnRelease = (props: HandlerWithStateProps) => {
   const {dispatch, state} = props;
   if (
     !ShouldShowCircle(
@@ -180,7 +228,7 @@ export const HandleCircleOnRelease = (props: HandlerWithStateProps) => {
 };
 
 /** When User Completes Drawing Pencil, and Releases On Screen (Pencil) */
-export const HandlePencilOnRelease = (props: HandlerWithStateProps) => {
+const HandlePencilOnRelease = (props: HandlerWithStateProps) => {
   const {dispatch, state} = props;
   if (!ShouldShowPencilPath(state.DrawingToolType, state.CurrentPoints)) {
     return;
@@ -203,27 +251,8 @@ export const HandlePencilOnRelease = (props: HandlerWithStateProps) => {
   });
 };
 
-/** When User Selects a Circle */
-export const HandleCircleOnPress = (props: SelectCircleHandlerProps) => {
-  const {dispatch, state, elementIndex} = props;
-  const selectedCircle = state.DrawingList[elementIndex];
-  if (selectedCircle) {
-    const currentCircleRadius = CalculateCircleRadius(
-      selectedCircle.Info.ShapeStart!,
-      selectedCircle.Info.ShapeEnd!,
-    );
-    dispatch({
-      type: 'SelectCircleElement',
-      SelectInfo: {
-        PreviousCircleRadius: currentCircleRadius,
-        SelectedCircleIndex: elementIndex,
-      },
-    });
-  }
-};
-
 /** When User is Zooming (Circle) */
-export const HandleCircleOnZoom = (props: HandlerWithEventAndStateProps) => {
+const HandleCircleOnZoom = (props: HandlerWithEventAndStateProps) => {
   const {dispatch, state, evt} = props;
 
   //if nothing was selected
@@ -264,36 +293,7 @@ export const HandleCircleOnZoom = (props: HandlerWithEventAndStateProps) => {
   }
 };
 
-/** When User Presses the Undo Button */
-export const HandleOnUndo = (props: HandlerWithStateProps) => {
-  const {dispatch, state} = props;
-  if (state.UserActions.length === 0) {
-    return;
-  }
-
-  const LastUserAction = state.UserActions[state.UserActions.length - 1];
-
-  //if the last user action was Selecting a Circle
-  if (
-    LastUserAction &&
-    LastUserAction.ActionType === DrawingType.SelectElement
-  ) {
-    //update the Circle Info
-    dispatch({
-      type: 'UpdateCircleElement',
-      CircleInfo: {
-        CircleIndex: LastUserAction.ActionInfo?.ElementIndex!,
-        NewCircleRadius: LastUserAction.ActionInfo?.PreviousCircleRadius!,
-      },
-    });
-    dispatch({type: 'UndoAction', LastActionWasZoom: true});
-    return;
-  } else {
-    dispatch({type: 'UndoAction', LastActionWasZoom: false});
-  }
-};
-
-export const HandleCircleOnZoomComplete = (props: DispatchProp) => {
+const HandleCircleOnZoomComplete = (props: DispatchProp) => {
   const {dispatch} = props;
   dispatch({type: 'CompleteCircleZoom'});
 };
