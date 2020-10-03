@@ -1,11 +1,6 @@
 import React from 'react';
 
-import {
-  View,
-  PanResponder,
-  StyleSheet,
-  GestureResponderEvent,
-} from 'react-native';
+import {View, PanResponder, StyleSheet} from 'react-native';
 import Svg, {G} from 'react-native-svg';
 
 import {Bar} from '../bottombar/Bar';
@@ -13,7 +8,6 @@ import {Bar} from '../bottombar/Bar';
 import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 
 import {CanvasReducer, InitialCanvasState} from './reducer/';
-import {DrawingType} from './types';
 
 import * as CanvasHandlers from './Handlers';
 
@@ -34,50 +28,17 @@ export const Canvas = () => {
       });
     },
     onPanResponderMove: (evt) => {
-      onScreenMove(evt);
+      CanvasHandlers.HandleOnScreenMove({
+        evt,
+        dispatch,
+        CurrentDrawingType: state.DrawingToolType,
+        state,
+      });
     },
     onPanResponderRelease: () => {
-      onScrenRelease();
+      CanvasHandlers.HandleOnScrenRelease({dispatch, state});
     },
   });
-
-  /** Is Called When User Moves on Screen */
-  const onScreenMove = (evt: GestureResponderEvent) => {
-    switch (state.DrawingToolType) {
-      case DrawingType.Pencil:
-        CanvasHandlers.HandlePencilOnTouchAndMove({evt, dispatch});
-        break;
-      case DrawingType.Line:
-      case DrawingType.Circle:
-        CanvasHandlers.HandleShapeOnMove({evt, dispatch});
-        break;
-      case DrawingType.SelectElement:
-        CanvasHandlers.HandleCircleOnZoom({evt, state, dispatch});
-        break;
-      default:
-        break;
-    }
-  };
-
-  /** Is Called When User Releases Touch from Screen */
-  const onScrenRelease = () => {
-    switch (state.DrawingToolType) {
-      case DrawingType.Pencil:
-        CanvasHandlers.HandlePencilOnRelease({state, dispatch});
-        break;
-      case DrawingType.Line:
-        CanvasHandlers.HandleLineOnRelease({state, dispatch});
-        break;
-      case DrawingType.Circle:
-        CanvasHandlers.HandleCircleOnRelease({state, dispatch});
-        break;
-      case DrawingType.SelectElement:
-        CanvasHandlers.HandleCircleOnZoomComplete({dispatch});
-        break;
-      default:
-        break;
-    }
-  };
 
   const SelectCircleForZoom = (elementIndex: number) => {
     CanvasHandlers.HandleCircleOnPress({state, dispatch, elementIndex});

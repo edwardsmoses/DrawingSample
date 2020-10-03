@@ -37,6 +37,8 @@ type DrawHandlerProps = EventProp &
     CurrentDrawingType: DrawingType;
   };
 
+type DrawHandlerWithStateProps = DrawHandlerProps & StateProp;
+
 /** Is Called When User Touches Screen */
 export const HandleOnScreenTouch = (props: DrawHandlerProps) => {
   const {evt, dispatch, CurrentDrawingType} = props;
@@ -47,6 +49,46 @@ export const HandleOnScreenTouch = (props: DrawHandlerProps) => {
     case DrawingType.Line:
     case DrawingType.Circle:
       HandleShapeOnTouch({evt, dispatch});
+      break;
+    default:
+      break;
+  }
+};
+
+/** Is Called When User Moves on Screen */
+export const HandleOnScreenMove = (props: DrawHandlerWithStateProps) => {
+  const {evt, dispatch, CurrentDrawingType, state} = props;
+  switch (CurrentDrawingType) {
+    case DrawingType.Pencil:
+      HandlePencilOnTouchAndMove({evt, dispatch});
+      break;
+    case DrawingType.Line:
+    case DrawingType.Circle:
+      HandleShapeOnMove({evt, dispatch});
+      break;
+    case DrawingType.SelectElement:
+      HandleCircleOnZoom({evt, state, dispatch});
+      break;
+    default:
+      break;
+  }
+};
+
+/** Is Called When User Releases Touch from Screen */
+export const HandleOnScrenRelease = (props: HandlerWithStateProps) => {
+  const {dispatch, state} = props;
+  switch (state.DrawingToolType) {
+    case DrawingType.Pencil:
+      HandlePencilOnRelease({state, dispatch});
+      break;
+    case DrawingType.Line:
+      HandleLineOnRelease({state, dispatch});
+      break;
+    case DrawingType.Circle:
+      HandleCircleOnRelease({state, dispatch});
+      break;
+    case DrawingType.SelectElement:
+      HandleCircleOnZoomComplete({dispatch});
       break;
     default:
       break;
