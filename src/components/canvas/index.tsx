@@ -43,7 +43,7 @@ export const Canvas = () => {
         onPanResponderMove: (evt) => {
             onScreenMove(evt);
         },
-        onPanResponderRelease: (evt) => {
+        onPanResponderRelease: () => {
             onScrenRelease();
         },
     });
