@@ -31,6 +31,7 @@ export type CanvasAction =
     | {type: 'CompleteCircleDrawing'; CircleInfo: Types.DrawingInfo}
     | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo}
     | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo}
+    | {type: 'SelectCircleElement'; SelectInfo: Types.SelectCircleInfo}
     | {type: 'ClearDrawing'}
     | {type: 'UndoAction'};
 
@@ -101,6 +102,25 @@ export const CanvasReducer = (
                 CurrentPoints: [], //clear the Current Points...
                 EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
                 StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
+            };
+        }
+        case 'SelectCircleElement': {
+            return {
+                ...state,
+                UserActions: [
+                    ...state.UserActions,
+                    {
+                        ActionType: Types.DrawingType.SelectElement,
+                        ActionInfo: {
+                            CircleRadius:
+                                action.SelectInfo.PreviousCircleRadius,
+                        },
+                    },
+                ], //Save the Current Radius of the Circle (For Undo)
+                CurrentUserSelection: {
+                    ElementIndex: action.SelectInfo.SelectedCircleIndex,
+                }, //Save the Selected Circle Index
+                DrawingToolType: Types.DrawingType.Circle, //Update the Drawing Type to Circle
             };
         }
         case 'ClearDrawing': {

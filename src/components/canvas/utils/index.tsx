@@ -23,12 +23,19 @@ type BuildLineProps = BuildProps & {
     PointPath?: string;
 };
 
+type BuildDrawingProps = {
+    Drawing: Types.Drawing;
+    Key: number;
+    OnLongPress(Index: number): void;
+};
+
 /** Build the Drawing (Lines, Circles,Pencils) */
-export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
+export const BuildDrawing = (props: BuildDrawingProps) => {
+    const {Drawing, Key, OnLongPress} = props;
     switch (Drawing.Type) {
         case Types.DrawingType.Line:
             return (
-                <G key={key}>
+                <G key={Key}>
                     {BuildLine({
                         Start: Drawing.Info.ShapeStart!,
                         End: Drawing.Info.ShapeEnd!,
@@ -39,22 +46,20 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
             );
         case Types.DrawingType.Circle:
             return (
-                <G key={key}>
+                <G key={Key}>
                     {BuildCircle({
                         Start: Drawing.Info.ShapeStart!,
                         End: Drawing.Info.ShapeEnd!,
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
-                        ElementIndex: key,
-                        OnLongPress: (Index) => {
-                            console.log('Pressed', Index);
-                        },
+                        ElementIndex: Key,
+                        OnLongPress: OnLongPress,
                     })}
                 </G>
             );
         case Types.DrawingType.Pencil:
             return (
-                <G key={key}>
+                <G key={Key}>
                     {BuildPencilPath({
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
@@ -102,6 +107,7 @@ export const BuildCircle = (props: BuildCircleProps) => {
             onLongPress={() => {
                 OnLongPress(ElementIndex);
             }}
+            delayLongPress={500}
             strokeWidth={StrokeWidth}
         />
     );
@@ -170,7 +176,7 @@ export const PointsToSVG = (points: Types.Coordinates[]) => {
 };
 
 /** Calculate the Radius of Circle */
-const CalculateCircleRadius = (
+export const CalculateCircleRadius = (
     Start: Types.Coordinates,
     End: Types.Coordinates,
 ) => {

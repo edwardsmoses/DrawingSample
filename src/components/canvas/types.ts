@@ -15,7 +15,6 @@ export type UserAction = {
 /** User Selects Element (Circle) */
 export type ElementSelection = {
     ElementIndex: number;
-    Element: JSX.Element;
 };
 
 export type Coordinates = {
@@ -39,6 +38,11 @@ export type PencilInfo = {
 export type Drawing = {
     Type: DrawingType;
     Info: DrawingInfo;
+};
+
+export type SelectCircleInfo = {
+    PreviousCircleRadius: number;
+    SelectedCircleIndex: number;
 };
 
 export type CanvasState = {

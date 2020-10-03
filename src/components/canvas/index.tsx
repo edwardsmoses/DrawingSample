@@ -24,6 +24,7 @@ import {
     ShouldShowPencilPath,
     BuildPencilPath,
     PointsToSVG,
+    CalculateCircleRadius,
 } from './utils/';
 
 export const Canvas = () => {
@@ -213,6 +214,24 @@ export const Canvas = () => {
         });
     };
 
+    const SelectCircleForZoom = (elementIndex: number) => {
+        const selectedCircle = state.DrawingList[elementIndex];
+        if (selectedCircle) {
+            const currentCircleRadius = CalculateCircleRadius(
+                selectedCircle.Info.ShapeStart!,
+                selectedCircle.Info.ShapeEnd!,
+            );
+            console.log('SelectedCircle', currentCircleRadius, selectedCircle);
+            dispatch({
+                type: 'SelectCircleElement',
+                SelectInfo: {
+                    PreviousCircleRadius: currentCircleRadius,
+                    SelectedCircleIndex: elementIndex,
+                },
+            });
+        }
+    };
+
     return (
         <React.Fragment>
             <View
@@ -221,7 +240,11 @@ export const Canvas = () => {
                 <Svg style={styles.drawCanvasContainer}>
                     <G>
                         {state.DrawingList.map((drawing, index) => {
-                            return BuildDrawing(drawing, index);
+                            return BuildDrawing({
+                                Drawing: drawing,
+                                Key: index,
+                                OnLongPress: SelectCircleForZoom,
+                            });
                         })}
                         {/* ShowVisual Feedback as user draws */}
                         {ShouldShowPencilPath(
