@@ -53,11 +53,11 @@ export const Canvas = () => {
   const onScreenTouch = (evt: GestureResponderEvent) => {
     switch (state.DrawingToolType) {
       case DrawingType.Pencil:
-        CanvasHandlers.HandleOnScreenPencilTouchAndMove({evt, dispatch});
+        CanvasHandlers.HandlePencilTouchAndMove({evt, dispatch});
         break;
       case DrawingType.Line:
       case DrawingType.Circle:
-        ShapeOnScreenTouch(evt);
+        CanvasHandlers.HandleShapeTouch({evt, dispatch});
         break;
       default:
         break;
@@ -68,7 +68,7 @@ export const Canvas = () => {
   const onScreenMove = (evt: GestureResponderEvent) => {
     switch (state.DrawingToolType) {
       case DrawingType.Pencil:
-        PencilOnScreenTouchAndMove(evt);
+        CanvasHandlers.HandlePencilTouchAndMove(evt);
         break;
       case DrawingType.Line:
       case DrawingType.Circle:
@@ -103,31 +103,6 @@ export const Canvas = () => {
     }
   };
   //#endregion
-
-  /** When User Touches And Moves on Screen for Pencil */
-  const PencilOnScreenTouchAndMove = (evt: GestureResponderEvent) => {
-    dispatch({
-      type: 'TouchPencilDrawing',
-      PencilInfo: {
-        TimeStamp: evt.nativeEvent.timestamp,
-        Start: {
-          X: evt.nativeEvent.locationX,
-          Y: evt.nativeEvent.locationY,
-        },
-      },
-    });
-  };
-
-  /** When User Touches Screen for Shape (Line, Circle) */
-  const ShapeOnScreenTouch = (evt: GestureResponderEvent) => {
-    dispatch({
-      type: 'UpdateStartCoordinates',
-      startCoordinates: {
-        X: evt.nativeEvent.locationX,
-        Y: evt.nativeEvent.locationY,
-      },
-    });
-  };
 
   /** When User Moves on  Screen for Shape (Line, Circle) */
   const ShapeOnScreenMove = (evt: GestureResponderEvent) => {

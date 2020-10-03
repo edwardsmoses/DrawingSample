@@ -7,7 +7,7 @@ type HandlerProps = {
 };
 
 /** When User Touches And Moves on Screen for Pencil */
-export const HandleOnScreenPencilTouchAndMove = (props: HandlerProps) => {
+export const HandlePencilTouchAndMove = (props: HandlerProps) => {
   const {dispatch, evt} = props;
   dispatch({
     type: 'TouchPencilDrawing',
@@ -17,6 +17,18 @@ export const HandleOnScreenPencilTouchAndMove = (props: HandlerProps) => {
         X: evt.nativeEvent.locationX,
         Y: evt.nativeEvent.locationY,
       },
+    },
+  });
+};
+
+/** When User Touches Screen for Shape (Line, Circle) */
+export const HandleShapeTouch = (props: HandlerProps) => {
+  const {dispatch, evt} = props;
+  dispatch({
+    type: 'UpdateStartCoordinates',
+    startCoordinates: {
+      X: evt.nativeEvent.locationX,
+      Y: evt.nativeEvent.locationY,
     },
   });
 };
