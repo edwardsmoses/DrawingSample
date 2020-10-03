@@ -111,6 +111,8 @@ export const Canvas = () => {
             case DrawingType.Circle:
                 CircleOnScreenRelease();
                 break;
+            case DrawingType.SelectElement:
+                HandleCircleZoomComplete();
             default:
                 break;
         }
@@ -224,7 +226,6 @@ export const Canvas = () => {
                 selectedCircle.Info.ShapeStart!,
                 selectedCircle.Info.ShapeEnd!,
             );
-            console.log('SelectedCircle', currentCircleRadius, selectedCircle);
             dispatch({
                 type: 'SelectCircleElement',
                 SelectInfo: {
@@ -274,6 +275,10 @@ export const Canvas = () => {
                 },
             });
         }
+    };
+
+    const HandleCircleZoomComplete = () => {
+        dispatch({type: 'CompleteCircleZoom'});
     };
 
     return (

@@ -33,6 +33,7 @@ export type CanvasAction =
     | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo}
     | {type: 'SelectCircleElement'; SelectInfo: Types.SelectCircleInfo}
     | {type: 'UpdateCircleElementOnZoom'; CircleInfo: Types.UpdateCircleInfo}
+    | {type: 'CompleteCircleZoom'}
     | {type: 'ClearDrawing'}
     | {type: 'UndoAction'};
 
@@ -139,6 +140,13 @@ export const CanvasReducer = (
                           }
                         : drawing,
                 ),
+            };
+        }
+        case 'CompleteCircleZoom': {
+            return {
+                ...state,
+                DrawingToolType: Types.DrawingType.Circle, //update drawing type to Circle
+                CurrentUserSelection: null, //no element is selected when circle zoom complete
             };
         }
         case 'ClearDrawing': {
