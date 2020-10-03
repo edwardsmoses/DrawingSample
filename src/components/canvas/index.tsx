@@ -27,7 +27,11 @@ export const Canvas = () => {
     onMoveShouldSetPanResponder: () => true,
 
     onPanResponderGrant: (evt) => {
-      onScreenTouch(evt);
+      CanvasHandlers.HandleOnScreenTouch({
+        evt,
+        dispatch,
+        CurrentDrawingType: state.DrawingToolType,
+      });
     },
     onPanResponderMove: (evt) => {
       onScreenMove(evt);
@@ -36,21 +40,6 @@ export const Canvas = () => {
       onScrenRelease();
     },
   });
-
-  /** Is Called When User Touches Screen */
-  const onScreenTouch = (evt: GestureResponderEvent) => {
-    switch (state.DrawingToolType) {
-      case DrawingType.Pencil:
-        CanvasHandlers.HandlePencilOnTouchAndMove({evt, dispatch});
-        break;
-      case DrawingType.Line:
-      case DrawingType.Circle:
-        CanvasHandlers.HandleShapeOnTouch({evt, dispatch});
-        break;
-      default:
-        break;
-    }
-  };
 
   /** Is Called When User Moves on Screen */
   const onScreenMove = (evt: GestureResponderEvent) => {

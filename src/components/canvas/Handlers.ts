@@ -14,21 +14,43 @@ type DispatchProp = {
   dispatch: (value: CanvasAction) => void;
 };
 
-type HandlerProps = DispatchProp & {
+type EventProp = {
   evt: GestureResponderEvent;
 };
 
-type HandlerWithStateProps = DispatchProp & {
+type StateProp = {
   state: CanvasState;
 };
 
-type HandlerWithEventAndStateProps = DispatchProp & {
-  evt: GestureResponderEvent;
-  state: CanvasState;
-};
+type HandlerProps = DispatchProp & EventProp;
+
+type HandlerWithStateProps = DispatchProp & StateProp;
+
+type HandlerWithEventAndStateProps = DispatchProp & StateProp & EventProp;
 
 type SelectCircleHandlerProps = HandlerWithStateProps & {
   elementIndex: number;
+};
+
+type DrawHandlerProps = EventProp &
+  DispatchProp & {
+    CurrentDrawingType: DrawingType;
+  };
+
+/** Is Called When User Touches Screen */
+export const HandleOnScreenTouch = (props: DrawHandlerProps) => {
+  const {evt, dispatch, CurrentDrawingType} = props;
+  switch (CurrentDrawingType) {
+    case DrawingType.Pencil:
+      HandlePencilOnTouchAndMove({evt, dispatch});
+      break;
+    case DrawingType.Line:
+    case DrawingType.Circle:
+      HandleShapeOnTouch({evt, dispatch});
+      break;
+    default:
+      break;
+  }
 };
 
 /** When User Touches And Moves on Screen for Pencil */
