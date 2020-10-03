@@ -90,6 +90,9 @@ export const Canvas = () => {
             case DrawingType.Circle:
                 ShapeOnScreenMove(evt);
                 break;
+            case DrawingType.SelectElement:
+                HandleCircleZoom(evt);
+                break;
             default:
                 break;
         }
@@ -232,6 +235,47 @@ export const Canvas = () => {
         }
     };
 
+    const HandleCircleZoom = (event: GestureResponderEvent) => {
+        //if nothing was selected
+        if (!state.CurrentUserSelection) {
+            return;
+        }
+
+        const touches = event.nativeEvent.touches;
+
+        //if two touches on screen, we have a pinch-to-zoom movement.
+        if (touches.length >= 2) {
+            const [touch1, touch2] = touches;
+
+            //get the element of the current Selected Circle
+            const currentSelectedIndex = state.CurrentUserSelection
+                ?.ElementIndex!;
+            const currentSelectedCircle =
+                state.DrawingList[currentSelectedIndex];
+
+            if (!currentSelectedCircle) {
+                return;
+            }
+
+            dispatch({
+                type: 'UpdateCircleElementOnZoom',
+                CircleInfo: {
+                    CircleIndex: currentSelectedIndex,
+                    NewCircleRadius: CalculateCircleRadius(
+                        {
+                            X: touch1.pageX,
+                            Y: touch1.pageY,
+                        },
+                        {
+                            X: touch2.pageX,
+                            Y: touch2.pageY,
+                        },
+                    ),
+                },
+            });
+        }
+    };
+
     return (
         <React.Fragment>
             <View
@@ -243,7 +287,7 @@ export const Canvas = () => {
                             return BuildDrawing({
                                 Drawing: drawing,
                                 Key: index,
-                                OnLongPress: SelectCircleForZoom,
+                                SelectElement: SelectCircleForZoom,
                             });
                         })}
                         {/* ShowVisual Feedback as user draws */}
@@ -277,7 +321,7 @@ export const Canvas = () => {
                                 StrokeColor: state.StrokeColor,
                                 StrokeWidth: state.StrokeWidth,
                                 ElementIndex: 0,
-                                OnLongPress: () => {},
+                                SelectCircle: () => {},
                             })}
                         {/* #End of Showing Visual Feedback as User Draws */}
                     </G>

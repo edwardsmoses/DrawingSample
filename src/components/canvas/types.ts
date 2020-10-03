@@ -27,9 +27,11 @@ export type DrawingInfo = {
     StrokeColor: string;
     ShapeEnd?: Coordinates;
     ShapeStart?: Coordinates;
+    CircleRadius?: number;
     PencilPath?: string;
 };
 
+/** Payload for When User Touches And Moves on Screen - Pencil */
 export type PencilInfo = {
     Start: Coordinates;
     TimeStamp: number;
@@ -40,9 +42,16 @@ export type Drawing = {
     Info: DrawingInfo;
 };
 
+/** PayLoad for Selecting Circle */
 export type SelectCircleInfo = {
     PreviousCircleRadius: number;
     SelectedCircleIndex: number;
+};
+
+/** Payload for Updating Circle as User Zooms */
+export type UpdateCircleInfo = {
+    CircleIndex: number;
+    NewCircleRadius: number;
 };
 
 export type CanvasState = {

@@ -14,8 +14,9 @@ type BuildShapeProps = BuildProps & {
 };
 
 type BuildCircleProps = BuildShapeProps & {
-    OnLongPress(Index: number): void;
+    SelectCircle(Index: number): void;
     ElementIndex: number;
+    CircleRadius?: number;
 };
 
 type BuildLineProps = BuildProps & {
@@ -26,12 +27,12 @@ type BuildLineProps = BuildProps & {
 type BuildDrawingProps = {
     Drawing: Types.Drawing;
     Key: number;
-    OnLongPress(Index: number): void;
+    SelectElement(Index: number): void;
 };
 
 /** Build the Drawing (Lines, Circles,Pencils) */
 export const BuildDrawing = (props: BuildDrawingProps) => {
-    const {Drawing, Key, OnLongPress} = props;
+    const {Drawing, Key, SelectElement} = props;
     switch (Drawing.Type) {
         case Types.DrawingType.Line:
             return (
@@ -53,7 +54,8 @@ export const BuildDrawing = (props: BuildDrawingProps) => {
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
                         ElementIndex: Key,
-                        OnLongPress: OnLongPress,
+                        SelectCircle: SelectElement,
+                        CircleRadius: Drawing.Info.CircleRadius,
                     })}
                 </G>
             );
@@ -95,19 +97,19 @@ export const BuildCircle = (props: BuildCircleProps) => {
         End,
         StrokeColor,
         StrokeWidth,
-        OnLongPress,
+        SelectCircle,
         ElementIndex,
+        CircleRadius,
     } = props;
     return (
         <Circle
             cx={Start.X}
             cy={Start.Y}
-            r={CalculateCircleRadius(Start, End)}
+            r={CircleRadius || CalculateCircleRadius(Start, End)}
             stroke={StrokeColor}
-            onLongPress={() => {
-                OnLongPress(ElementIndex);
+            onPress={() => {
+                SelectCircle(ElementIndex);
             }}
-            delayLongPress={500}
             strokeWidth={StrokeWidth}
         />
     );

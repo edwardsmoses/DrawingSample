@@ -32,6 +32,7 @@ export type CanvasAction =
     | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo}
     | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo}
     | {type: 'SelectCircleElement'; SelectInfo: Types.SelectCircleInfo}
+    | {type: 'UpdateCircleElementOnZoom'; CircleInfo: Types.UpdateCircleInfo}
     | {type: 'ClearDrawing'}
     | {type: 'UndoAction'};
 
@@ -120,7 +121,24 @@ export const CanvasReducer = (
                 CurrentUserSelection: {
                     ElementIndex: action.SelectInfo.SelectedCircleIndex,
                 }, //Save the Selected Circle Index
-                DrawingToolType: Types.DrawingType.Circle, //Update the Drawing Type to Circle
+                DrawingToolType: Types.DrawingType.SelectElement, //Update the Drawing Type to Select Element
+            };
+        }
+        case 'UpdateCircleElementOnZoom': {
+            return {
+                ...state,
+                DrawingList: state.DrawingList.map((drawing, i) =>
+                    i === action.CircleInfo.CircleIndex
+                        ? {
+                              ...drawing,
+                              Info: {
+                                  ...drawing.Info,
+                                  CircleRadius:
+                                      action.CircleInfo.NewCircleRadius,
+                              },
+                          }
+                        : drawing,
+                ),
             };
         }
         case 'ClearDrawing': {
