@@ -25,8 +25,6 @@ import {
   BuildCircle,
   ShouldShowPencilPath,
   BuildPencilPath,
-  PointsToSVG,
-  CalculateCircleRadius,
 } from './utils/';
 
 export const Canvas = () => {
@@ -47,17 +45,15 @@ export const Canvas = () => {
     },
   });
 
-  //#region PanResponder Functions
-
   /** Is Called When User Touches Screen */
   const onScreenTouch = (evt: GestureResponderEvent) => {
     switch (state.DrawingToolType) {
       case DrawingType.Pencil:
-        CanvasHandlers.HandlePencilTouchAndMove({evt, dispatch});
+        CanvasHandlers.HandlePencilOnTouchAndMove({evt, dispatch});
         break;
       case DrawingType.Line:
       case DrawingType.Circle:
-        CanvasHandlers.HandleShapeTouch({evt, dispatch});
+        CanvasHandlers.HandleShapeOnTouch({evt, dispatch});
         break;
       default:
         break;
@@ -68,14 +64,14 @@ export const Canvas = () => {
   const onScreenMove = (evt: GestureResponderEvent) => {
     switch (state.DrawingToolType) {
       case DrawingType.Pencil:
-        CanvasHandlers.HandlePencilTouchAndMove(evt);
+        CanvasHandlers.HandlePencilOnTouchAndMove({evt, dispatch});
         break;
       case DrawingType.Line:
       case DrawingType.Circle:
-        ShapeOnScreenMove(evt);
+        CanvasHandlers.HandleShapeOnMove({evt, dispatch});
         break;
       case DrawingType.SelectElement:
-        HandleCircleZoom(evt);
+        CanvasHandlers.HandleCircleOnZoom({evt, state, dispatch});
         break;
       default:
         break;
@@ -84,187 +80,30 @@ export const Canvas = () => {
 
   /** Is Called When User Releases Touch from Screen */
   const onScrenRelease = () => {
-    console.log('CanvasState', state);
     switch (state.DrawingToolType) {
       case DrawingType.Pencil:
-        PencilOnScreenRelease();
+        CanvasHandlers.HandlePencilOnRelease({state, dispatch});
         break;
       case DrawingType.Line:
-        LineOnScreenRelease();
+        CanvasHandlers.HandleLineOnRelease({state, dispatch});
         break;
       case DrawingType.Circle:
-        CircleOnScreenRelease();
+        CanvasHandlers.HandleCircleOnRelease({state, dispatch});
         break;
       case DrawingType.SelectElement:
-        HandleCircleZoomComplete();
+        CanvasHandlers.HandleCircleOnZoomComplete({dispatch});
         break;
       default:
         break;
     }
   };
-  //#endregion
-
-  /** When User Moves on  Screen for Shape (Line, Circle) */
-  const ShapeOnScreenMove = (evt: GestureResponderEvent) => {
-    dispatch({
-      type: 'UpdateEndCoordinates',
-      endCoordinates: {
-        X: evt.nativeEvent.locationX,
-        Y: evt.nativeEvent.locationY,
-      },
-    });
-  };
-
-  /** When User Completes Drawing Line, and Releases On Screen (Line) */
-  const LineOnScreenRelease = () => {
-    if (!ShouldShowLine(state.DrawingToolType, state.EndCoordinates)) {
-      return;
-    }
-
-    //update the State
-    dispatch({
-      type: 'CompleteLineDrawing',
-      LineInfo: {
-        ShapeEnd: state.EndCoordinates,
-        ShapeStart: state.StartCoordinates,
-        StrokeColor: state.StrokeColor,
-        StrokeWidth: state.StrokeWidth,
-      },
-    });
-  };
-
-  /** When User Completes Drawing Circle, and Releases On Screen (Circle) */
-  const CircleOnScreenRelease = () => {
-    if (
-      !ShouldShowCircle(
-        state.DrawingToolType,
-        state.StartCoordinates,
-        state.EndCoordinates,
-      )
-    ) {
-      return;
-    }
-
-    //update the State
-    dispatch({
-      type: 'CompleteCircleDrawing',
-      CircleInfo: {
-        ShapeEnd: state.EndCoordinates,
-        ShapeStart: state.StartCoordinates,
-        StrokeColor: state.StrokeColor,
-        StrokeWidth: state.StrokeWidth,
-      },
-    });
-  };
-
-  const PencilOnScreenRelease = () => {
-    if (!ShouldShowPencilPath(state.DrawingToolType, state.CurrentPoints)) {
-      return;
-    }
-
-    const points = state.CurrentPoints;
-    if (points.length === 1) {
-      let p = points[0];
-      let distance = Math.sqrt(state.StrokeWidth || 4) / 2;
-      points.push({X: p.X + distance, Y: p.Y + distance});
-    }
-
-    dispatch({
-      type: 'CompletePencilDrawing',
-      PencilInfo: {
-        StrokeColor: state.StrokeColor,
-        StrokeWidth: state.StrokeWidth,
-        PencilPath: PointsToSVG(points),
-      },
-    });
-  };
 
   const SelectCircleForZoom = (elementIndex: number) => {
-    const selectedCircle = state.DrawingList[elementIndex];
-    if (selectedCircle) {
-      const currentCircleRadius = CalculateCircleRadius(
-        selectedCircle.Info.ShapeStart!,
-        selectedCircle.Info.ShapeEnd!,
-      );
-      dispatch({
-        type: 'SelectCircleElement',
-        SelectInfo: {
-          PreviousCircleRadius: currentCircleRadius,
-          SelectedCircleIndex: elementIndex,
-        },
-      });
-    }
+    CanvasHandlers.HandleCircleOnPress({state, dispatch, elementIndex});
   };
 
-  const HandleCircleZoom = (event: GestureResponderEvent) => {
-    //if nothing was selected
-    if (!state.CurrentUserSelection) {
-      return;
-    }
-
-    const touches = event.nativeEvent.touches;
-
-    //if two touches on screen, we have a pinch-to-zoom movement.
-    if (touches.length >= 2) {
-      const [touch1, touch2] = touches;
-
-      //get the element of the current Selected Circle
-      const currentSelectedIndex = state.CurrentUserSelection?.ElementIndex!;
-      const currentSelectedCircle = state.DrawingList[currentSelectedIndex];
-
-      if (!currentSelectedCircle) {
-        return;
-      }
-
-      dispatch({
-        type: 'UpdateCircleElement',
-        CircleInfo: {
-          CircleIndex: currentSelectedIndex,
-          NewCircleRadius: CalculateCircleRadius(
-            {
-              X: touch1.pageX,
-              Y: touch1.pageY,
-            },
-            {
-              X: touch2.pageX,
-              Y: touch2.pageY,
-            },
-          ),
-        },
-      });
-    }
-  };
-
-  const HandleCircleZoomComplete = () => {
-    dispatch({type: 'CompleteCircleZoom'});
-  };
-
-  /** When User Presses the Undo Button */
   const HandleUndo = () => {
-    if (state.UserActions.length === 0) {
-      return;
-    }
-
-    const LastUserAction = state.UserActions[state.UserActions.length - 1];
-
-    //if the last user action was Selecting a Circle
-    if (
-      LastUserAction &&
-      LastUserAction.ActionType === DrawingType.SelectElement
-    ) {
-      //update the Circle Info
-      dispatch({
-        type: 'UpdateCircleElement',
-        CircleInfo: {
-          CircleIndex: LastUserAction.ActionInfo?.ElementIndex!,
-          NewCircleRadius: LastUserAction.ActionInfo?.PreviousCircleRadius!,
-        },
-      });
-      dispatch({type: 'UndoAction', LastActionWasZoom: true});
-      return;
-    } else {
-      dispatch({type: 'UndoAction', LastActionWasZoom: false});
-    }
+    CanvasHandlers.HandleOnUndo({state, dispatch});
   };
 
   return (
