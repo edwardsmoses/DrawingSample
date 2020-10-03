@@ -38,27 +38,12 @@ export const Canvas = () => {
         onMoveShouldSetPanResponder: () => true,
 
         onPanResponderGrant: (evt) => {
-            console.log(
-                'Touched',
-                evt.nativeEvent.locationX,
-                evt.nativeEvent.locationY,
-            );
             onScreenTouch(evt);
         },
         onPanResponderMove: (evt) => {
-            console.log(
-                'Moved',
-                evt.nativeEvent.locationX,
-                evt.nativeEvent.locationY,
-            );
             onScreenMove(evt);
         },
         onPanResponderRelease: (evt) => {
-            console.log(
-                'Release',
-                evt.nativeEvent.locationX,
-                evt.nativeEvent.locationY,
-            );
             onScrenRelease();
         },
     });
@@ -113,6 +98,7 @@ export const Canvas = () => {
                 break;
             case DrawingType.SelectElement:
                 HandleCircleZoomComplete();
+                break;
             default:
                 break;
         }
