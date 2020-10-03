@@ -1,7 +1,5 @@
 import React from 'react';
 import {Circle, G, Line, Path} from 'react-native-svg';
-import {Pen} from '../../tools/Pen';
-import {PointProps} from '../../tools/Point';
 
 import * as Types from '../types';
 
@@ -15,12 +13,17 @@ type BuildShapeProps = BuildProps & {
     End: Types.Coordinates;
 };
 
+type BuildCircleProps = BuildShapeProps & {
+    OnLongPress(Index: number): void;
+    ElementIndex: number;
+};
+
 type BuildLineProps = BuildProps & {
     Points: Types.Coordinates[];
     PointPath?: string;
 };
 
-/** Build the Drawing (Lines, Circles) */
+/** Build the Drawing (Lines, Circles,Pencils) */
 export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
     switch (Drawing.Type) {
         case Types.DrawingType.Line:
@@ -42,6 +45,10 @@ export const BuildDrawing = (Drawing: Types.Drawing, key: number) => {
                         End: Drawing.Info.ShapeEnd!,
                         StrokeColor: Drawing.Info.StrokeColor,
                         StrokeWidth: Drawing.Info.StrokeWidth,
+                        ElementIndex: key,
+                        OnLongPress: (Index) => {
+                            console.log('Pressed', Index);
+                        },
                     })}
                 </G>
             );
@@ -77,14 +84,24 @@ export const BuildLine = (props: BuildShapeProps) => {
 };
 
 /** Build the Circle Element  */
-export const BuildCircle = (props: BuildShapeProps) => {
-    const {Start, End, StrokeColor, StrokeWidth} = props;
+export const BuildCircle = (props: BuildCircleProps) => {
+    const {
+        Start,
+        End,
+        StrokeColor,
+        StrokeWidth,
+        OnLongPress,
+        ElementIndex,
+    } = props;
     return (
         <Circle
             cx={Start.X}
             cy={Start.Y}
             r={CalculateCircleRadius(Start, End)}
             stroke={StrokeColor}
+            onLongPress={() => {
+                OnLongPress(ElementIndex);
+            }}
             strokeWidth={StrokeWidth}
         />
     );

@@ -253,6 +253,8 @@ export const Canvas = () => {
                                 End: state.EndCoordinates,
                                 StrokeColor: state.StrokeColor,
                                 StrokeWidth: state.StrokeWidth,
+                                ElementIndex: 0,
+                                OnLongPress: () => {},
                             })}
                         {/* #End of Showing Visual Feedback as User Draws */}
                     </G>
