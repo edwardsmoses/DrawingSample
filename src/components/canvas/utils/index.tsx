@@ -16,6 +16,7 @@ type BuildShapeProps = BuildProps & {
 type BuildCircleProps = BuildShapeProps & {
   SelectCircle(Index: number): void;
   ElementIndex: number;
+  /** Only Used When Updating the Circle */
   CircleRadius?: number;
 };
 

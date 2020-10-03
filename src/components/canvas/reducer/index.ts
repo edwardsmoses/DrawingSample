@@ -32,10 +32,10 @@ export type CanvasAction =
   | {type: 'TouchPencilDrawing'; PencilInfo: Types.PencilInfo}
   | {type: 'CompletePencilDrawing'; PencilInfo: Types.DrawingInfo}
   | {type: 'SelectCircleElement'; SelectInfo: Types.SelectCircleInfo}
-  | {type: 'UpdateCircleElementOnZoom'; CircleInfo: Types.UpdateCircleInfo}
+  | {type: 'UpdateCircleElement'; CircleInfo: Types.UpdateCircleInfo}
+  | {type: 'UndoAction'; LastActionWasZoom: boolean}
   | {type: 'CompleteCircleZoom'}
-  | {type: 'ClearDrawing'}
-  | {type: 'UndoAction'};
+  | {type: 'ClearDrawing'};
 
 /** The Reducer for Drawing Canvas */
 export const CanvasReducer = (
@@ -62,7 +62,7 @@ export const CanvasReducer = (
         ], //add the New Line Info to the Drawing.
         UserActions: [
           ...state.UserActions,
-          {ActionType: Types.DrawingType.Line, ActionInfo: {}},
+          {ActionType: Types.DrawingType.Line},
         ], //add the Line Drawn to UserActions (for Undo)
         EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
         StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
@@ -76,7 +76,7 @@ export const CanvasReducer = (
         ], //add the New Circle Info to the Drawing.
         UserActions: [
           ...state.UserActions,
-          {ActionType: Types.DrawingType.Circle, ActionInfo: {}},
+          {ActionType: Types.DrawingType.Circle},
         ], //add the Circle Drawn to UserActions (for Undo)
         EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
         StartCoordinates: {X: 0, Y: 0}, //Reset the StartCoordinates
@@ -96,7 +96,7 @@ export const CanvasReducer = (
         ], //add the New Pencil Info to the Drawing.
         UserActions: [
           ...state.UserActions,
-          {ActionType: Types.DrawingType.Pencil, ActionInfo: {}},
+          {ActionType: Types.DrawingType.Pencil},
         ], //add the Pencil Drawn to UserActions (for Undo)
         CurrentPoints: [], //clear the Current Points...
         EndCoordinates: {X: 0, Y: 0}, //Reset the EndCoordinates
@@ -111,7 +111,8 @@ export const CanvasReducer = (
           {
             ActionType: Types.DrawingType.SelectElement,
             ActionInfo: {
-              CircleRadius: action.SelectInfo.PreviousCircleRadius,
+              ElementIndex: action.SelectInfo.SelectedCircleIndex,
+              PreviousCircleRadius: action.SelectInfo.PreviousCircleRadius,
             },
           },
         ], //Save the Current Radius of the Circle (For Undo)
@@ -121,7 +122,7 @@ export const CanvasReducer = (
         DrawingToolType: Types.DrawingType.SelectElement, //Update the Drawing Type to Select Element
       };
     }
-    case 'UpdateCircleElementOnZoom': {
+    case 'UpdateCircleElement': {
       return {
         ...state,
         DrawingList: state.DrawingList.map((drawing, i) =>
@@ -155,14 +156,13 @@ export const CanvasReducer = (
       };
     }
     case 'UndoAction': {
-      if (state.UserActions.length === 0) {
-        return state;
-      }
       return {
         ...state,
-        DrawingList: state.DrawingList.filter(
-          (_, i) => i !== state.DrawingList.length - 1,
-        ), //remove the last element of the Drawing List
+        DrawingList: action.LastActionWasZoom
+          ? state.DrawingList
+          : state.DrawingList.filter(
+              (_, i) => i !== state.DrawingList.length - 1,
+            ), //if last Action was Zoom, don't remove the last element of the Drawing List (If It wasn't, Remove)
         UserActions: state.UserActions.filter(
           (_, i) => i !== state.UserActions.length - 1,
         ), //remove the last element of the UserActions

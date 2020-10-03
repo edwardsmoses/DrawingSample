@@ -240,7 +240,7 @@ export const Canvas = () => {
       }
 
       dispatch({
-        type: 'UpdateCircleElementOnZoom',
+        type: 'UpdateCircleElement',
         CircleInfo: {
           CircleIndex: currentSelectedIndex,
           NewCircleRadius: CalculateCircleRadius(
@@ -260,6 +260,34 @@ export const Canvas = () => {
 
   const HandleCircleZoomComplete = () => {
     dispatch({type: 'CompleteCircleZoom'});
+  };
+
+  /** When User Presses the Undo Button */
+  const HandleUndo = () => {
+    if (state.UserActions.length === 0) {
+      return;
+    }
+
+    const LastUserAction = state.UserActions[state.UserActions.length - 1];
+
+    //if the last user action was Selecting a Circle
+    if (
+      LastUserAction &&
+      LastUserAction.ActionType === DrawingType.SelectElement
+    ) {
+      //update the Circle Info
+      dispatch({
+        type: 'UpdateCircleElement',
+        CircleInfo: {
+          CircleIndex: LastUserAction.ActionInfo?.ElementIndex!,
+          NewCircleRadius: LastUserAction.ActionInfo?.PreviousCircleRadius!,
+        },
+      });
+      dispatch({type: 'UndoAction', LastActionWasZoom: true});
+      return;
+    } else {
+      dispatch({type: 'UndoAction', LastActionWasZoom: false});
+    }
   };
 
   return (
@@ -310,9 +338,7 @@ export const Canvas = () => {
         selectColor={(color) =>
           dispatch({type: 'UpdateStrokeColor', newColor: color})
         }
-        undoAction={() => {
-          dispatch({type: 'UndoAction'});
-        }}
+        undoAction={HandleUndo}
         clearAction={() => {
           dispatch({type: 'ClearDrawing'});
         }}

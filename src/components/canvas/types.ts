@@ -9,7 +9,13 @@ export enum DrawingType {
 /** The UserActions */
 export type UserAction = {
   ActionType: DrawingType;
-  ActionInfo: object;
+  ActionInfo?: ActionInfo;
+};
+
+/** The User Action Info (Used for CircleSelection) */
+export type ActionInfo = {
+  ElementIndex: number;
+  PreviousCircleRadius: number;
 };
 
 /** User Selects Element (Circle) */
