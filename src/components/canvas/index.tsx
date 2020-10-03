@@ -15,6 +15,8 @@ import {CaptureAndShareScreenshot} from '../screenshot/CaptureScreenShot';
 import {CanvasReducer, InitialCanvasState} from './reducer/';
 import {DrawingType} from './types';
 
+import * as CanvasHandlers from './Handlers';
+
 import {
   BuildLine,
   ShouldShowLine,
@@ -51,7 +53,7 @@ export const Canvas = () => {
   const onScreenTouch = (evt: GestureResponderEvent) => {
     switch (state.DrawingToolType) {
       case DrawingType.Pencil:
-        PencilOnScreenTouchAndMove(evt);
+        CanvasHandlers.HandleOnScreenPencilTouchAndMove({evt, dispatch});
         break;
       case DrawingType.Line:
       case DrawingType.Circle:
