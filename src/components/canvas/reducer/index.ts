@@ -11,7 +11,7 @@ export const InitialCanvasState: Types.CanvasState = {
     X: 0,
     Y: 0,
   },
-  StrokeColor: '#000000',
+  StrokeColor: '#131113',
   StrokeWidth: 4,
 
   CurrentPoints: [],
