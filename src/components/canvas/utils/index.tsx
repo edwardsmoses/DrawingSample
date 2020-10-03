@@ -227,5 +227,3 @@ export const CalculateCircleRadius = (
   );
   return circleRadius;
 };
-
-
